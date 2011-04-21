@@ -14,7 +14,7 @@ function prompt {
 	Write-Host($userLocation) -nonewline -foregroundcolor Green 
 	
 	if (isCurrentDirectoryGitRepository) {
-		$branch = GitBranchName()
+		$branch = GitBranchName
 
 		Write-Host('[') -nonewline -foregroundcolor Yellow
 		if($branch -eq "merging") {
