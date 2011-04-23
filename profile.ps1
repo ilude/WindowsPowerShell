@@ -10,7 +10,7 @@ function prompt {
 	$index = $path.LastIndexOf('\') + 1
 	$userLocation = $path.Substring($index, $path.Length - $index)
 	
-	$host.UI.RawUi.WindowTitle = "Git - $pwd"
+	
 	Write-Host($userLocation) -nonewline -foregroundcolor Green 
 	
 	if (isCurrentDirectoryGitRepository) {
@@ -24,6 +24,11 @@ function prompt {
 			Write-Host($branch) -nonewline -foregroundcolor Cyan
 		}
 		Write-Host(']') -nonewline -foregroundcolor Yellow
+		
+		$host.UI.RawUi.WindowTitle = "Git:$userLocation - $pwd"
+	}
+	else {
+		$host.UI.RawUi.WindowTitle = "$userLocation - $pwd"
 	}
     
 	Write-Host('>') -nonewline -foregroundcolor Green    
