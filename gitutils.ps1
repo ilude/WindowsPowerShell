@@ -19,6 +19,7 @@ function isCurrentDirectoryGitRepository {
         }
     }
 		return $FALSE
+	}	
 	catch {
 		return $FALSE
 	}
@@ -39,16 +40,16 @@ function DeleteTag {
 # Get the current branch
 function GitBranchName {
 	try {
-			$currentBranch = git symbolic-ref HEAD
-			$index = $currentBranch.LastIndexOf('/') + 1
-			if($index -gt 0) {
-				return $currentBranch.Substring($index, $currentBranch.Length - $index)
-			}
-			return "merging"
+		$currentBranch = git symbolic-ref HEAD
+		$index = $currentBranch.LastIndexOf('/') + 1
+		if($index -gt 0) {
+			return $currentBranch.Substring($index, $currentBranch.Length - $index)
 		}
-		catch {
-			return ""
-		}
+		return "merging"
+	}
+	catch {
+		return ""
+	}
 }
 
 # Extracts status details about the repo
