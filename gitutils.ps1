@@ -5,18 +5,18 @@
 function isCurrentDirectoryGitRepository {
 	try {
     if ((Test-Path ".git") -eq $TRUE) {
-        return $TRUE
+			return $TRUE
     }
     
     # Test within parent dirs
     $checkIn = (Get-Item .).parent
     while ($checkIn -ne $NULL) {
-        $pathToTest = $checkIn.fullname + '/.git'
-        if ((Test-Path $pathToTest) -eq $TRUE) {
-            return $TRUE
-        } else {
-            $checkIn = $checkIn.parent
-        }
+			$pathToTest = $checkIn.fullname + '/.git'
+			if ((Test-Path $pathToTest) -eq $TRUE) {
+				return $TRUE
+			} else {
+				$checkIn = $checkIn.parent
+			}
     }
 		return $FALSE
 	}	
