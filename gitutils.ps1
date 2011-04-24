@@ -3,6 +3,7 @@
 
 # Is the current directory a git repository/working copy?
 function isCurrentDirectoryGitRepository {
+	try {
     if ((Test-Path ".git") -eq $TRUE) {
         return $TRUE
     }
@@ -17,8 +18,10 @@ function isCurrentDirectoryGitRepository {
             $checkIn = $checkIn.parent
         }
     }
-    
-    return $FALSE
+		return $FALSE
+	catch {
+		return $FALSE
+	}
 }
 
 function TagDeployment {
@@ -35,12 +38,17 @@ function DeleteTag {
 
 # Get the current branch
 function GitBranchName {
-    $currentBranch = git symbolic-ref HEAD
-		$index = $currentBranch.LastIndexOf('/') + 1
-		if($index -gt 0) {
-			return $currentBranch.Substring($index, $currentBranch.Length - $index)
+	try {
+			$currentBranch = git symbolic-ref HEAD
+			$index = $currentBranch.LastIndexOf('/') + 1
+			if($index -gt 0) {
+				return $currentBranch.Substring($index, $currentBranch.Length - $index)
+			}
+			return "merging"
 		}
-		return "merging"
+		catch {
+			return ""
+		}
 }
 
 # Extracts status details about the repo
