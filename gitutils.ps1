@@ -26,7 +26,7 @@ function isCurrentDirectoryGitRepository {
 }
 
 function TrackBranch {
-	Param([parameter()][string]$tagname = GitBranchName)
+	Param([string]$tagname = GitBranchName)
 	git config branch.$tagname.remote origin
 	git config branch.$tagname.merge refs/heads/$tagname
 }
