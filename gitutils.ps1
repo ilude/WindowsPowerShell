@@ -39,7 +39,7 @@ function TrackBranch {
 function TrackAllBranches {
 	git branch -r | foreach { 
 		$remotebranch = $_.Trim();
-		if($remotebranch.StartsWith("origin/") {
+		if($remotebranch.StartsWith("origin/")) {
 			$branch = $remotebranch.Replace("origin/", "");
 			TrackBranch $branch;
 		}
