@@ -1,5 +1,6 @@
 # Git functions
 # Mark Embling (http://www.markembling.info/)
+# See http://gist.github.com/180853 for gitutils.ps1.
 
 # Is the current directory a git repository/working copy?
 function isCurrentDirectoryGitRepository {
@@ -47,7 +48,7 @@ function TrackAllBranches {
 }
 
 function TagDeployment {
-	$date = Get-Date -format yyyy-MM-dd.HH.mm.ss
+	$date = Get-Datei -format yyyy-MM-dd.HH.mm.ss
 	git tag -m "Deployed $date" deploy-$date
 	rv date
 }

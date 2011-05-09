@@ -1,9 +1,27 @@
-# My preferred prompt for Powershell. 
-# Displays git branch and stats when inside a git repository.
+# Directory where this file is located
+$pwd = Split-Path $MyInvocation.MyCommand.Path
 
-# See http://gist.github.com/180853 for gitutils.ps1.
-$dir = Split-Path $MyInvocation.MyCommand.Path
-. (Join-Path $dir gitutils.ps1)
+$testfile = Join-Path $pwd gitutils.ps1
+if(Test-Path $testfile) {
+	. $testfile
+}
+
+###########################
+#
+# Load all modules
+#
+###########################
+
+gci $pwd *.psm1 | foreach {
+	$module = $_.VersionInfo.FileName;
+	Import-Module $module
+}
+
+###########################
+#
+# Setup prompt
+#
+###########################
 
 function prompt {
 	$path = ([string]$pwd)
@@ -35,8 +53,26 @@ function prompt {
 	return " "
 }
 
-function Open-EbizSolution {
-	Invoke-Expression "& `".\Ebiz 2007 Modules.sln`""
+###########################
+#
+# Reload Profile
+#
+###########################
+
+function Reload-Profile {
+    @(
+        $Profile.AllUsersAllHosts,
+        $Profile.AllUsersCurrentHost,
+        $Profile.CurrentUserAllHosts,
+        $Profile.CurrentUserCurrentHost
+    ) | % {
+        if(Test-Path $_){
+            Write-Verbose "Running $_"
+            . $_
+        }
+    }    
 }
+
 Set-Alias dev Open-EbizSolution
 Set-Alias which get-command
+Set-Alias Open-EbizSolution "Invoke-Expression `"& `".\Ebiz 2007 Modules.sln`"`""
