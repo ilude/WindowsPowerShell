@@ -36,6 +36,16 @@ function TrackBranch {
 	git config branch.$tagname.merge refs/heads/$tagname
 }
 
+function TrackAllBranches {
+	git branch -r | foreach { 
+		$remotebranch = $_.Trim();
+		if($remotebranch.StartsWith("origin/") {
+			$branch = $remotebranch.Replace("origin/", "");
+			TrackBranch $branch;
+		}
+	}
+}
+
 function TagDeployment {
 	$date = Get-Date -format yyyy-MM-dd.HH.mm.ss
 	git tag -m "Deployed $date" deploy-$date
