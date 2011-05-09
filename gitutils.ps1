@@ -25,6 +25,12 @@ function isCurrentDirectoryGitRepository {
 	}
 }
 
+function TrackBranch {
+	Param([parameter()][string]$tagname = GitBranchName)
+	git config branch.$tagname.remote origin
+	git config branch.$tagname.merge refs/heads/$tagname
+}
+
 function TagDeployment {
 	$date = Get-Date -format yyyy-MM-dd.HH.mm.ss
 	git tag -m "Deployed $date" deploy-$date
