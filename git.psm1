@@ -40,6 +40,11 @@ function TrackBranch {
 function TrackAllBranches {
 	git branch -r | foreach { 
 		$remotebranch = $_.Trim();
+		if($remotebranch -eq "origin/HEAD" -or $remotebranch -eq "origin/master") {
+			return;
+		}
+		
+		
 		if($remotebranch.StartsWith("origin/")) {
 			$branch = $remotebranch.Replace("origin/", "");
 			TrackBranch $branch;
