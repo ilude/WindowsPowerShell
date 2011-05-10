@@ -54,9 +54,15 @@ function TagDeployment {
 }
 
 function DeleteTag {
-	Param([parameter(Mandatory=$true)][string]$tagname)
-	git tag -d $tagname
-	git push origin :refs/tags/$tagname
+	Param([parameter(Mandatory=$true)][string]$name)
+	git tag -d $name
+	git push origin :refs/tags/$name
+}
+
+function DeleteBranch {
+	Param([parameter(Mandatory=$true)][string]$name)
+	git branch -d $name
+	git push origin :$name
 }
 
 # Get the current branch
