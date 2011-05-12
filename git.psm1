@@ -53,9 +53,9 @@ function TrackAllBranches {
 }
 
 function TagDeployment {
-	$date = Get-Datei -format yyyy-MM-dd.HH.mm.ss
+	$date = Get-Date -format yyyy-MM-dd.HH.mm.ss
 	git tag -m "Deployed $date" deploy-$date
-	rv date
+	#rv $date
 }
 
 function DeleteTag {
