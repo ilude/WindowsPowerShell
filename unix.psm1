@@ -1,11 +1,4 @@
 
-
-
-
-
-
-
-
 Set-Alias which get-command
 
 function Find-Items {
@@ -65,15 +58,12 @@ function Remove-Items {
 		[string]$pattern
 	)
 
-
 	if($r) {
-		$files = Get-ChildItem $pwd -include $pattern -Recurse -Force
+		Get-ChildItem $pwd -include $pattern -Recurse -Force | Remove-Item 
 	}
 	else {
-		$files = Get-ChildItem $pwd -include $pattern -Force
+		Get-ChildItem $pwd -include $pattern -Force | Remove-Item 
 	}
-
-	$files | Remove-Item -Recurse -Force
 }
 remove-item alias:rm 		-ErrorAction SilentlyContinue
 Set-Alias rm Remove-Items
