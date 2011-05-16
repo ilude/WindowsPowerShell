@@ -108,7 +108,7 @@ function Test-Branch {
 # Get the current branch
 function GitBranchName {
 	try {
-		$currentBranch = git symbolic-ref HEAD
+		$currentBranch = git symbolic-ref HEAD --quiet
 		$index = $currentBranch.LastIndexOf('/') + 1
 		if($index -gt 0) {
 			return $currentBranch.Substring($index, $currentBranch.Length - $index)
