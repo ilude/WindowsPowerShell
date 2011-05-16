@@ -13,6 +13,25 @@ function head {
 	return Get-Content $file | Select-Object -First $count
 }
 
+function rm {
+	Param
+	(
+		[swtich]$r=$false,
+		[Parameter(Mandatory = $True)]
+		[string]$pattern
+	)
+
+
+	if($r) {
+		$files = Get-ChildItem $pwd -include $pattern -Recurse -Force
+	}
+	else {
+		$files = Get-ChildItem $pwd -include $pattern -Force
+	}
+
+	$files | Remove-Item -Recurse -Force
+}
+
 function wc {
 	param($object)
 
