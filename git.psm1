@@ -26,8 +26,19 @@ function isCurrentDirectoryGitRepository {
 	}
 }
 
+function TrackBranches {
+	git branch -r | `
+		Select-Object @{Expression = {$_.Trim().Replace("origin/", "")}} | ` # trim whitespace and strip leading origin
+		Where-Object { ($_.Trim().StartsWith("origin/")) -and ($_.Trim() -ne "origin/HEAD") -and ($_.Trim() -ne "origin/master") } | `
+		foreach {
+			TrackBranch $branch;
+		}
+}
+
 function TrackBranch {
-	Param([string]$tagname)
+	Param(
+		[string]$tagname
+	)
 	
 	if(! $tagname){
 		$tagname = GitBranchName
@@ -37,37 +48,61 @@ function TrackBranch {
 	git config branch.$tagname.merge refs/heads/$tagname
 }
 
-function TrackAllBranches {
-	git branch -r | foreach { 
-		$remotebranch = $_.Trim();
-		if($remotebranch -eq "origin/HEAD" -or $remotebranch -eq "origin/master") {
-			return;
+function TagDeployment {
+	$date = Get-Date -format yyyy-MM-dd.HH.mm.ss
+	git tag -m "Deployed $date" deploy-$date
+}
+
+function Remove-Tag {
+	Param(
+		[parameter(Mandatory=$true)]
+		[string]$name
+	)
+	
+	git tag -d $name
+	if($?) {
+		git push origin :refs/tags/$name
+	}
+}
+
+function Remove-Branch {
+	Param(
+		[switch]$D=$false,
+		[switch]$r=$false,
+		[parameter(Mandatory=$true)]
+		[string]$name
+	)
+	
+	if(($r) -and (Test-Branch -r $name)) {
+		git push origin :$name
+	}
+	else {
+		$force = "-d"
+		if($D) {
+			$force = "-D"
 		}
 		
+		git branch $force $name
 		
-		if($remotebranch.StartsWith("origin/")) {
-			$branch = $remotebranch.Replace("origin/", "");
-			TrackBranch $branch;
+		if($? -and (Test-Branch -r $name)) {
+			git push origin :$name
 		}
 	}
 }
 
-function TagDeployment {
-	$date = Get-Date -format yyyy-MM-dd.HH.mm.ss
-	git tag -m "Deployed $date" deploy-$date
-	#rv $date
-}
-
-function DeleteTag {
-	Param([parameter(Mandatory=$true)][string]$name)
-	git tag -d $name
-	git push origin :refs/tags/$name
-}
-
-function DeleteBranch {
-	Param([parameter(Mandatory=$true)][string]$name)
-	git branch -d $name
-	git push origin :$name
+function Test-Branch {
+	Param(
+		[switch]$r=$false,
+		[parameter(Mandatory=$true)]
+		[string]$name
+	)
+	
+	if($r) {
+		return (git branch -r | Where-Object { $_.Trim() -eq "origin/$name" } | Measure-Object).Count -eq 1
+	}
+	else {
+		return (git branch | Where-Object { $_.Trim() -eq "$name" } | Measure-Object).Count -eq 1
+	}
 }
 
 # Get the current branch
