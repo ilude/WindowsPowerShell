@@ -14,7 +14,8 @@ if(Test-Path $testfile) {
 
 gci $pwd *.psm1 | foreach {
 	$module = $_.VersionInfo.FileName;
-	Import-Module $module
+	Import-Module $module 
+	# Import-Module $module -verbose
 }
 
 ###########################

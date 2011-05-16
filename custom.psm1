@@ -34,7 +34,7 @@ function Approve-Syntax {
 #
 ###########################
 
-function Reload-Profile {
+function Update-Profile {
     @(
         $Profile.AllUsersAllHosts,
         $Profile.AllUsersCurrentHost,
@@ -47,3 +47,4 @@ function Reload-Profile {
         }
     }    
 }
+Set-Alias Reload-Profile Update-Profile

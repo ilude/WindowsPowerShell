@@ -1,14 +1,14 @@
 
 
 
-remove-item alias:head 	-ErrorAction SilentlyContinue
-remove-item alias:rm 		-ErrorAction SilentlyContinue
-remove-item alias:wc 		-ErrorAction SilentlyContinue
+
+
+
 
 
 Set-Alias which get-command
 
-function grep {
+function Find-Items {
 	Param
 	(
 		[Parameter(Position=0, Mandatory = $true)]
@@ -38,8 +38,10 @@ function grep {
 		}
 	}
 }
+remove-item alias:grep 	-ErrorAction SilentlyContinue
+Set-Alias grep Find-Items
 
-function head {
+function Show-Head {
 	Param(
 		[parameter(Mandatory=$true)][string]$file,
 		[int]$count = 10
@@ -52,8 +54,10 @@ function head {
 	
 	return Get-Content $file | Select-Object -First $count
 }
+remove-item alias:head 	-ErrorAction SilentlyContinue
+Set-Alias head Show-Head
 
-function rm {
+function Remove-Items {
 	Param
 	(
 		[swtich]$r=$false,
@@ -71,8 +75,10 @@ function rm {
 
 	$files | Remove-Item -Recurse -Force
 }
+remove-item alias:rm 		-ErrorAction SilentlyContinue
+Set-Alias rm Remove-Items
 
-function wc {
+function Measure-Lines {
 	param($object)
 
 	begin {
@@ -100,3 +106,5 @@ function wc {
 		}
 	}
 }
+remove-item alias:wc 		-ErrorAction SilentlyContinue
+Set-Alias wc Measure-Lines
