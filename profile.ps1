@@ -53,26 +53,5 @@ function prompt {
 	return " "
 }
 
-###########################
-#
-# Reload Profile
-#
-###########################
-
-function Reload-Profile {
-    @(
-        $Profile.AllUsersAllHosts,
-        $Profile.AllUsersCurrentHost,
-        $Profile.CurrentUserAllHosts,
-        $Profile.CurrentUserCurrentHost
-    ) | % {
-        if(Test-Path $_){
-            Write-Verbose "Running $_"
-            . $_
-        }
-    }    
-}
-
 Set-Alias dev Open-EbizSolution
-Set-Alias which get-command
 Set-Alias Open-EbizSolution "Invoke-Expression `"& `".\Ebiz 2007 Modules.sln`"`""
