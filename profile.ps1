@@ -71,5 +71,6 @@ function TabExpansion($line, $lastWord) {
     }
 }
 
+Set-Alias nano "C:\Program Files\Notepad++\Notepad++"
 Set-Alias dev Open-EbizSolution
 Set-Alias Open-EbizSolution "Invoke-Expression `"& `".\Ebiz 2007 Modules.sln`"`""

@@ -13,10 +13,12 @@ function Get-GitDirectory {
 
 function TrackBranches {
 	git branch -r | `
-		Select-Object @{Expression = {$_.Trim().Replace("origin/", "")}} | ` # trim whitespace and strip leading origin
-		Where-Object { ($_.Trim().StartsWith("origin/")) -and ($_.Trim() -ne "origin/HEAD") -and ($_.Trim() -ne "origin/master") } | `
 		foreach {
-			TrackBranch $branch;
+			$branch = $_.Replace("origin/", "").trim();
+			$count = (-split $_).Count
+			if(($count -eq 1) -and ($branch -ne "HEAD") -and ($branch -ne "master")) {
+				TrackBranch $branch;
+			}
 		}
 }
 
@@ -25,8 +27,8 @@ function TrackBranch {
 		[string]$tagname
 	)
 	
-	if(! $tagname){
-		$tagname = GitBranchName
+	if(-not $tagname){
+		$tagname = Get-GitBranch
 	}
 	
 	git config branch.$tagname.remote origin
@@ -134,22 +136,16 @@ function Get-GitBranch($gitDir = $(Get-GitDirectory), [Diagnostics.Stopwatch]$sw
 				$r = '|BISECTING'
 			}
 
-			$b = '{0}' -f (
-				Coalesce-Args `
-					{ dbg 'Trying describe' $sw; git describe --exact-match HEAD 2>$null } `
-					{
-						dbg 'Falling back on parsing HEAD' $sw
-						$ref = Get-Content $gitDir\HEAD 2>$null
-						dbg "Head => $ref"
-						if ($ref -match 'ref: (?<ref>.+)') {
-							return $Matches['ref']
-						} elseif ($ref -and $ref.Length -ge 7) {
-							return $ref.Substring(0,7)+'...'
-						} else {
-							return 'unknown'
-						}
-					}
-				)
+			dbg 'Falling back on parsing HEAD' $sw
+			$ref = Get-Content $gitDir\HEAD 2>$null
+			dbg "Head => $ref"
+			if ($ref -match 'ref: (?<ref>.+)') {
+				$b = $Matches['ref']
+			} elseif ($ref -and $ref.Length -ge 7) {
+				$b = $ref.Substring(0,7)+'...'
+			} else {
+				$b = 'unknown'
+			}
 		}
 
 		if ('true' -eq $(git rev-parse --is-inside-git-dir 2>$null)) {
