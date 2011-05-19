@@ -14,7 +14,7 @@ if(Test-Path $testfile) {
 
 gci $pwd *.psm1 | foreach {
 	$module = $_.VersionInfo.FileName;
-	Import-Module $module 
+	Import-Module $module -DisableNameChecking
 	# Import-Module $module -verbose
 }
 
@@ -25,24 +25,20 @@ gci $pwd *.psm1 | foreach {
 ###########################
 
 function prompt {
+	$realLASTEXITCODE = $LASTEXITCODE
+
 	$path = ([string]$pwd)
 	$index = $path.LastIndexOf('\') + 1
 	$userLocation = $path.Substring($index, $path.Length - $index)
 	
-	
 	Write-Host($userLocation) -nonewline -foregroundcolor Green 
 	
-	if (isCurrentDirectoryGitRepository) {
-		$branch = GitBranchName
+	if (Test-GitRepository) {
+		$branch = Get-GitBranch
 
-		Write-Host('[') -nonewline -foregroundcolor Yellow
-		if($branch -eq "merging") {
-			Write-Host("merging") -nonewline -foregroundcolor Red
-		}
-		else {
-			Write-Host($branch) -nonewline -foregroundcolor Cyan
-		}
-		Write-Host(']') -nonewline -foregroundcolor Yellow
+		Write-Host '[' -nonewline -foregroundcolor Yellow
+		Write-Host $branch -nonewline -foregroundcolor Cyan
+		Write-Host ']' -nonewline -foregroundcolor Yellow
 		
 		$host.UI.RawUi.WindowTitle = "Git:$userLocation - $pwd"
 	}
@@ -50,8 +46,8 @@ function prompt {
 		$host.UI.RawUi.WindowTitle = "$userLocation - $pwd"
 	}
     
-	Write-Host('>') -nonewline -foregroundcolor Green    
-	return " "
+	$LASTEXITCODE = $realLASTEXITCODE
+	return "> "
 }
 
 Set-Alias dev Open-EbizSolution

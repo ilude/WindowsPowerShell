@@ -3,27 +3,12 @@
 # See http://gist.github.com/180853 for gitutils.ps1.
 
 # Is the current directory a git repository/working copy?
-function isCurrentDirectoryGitRepository {
-	try {
-    if ((Test-Path ".git") -eq $TRUE) {
-			return $TRUE
-    }
-    
-    # Test within parent dirs
-    $checkIn = (Get-Item .).parent
-    while ($checkIn -ne $NULL) {
-			$pathToTest = $checkIn.fullname + '/.git'
-			if ((Test-Path $pathToTest) -eq $TRUE) {
-				return $TRUE
-			} else {
-				$checkIn = $checkIn.parent
-			}
-    }
-		return $FALSE
-	}	
-	catch {
-		return $FALSE
-	}
+function Test-GitRepository {
+		Get-GitDirectory -ne $null;
+}
+
+function Get-GitDirectory {
+	Get-LocalOrParentPath .git
 }
 
 function TrackBranches {
@@ -105,59 +90,78 @@ function Test-Branch {
 	}
 }
 
-# Get the current branch
-function GitBranchName {
-	try {
-		$currentBranch = git symbolic-ref HEAD --quiet
-		$index = $currentBranch.LastIndexOf('/') + 1
-		if($index -gt 0) {
-			return $currentBranch.Substring($index, $currentBranch.Length - $index)
+function Enable-GitColors {
+	$env:TERM = 'cygwin'
+}
+
+function Get-GitAliasPattern {
+	$aliases = @('git') + (Get-Alias | where {$_.definition -eq 'git' } | select -Exp Name) -join '|' 
+	"(" + $aliases + ")"
+}
+
+
+function Get-GitBranch($gitDir = $(Get-GitDirectory), [Diagnostics.Stopwatch]$sw) {
+	if ($gitDir) {
+		dbg 'Finding branch' $sw
+		dbg "$gitDir"
+		$r = ''; $b = ''; $c = ''
+		if (Test-Path $gitDir\rebase-merge\interactive) {
+			dbg 'Found rebase-merge\interactive' $sw
+			$r = '|REBASE-i'
+			$b = "$(Get-Content $gitDir\rebase-merge\head-name)"
+		} elseif (Test-Path $gitDir\rebase-merge) {
+			dbg 'Found rebase-merge' $sw
+			$r = '|REBASE-m'
+			$b = "$(Get-Content $gitDir\rebase-merge\head-name)"
+		} else {
+			if (Test-Path $gitDir\rebase-apply) {
+				dbg 'Found rebase-apply' $sw
+				if (Test-Path $gitDir\rebase-apply\rebasing) {
+					dbg 'Found rebase-apply\rebasing' $sw
+					$r = '|REBASE'
+				} elseif (Test-Path $gitDir\rebase-apply\applying) {
+					dbg 'Found rebase-apply\applying' $sw
+					$r = '|AM'
+				} else {
+					dbg 'Found rebase-apply' $sw
+					$r = '|AM/REBASE'
+				}
+			} elseif (Test-Path $gitDir\MERGE_HEAD) {
+				dbg 'Found MERGE_HEAD' $sw
+				$r = '|MERGING'
+			} elseif (Test-Path $gitDir\BISECT_LOG) {
+				dbg 'Found BISECT_LOG' $sw
+				$r = '|BISECTING'
+			}
+
+			$b = '{0}' -f (
+				Coalesce-Args `
+					{ dbg 'Trying describe' $sw; git describe --exact-match HEAD 2>$null } `
+					{
+						dbg 'Falling back on parsing HEAD' $sw
+						$ref = Get-Content $gitDir\HEAD 2>$null
+						dbg "Head => $ref"
+						if ($ref -match 'ref: (?<ref>.+)') {
+							return $Matches['ref']
+						} elseif ($ref -and $ref.Length -ge 7) {
+							return $ref.Substring(0,7)+'...'
+						} else {
+							return 'unknown'
+						}
+					}
+				)
 		}
-		return "merging"
-	}
-	catch {
-		return ""
+
+		if ('true' -eq $(git rev-parse --is-inside-git-dir 2>$null)) {
+			dbg 'Inside git directory' $sw
+			if ('true' -eq $(git rev-parse --is-bare-repository 2>$null)) {
+				$c = 'BARE:'
+			} else {
+				$b = 'GIT_DIR!'
+			}
+		}
+
+		"$c$($b -replace 'refs/heads/','')$r"
 	}
 }
 
-# Extracts status details about the repo
-function gitStatus {
-    $untracked = $FALSE
-    $added = 0
-    $modified = 0
-    $deleted = 0
-    $ahead = $FALSE
-    $aheadCount = 0
-    
-    $output = git status
-    
-    $branchbits = $output[0].Split(' ')
-    $branch = $branchbits[$branchbits.length - 1]
-    
-    $output | foreach {
-        if ($_ -match "^\#.*origin/.*' by (\d+) commit.*") {
-            $aheadCount = $matches[1]
-            $ahead = $TRUE
-        }
-        elseif ($_ -match "deleted:") {
-            $deleted += 1
-        }
-        elseif (($_ -match "modified:") -or ($_ -match "renamed:")) {
-            $modified += 1
-        }
-        elseif ($_ -match "new file:") {
-            $added += 1
-        }
-        elseif ($_ -match "Untracked files:") {
-            $untracked = $TRUE
-        }
-    }
-    
-    return @{"untracked" = $untracked;
-             "added" = $added;
-             "modified" = $modified;
-             "deleted" = $deleted;
-             "ahead" = $ahead;
-             "aheadCount" = $aheadCount;
-             "branch" = $branch}
-}
