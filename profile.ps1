@@ -50,15 +50,24 @@ function prompt {
 	return "> "
 }
 
+###########################
+#
+# Setup Tab Expansion
+#
+###########################
 
-# Set up tab expansion and include git expansion
+$defaul_tab_expansion = 'Default_Tab_Expansion'
+if(!(Test-Path Function:\$defaul_tab_expansion)) {
+    Rename-Item Function:\TabExpansion $defaul_tab_expansion
+}
+
 function TabExpansion($line, $lastWord) {
     $lastBlock = [regex]::Split($line, '[|;]')[-1].TrimStart()
     switch -regex ($lastBlock) {
         # Execute git tab completion for all git-related commands
         "$(Get-GitAliasPattern) (.*)" { GitTabExpansion $lastBlock }
         # Fall back on existing tab expansion
-        default { & $teBackup $line $lastWord }
+        default { & $defaul_tab_expansion $line $lastWord }
     }
 }
 
