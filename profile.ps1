@@ -50,5 +50,17 @@ function prompt {
 	return "> "
 }
 
+
+# Set up tab expansion and include git expansion
+function TabExpansion($line, $lastWord) {
+    $lastBlock = [regex]::Split($line, '[|;]')[-1].TrimStart()
+    switch -regex ($lastBlock) {
+        # Execute git tab completion for all git-related commands
+        "$(Get-GitAliasPattern) (.*)" { GitTabExpansion $lastBlock }
+        # Fall back on existing tab expansion
+        default { & $teBackup $line $lastWord }
+    }
+}
+
 Set-Alias dev Open-EbizSolution
 Set-Alias Open-EbizSolution "Invoke-Expression `"& `".\Ebiz 2007 Modules.sln`"`""
