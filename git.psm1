@@ -161,3 +161,4 @@ function Get-GitBranch($gitDir = $(Get-GitDirectory), [Diagnostics.Stopwatch]$sw
 	}
 }
 
+Export-ModuleMember Test-GitRepository, TrackBranches, TagDeployment, Remove-Tag, Remove-Branch, Test-Branch, Enable-GitColors, Get-GitAliasPattern, Get-GitBranch
