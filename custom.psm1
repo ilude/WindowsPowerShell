@@ -53,7 +53,7 @@ function Update-Profile {
 		$Profile.AllUsersCurrentHost,
 		$Profile.CurrentUserAllHosts,
 		$Profile.CurrentUserCurrentHost
-	) % {
+	) | foreach {
 		if(Test-Path $_){
 			Write-Verbose "Running $_"
 			. $_
