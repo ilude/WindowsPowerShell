@@ -1,10 +1,5 @@
 # Directory where this file is located
-$pwd = Split-Path $MyInvocation.MyCommand.Path
-
-$testfile = Join-Path $pwd gitutils.ps1
-if(Test-Path $testfile) {
-	. $testfile
-}
+$script:pwd = Split-Path $MyInvocation.MyCommand.Path
 
 ###########################
 #
@@ -12,11 +7,11 @@ if(Test-Path $testfile) {
 #
 ###########################
 
-gci $pwd *.psm1 | foreach {
-	$module = $_.VersionInfo.FileName;
-	Import-Module $module -DisableNameChecking
-	# Import-Module $module -verbose
+Get-ChildItem $pwd *.psm1 | foreach {
+	Import-Module $_.VersionInfo.FileName -DisableNameChecking -verbose:$false
 }
+
+Initialize-Modules
 
 ###########################
 #
@@ -71,6 +66,4 @@ function TabExpansion($line, $lastWord) {
     }
 }
 
-Set-Alias nano "$(Get-Editor)"
-Set-Alias dev Open-EbizSolution
-Set-Alias Open-EbizSolution "Invoke-Expression `"& `".\Ebiz 2007 Modules.sln`"`""
+

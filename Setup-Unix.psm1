@@ -1,7 +1,19 @@
 
+###########################
+#
+# which
+#
+###########################
+
 Set-Alias which get-command
 
-function Find-Items {
+###########################
+#
+# grep
+#
+###########################
+
+function grep {
 	Param
 	(
 		[Parameter(Position=0, Mandatory = $true)]
@@ -31,10 +43,14 @@ function Find-Items {
 		}
 	}
 }
-remove-item alias:grep 	-ErrorAction SilentlyContinue
-Set-Alias grep Find-Items
 
-function Show-Head {
+###########################
+#
+# head
+#
+###########################
+
+function head {
 	Param(
 		[parameter(Mandatory=$true)][string]$file,
 		[int]$count = 10
@@ -47,10 +63,14 @@ function Show-Head {
 	
 	return Get-Content $file | Select-Object -First $count
 }
-remove-item alias:head 	-ErrorAction SilentlyContinue
-Set-Alias head Show-Head
 
-function Remove-Items {
+###########################
+#
+# rm
+#
+###########################
+
+function rm {
 	Param
 	(
 		[swtich]$r=$false,
@@ -65,10 +85,14 @@ function Remove-Items {
 		Get-ChildItem $pwd -include $pattern -Force | Remove-Item 
 	}
 }
-remove-item alias:rm 		-ErrorAction SilentlyContinue
-Set-Alias rm Remove-Items
 
-function Measure-Lines {
+###########################
+#
+# wc
+#
+###########################
+
+function wc {
 	param($object)
 
 	begin {
@@ -96,5 +120,5 @@ function Measure-Lines {
 		}
 	}
 }
-remove-item alias:wc 		-ErrorAction SilentlyContinue
-Set-Alias wc Measure-Lines
+
+Export-ModuleMember grep, head, rm, wc -Alias which
