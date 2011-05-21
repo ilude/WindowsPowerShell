@@ -68,7 +68,7 @@ function Check-RemoteRepository($pwd = $(pwd)) {
 		$local=$(git rev-parse HEAD)
 
 		Write-Verbose "Local:  $local => Remote: $remote"
-		if($remote -ne $master) {
+		if($remote -ne $remote) {
 			if(git branch --contains $remote) {
 				Write-Warning "Local Powershell profile repository has changes that have not been pushed upstream"
 			}
