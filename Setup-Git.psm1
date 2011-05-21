@@ -50,6 +50,38 @@ function Initialize-Git {
 	}
 }
 
+###########################
+#
+# Test-RepositoryUpdate
+# Checks if the local working head needs to be updated with a pull
+#
+###########################
+
+function Check-RemoteRepository($pwd = $(pwd)) {
+	pushd $pwd
+	if(Test-GitRepository) {	
+		if((git diff-index --name-only HEAD).length -gt 0) {
+			Write-Warning "Local Powershell profile repository has uncommited changes"
+		}
+		
+		$remote=$(git ls-remote origin HEAD | %{ ($_ -split "[\s]")[0] })
+		$local=$(git rev-parse HEAD)
+
+		if($remote -ne $master) {
+			if(git branch --contains $remote) {
+				Write-Warning "Local Powershell profile repository has changes that have not been pushed upstream"
+			}
+			else {
+				Write-Warning "Remote Powershell profile repository has changes that are not present locally"
+			}
+		}
+		else {
+			Write-Verbose "Local Powershell profile repository is up to date"
+		}
+	}
+	popd
+}
+
 # Git functions
 # Mark Embling (http://www.markembling.info/)
 # See http://gist.github.com/180853 for gitutils.ps1.
@@ -278,4 +310,4 @@ function Get-GitBranch($gitDir = $(Get-GitDirectory), [Diagnostics.Stopwatch]$sw
 	}
 }
 
-Export-ModuleMember Setup-Git, Test-GitRepository, TrackBranches, TagDeployment, Delete-Tag, Delete-Branch, Test-Branch, Enable-GitColors, Get-GitAliasPattern, Get-GitBranch
+Export-ModuleMember Check-RemoteRepository, Setup-Git, Test-GitRepository, TrackBranches, TagDeployment, Delete-Tag, Delete-Branch, Test-Branch, Enable-GitColors, Get-GitAliasPattern, Get-GitBranch
