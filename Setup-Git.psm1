@@ -1,5 +1,5 @@
 
-function Initialize-Git {
+function Setup-Git {
 	git config --global core.autocrlf true
 	git config --global mergetool.p4merge.trustexitcode false
 	git config --global merge.tool p4merge
@@ -311,4 +311,4 @@ function Get-GitBranch($gitDir = $(Get-GitDirectory), [Diagnostics.Stopwatch]$sw
 	}
 }
 
-Export-ModuleMember Check-RemoteRepository, Setup-Git, Test-GitRepository, TrackBranches, TagDeployment, Delete-Tag, Delete-Branch, Test-Branch, Enable-GitColors, Get-GitAliasPattern, Get-GitBranch
+Export-ModuleMember Setup-Git, Check-RemoteRepository, Test-GitRepository, TrackBranches, TagDeployment, Delete-Tag, Delete-Branch, Test-Branch, Enable-GitColors, Get-GitAliasPattern, Get-GitBranch

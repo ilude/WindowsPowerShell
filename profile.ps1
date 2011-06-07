@@ -11,7 +11,6 @@ Get-ChildItem $pwd *.psm1 | foreach {
 	Import-Module $_.VersionInfo.FileName -DisableNameChecking -verbose:$false
 }
 
-Initialize-Modules
 
 ###########################
 #

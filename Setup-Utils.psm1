@@ -148,5 +148,5 @@ Set-Alias Get-Version $Host.Version
 Set-Alias nano "$(Get-Editor)"
 
 Export-ModuleMember `
-	Get-Editor, Test-Syntax, Reload-Profile, Coalesce-Args, Get-LocalOrParentPath, Debug, Get-ScriptDirectory, Setup-Aliases, Open-EbizSolution `
+	Get-Editor, Test-Syntax, Reload-Profile, Coalesce-Args, Get-LocalOrParentPath, Debug, Get-ScriptDirectory, Get-Environment, Open-EbizSolution `
 	-Alias ??, dbg, dev, Get-Env, Get-Version, nano
