@@ -1,6 +1,15 @@
 # Directory where this file is located
 $script:pwd = Split-Path $MyInvocation.MyCommand.Path
 
+$paths = Join-Path $pwd paths.txt
+if(Test-Path $paths) {
+	Get-Content $paths | foreach {
+		if(Test-Path $_) {
+			$env:Path = $env:Path + ";" + $_
+		}
+	}
+}
+
 ###########################
 #
 # Load all modules
