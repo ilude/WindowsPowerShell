@@ -6,8 +6,8 @@
 ###########################
 
 function Get-Editor {
-	$path = Resolve-Path ("$env:ProgramFiles*" + "\notepad*\notepad*");
-	if(Test-Path $path) {
+	$path = Resolve-Path (join-path (join-path "$env:ProgramFiles*" "notepad*") "notepad*");
+	if($path.Path) {
 		return $path.Path;
 	}
 	

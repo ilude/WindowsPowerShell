@@ -52,7 +52,7 @@ function Setup-Git {
 
 ###########################
 #
-# Test-RepositoryUpdate
+# Check-RemoteRepository
 # Checks if the local working head needs to be updated with a pull
 #
 ###########################
