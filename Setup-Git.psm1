@@ -11,7 +11,7 @@ function Setup-Git {
 	git config --global branch.autosetuprebase always 
 	git config --global alias.co checkout
 	git config --global alias.cb 'checkout -b'
-	git config --global alias.ci commit
+	git config --global alias.ci 'commit -m'
 	git config --global alias.br branch
 	git config --global alias.s 'status -s'
 	git config --global alias.unstage 'rm -r --cached .'
@@ -311,4 +311,6 @@ function Get-GitBranch($gitDir = $(Get-GitDirectory), [Diagnostics.Stopwatch]$sw
 	}
 }
 
-Export-ModuleMember Setup-Git, Check-RemoteRepository, Test-GitRepository, TrackBranches, TagDeployment, Delete-Tag, Delete-Branch, Test-Branch, Enable-GitColors, Get-GitAliasPattern, Get-GitBranch
+set-alias g git;
+
+Export-ModuleMember Setup-Git, Check-RemoteRepository, Test-GitRepository, TrackBranches, TagDeployment, Delete-Tag, Delete-Branch, Test-Branch, Enable-GitColors, Get-GitAliasPattern, Get-GitBranch -alias g
