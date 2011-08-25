@@ -20,9 +20,10 @@ function Setup-Git {
 	git config --global alias.pushall '!git push --all; git push --tags'
 	git config --global alias.ls '!git --no-pager log -20 --date=short --pretty=tformat:\"%C(yellow)%h%Creset - %C(yellow)%an%Creset %C(white)%ad%Creset%C(yellow)%d%Creset %Cgreen%s%Creset\"'
 	git config --global alias.lg 'log --graph --abbrev-commit --date=relative --pretty=format:\"%C(yellow)%h%Creset - %C(yellow)%an%Creset%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset\"'
-	git config --global alias.wtf '!git reflog'
+	git config --global alias.lf 'show --pretty="format:" --name-only'
+	git config --global alias.wtf 'reflog'
 	git config --global alias.list '!powershell git show --pretty=\"format:\" --name-only $1 | Sort-Object | Get-Unique'
-	git config --global alias.rs '!git remote show origin'
+	git config --global alias.rs 'remote show origin'
 
 	$username = invoke-expression "git config --get user.name"
 	if($username -eq "") {
