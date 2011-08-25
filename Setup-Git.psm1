@@ -24,7 +24,6 @@ function Setup-Git {
 	# show files in commit
 	git config --global alias.lf 'show --pretty="format:" --name-only'
 	git config --global alias.wtf 'reflog'
-	git config --global alias.list '!powershell git show --pretty=\"format:\" --name-only $1 | Sort-Object | Get-Unique'
 	git config --global alias.rs 'remote show origin'
 
 	$username = invoke-expression "git config --get user.name"
