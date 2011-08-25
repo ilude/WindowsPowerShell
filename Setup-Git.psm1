@@ -1,4 +1,4 @@
-
+e
 function Setup-Git {
 	git config --global core.autocrlf true
 	git config --global mergetool.p4merge.trustexitcode false
