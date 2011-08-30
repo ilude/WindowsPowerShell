@@ -39,7 +39,7 @@ function Setup-Git {
 	if($username -eq "") {
 		$username = "Not Set"
 	}
-	$username = Read-Host "Enter Name($username)"
+	$username = Read-Host "Enter Fullname($username)"
 	if($username) {
 		git config --global user.name "'$username'"
 	}
@@ -52,6 +52,18 @@ function Setup-Git {
 	if($email) {
 		git config --global user.email "'$email'"
 	}
+	
+	
+	# 
+	# check if truefit upstream is setup and create it if its not
+	#
+	push-location
+	cd "~\My Documents\WindowsPowerShell"
+	if(((git remote) -contains "truefit") -eq $False) {
+		git remote add git://github.com/truefit/WindowsPowerShell.git
+	}
+	pop-location
+	
 
 	if (Get-Command -CommandType Cmdlet Get-Editor -errorAction SilentlyContinue) {
 		$editor = Get-Editor
