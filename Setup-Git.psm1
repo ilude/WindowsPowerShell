@@ -73,6 +73,45 @@ function Setup-Git {
 	}
 }
 
+function Setup-Truefit {
+	push-location
+	cd ~
+	
+	$netrc = "_netrc";
+	
+	if((Test-Path $netrc) -eq $False) {
+		$login = Read-Host "Enter TrueFit login"
+		$password = Read-Host "Enter password" -AsSecureString
+	
+		if($login -and $password) {
+			Add-Content -path $netrc -value "machine git.truefitsolutions.com"
+			Add-Content -path $netrc -value "`tlogin $login"
+			Add-Content -path $netrc -value "`tpassword $password"
+		}
+	}	
+	
+	$cert_store = resolve-path (join-path (join-path (join-path "$env:ProgramFiles*" "git") "bin") "curl-ca-bundle.crt")
+	if($cert_store) {
+		$profile_directory = (join-path ([environment]::GetFolderPath([environment+SpecialFolder]::MyDocuments)) WindowsPowerShell)
+		$truefit_cert = get-content (join-path $profile_directory truefit.crt) | out-string
+		if(-not (get-content "$cert_store" | select-string "Interceptor")) {
+			Write-Host "Writing TrueFit certificate to $cert_store"
+			
+			Add-Content -path "$cert_store" -value ""
+			Add-Content -path "$cert_store" -value "$truefit_cert"
+		}
+		else {
+			Write-Host "TrueFit certificate already exists in $cert_store"
+		}
+ 	}
+	else {
+		Write-Error "Unable to locate git certificate bundle! Have you installed git?"
+	}
+	
+	pop-location
+}
+
+
 ###########################
 #
 # Check-RemoteRepository
@@ -336,4 +375,4 @@ function Get-GitBranch($gitDir = $(Get-GitDirectory), [Diagnostics.Stopwatch]$sw
 
 set-alias g git;
 
-Export-ModuleMember Setup-Git, Check-RemoteRepository, Test-GitRepository, TrackBranches, TagDeployment, Delete-Tag, Delete-Branch, Test-Branch, Enable-GitColors, Get-GitAliasPattern, Get-GitBranch -alias g
+Export-ModuleMember Setup-Git, Setup-Truefit, Check-RemoteRepository, Test-GitRepository, TrackBranches, TagDeployment, Delete-Tag, Delete-Branch, Test-Branch, Enable-GitColors, Get-GitAliasPattern, Get-GitBranch -alias g
