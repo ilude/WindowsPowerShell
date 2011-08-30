@@ -8,6 +8,10 @@ function Setup-Git {
 	git config --global mergetool.keepbackup false
 	# rebase on pull instead of merge
 	git config --global branch.autosetuprebase always 
+	
+	# unset all aliases
+	git config --get-regexp 'alias.*' | foreach-object { -split $_ | select-object -first 1  } | % { . git config --global --unset "$_" }
+	
 	git config --global alias.co checkout
 	git config --global alias.cb 'checkout -b'
 	git config --global alias.ci 'commit -m'
