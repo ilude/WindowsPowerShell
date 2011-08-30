@@ -9,4 +9,4 @@ Start > Run > Powershell
 
 exit and restart powershell
 
-	Git-Setup
+	Setup-Git
