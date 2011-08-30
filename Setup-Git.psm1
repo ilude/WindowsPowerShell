@@ -58,9 +58,9 @@ function Setup-Git {
 	# check if truefit upstream is setup and create it if its not
 	#
 	push-location
-	cd "~\My Documents\WindowsPowerShell"
+	cd (join-path ([environment]::GetFolderPath([environment+SpecialFolder]::MyDocuments)) WindowsPowerShell)
 	if(((git remote) -contains "truefit") -eq $False) {
-		git remote add git://github.com/truefit/WindowsPowerShell.git
+		git remote add truefit git://github.com/truefit/WindowsPowerShell.git
 	}
 	pop-location
 	
