@@ -12,11 +12,17 @@ function Setup-Git {
 	# unset all aliases
 	git config --get-regexp 'alias.*' | foreach-object { -split $_ | select-object -first 1  } | % { . git config --global --unset "$_" }
 	
+	git config --global alias.alias "config --get-regexp 'alias.*'"
+	
 	git config --global alias.co checkout
 	git config --global alias.cb 'checkout -b'
 	git config --global alias.ci 'commit -m'
-	git config --global alias.br branch
 	git config --global alias.s 'status -s'
+	
+	git config --global alias.br branch
+	git config --global alias.dlb 'tag -d '
+	git config --global alias.drb 'git push origin :refs/tags/$1'
+	
 	git config --global alias.unstage 'rm -r --cached .'
 	git config --global alias.deployed '!powershell TagDeployment'
 	git config --global alias.aa "!git add -A . && git status -s"
