@@ -11,7 +11,7 @@ Run Powershell
 Start > Run > Powershell
 
 	Set-ExecutionPolicy remotesigned
-	cd ~\documents
+	cd ([environment]::GetFolderPath([environment+SpecialFolder]::MyDocuments))
 	git clone git://github.com/truefit/WindowsPowerShell.git
 	exit
 
