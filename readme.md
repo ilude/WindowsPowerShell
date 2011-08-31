@@ -1,6 +1,3 @@
-Installation And Usage
-======================
-
 Install Windows Powershell
 --------------------------
 
