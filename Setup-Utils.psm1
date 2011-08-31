@@ -134,6 +134,17 @@ function Get-ScriptDirectory
 	Split-Path $Invocation.MyCommand.Path
 }
 
+###########################
+#
+# ConvertTo-PlainText
+#
+###########################
+
+function ConvertTo-PlainText( [security.securestring]$secure ) {
+	$marshal = [Runtime.InteropServices.Marshal];
+	return $marshal::PtrToStringAuto( $marshal::SecureStringToBSTR($secure) );
+}
+
 function Get-Environment {
 	Get-ChildItem Env:
 }
@@ -148,5 +159,5 @@ Set-Alias Get-Version $Host.Version
 Set-Alias nano "$(Get-Editor)"
 
 Export-ModuleMember `
-	Get-Editor, Test-Syntax, Reload-Profile, Coalesce-Args, Get-LocalOrParentPath, Debug, Get-ScriptDirectory, Get-Environment, Open-EbizSolution `
+	Get-Editor, Test-Syntax, Reload-Profile, Coalesce-Args, Get-LocalOrParentPath, Debug, Get-ScriptDirectory, Get-Environment, Open-EbizSolution, ConvertTo-PlainText `
 	-Alias ??, dbg, dev, Get-Env, Get-Version, nano

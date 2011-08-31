@@ -81,7 +81,7 @@ function Setup-Truefit {
 	
 	if((Test-Path $netrc) -eq $False) {
 		$login = Read-Host "Enter TrueFit login"
-		$password = Read-Host "Enter password" -AsSecureString
+		$password = ConvertTo-PlainText (Read-Host "Enter password" -AsSecureString)
 	
 		if($login -and $password) {
 			Add-Content -path $netrc -value "machine git.truefitsolutions.com"
