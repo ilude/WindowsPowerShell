@@ -19,12 +19,18 @@ function Setup-Git {
 	git config --global alias.ci 'commit -m'
 	git config --global alias.s 'status -s'
 	
+  # Branching Aliases
 	git config --global alias.br branch
-	git config --global alias.dlb 'tag -d '
-	git config --global alias.drb 'git push origin :refs/tags/$1'
-	
+	git config --global alias.dlb 'branch -d '
+	git config --global alias.drb 'git push origin :$1'
+	git config --global alias.track '!powershell Track-Branches'
+  
+  # Tagging Aliases
+  git config --global alias.dlt 'tag -d '
+  git config --global alias.drt 'git push origin :refs/tags/$1'
+  git config --global alias.mark '!powershell TagDeployment'
+  
 	git config --global alias.unstage 'rm -r --cached .'
-	git config --global alias.deployed '!powershell TagDeployment'
 	git config --global alias.aa "!git add -A . && git status -s"
 	git config --global alias.pushall '!git push --all; git push --tags'
 	git config --global alias.ls '!git --no-pager log -20 --date=short --pretty=tformat:\"%C(yellow)%h%Creset - %C(yellow)%an%Creset %C(white)%ad%Creset%C(yellow)%d%Creset %Cgreen%s%Creset\"'
@@ -193,7 +199,7 @@ function TrackBranches {
 #
 ###########################
 
-function TrackBranch {
+function Track-Branches {
 	Param(
 		[string]$tagname
 	)
@@ -375,4 +381,4 @@ function Get-GitBranch($gitDir = $(Get-GitDirectory), [Diagnostics.Stopwatch]$sw
 
 set-alias g git;
 
-Export-ModuleMember Setup-Git, Setup-Truefit, Check-RemoteRepository, Test-GitRepository, TrackBranches, TagDeployment, Delete-Tag, Delete-Branch, Test-Branch, Enable-GitColors, Get-GitAliasPattern, Get-GitBranch -alias g
+Export-ModuleMember Setup-Git, Setup-Truefit, Check-RemoteRepository, Test-GitRepository, Track-Branches, TagDeployment, Delete-Tag, Delete-Branch, Test-Branch, Enable-GitColors, Get-GitAliasPattern, Get-GitBranch -alias g
