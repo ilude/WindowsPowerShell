@@ -94,11 +94,13 @@ function Setup-Truefit {
 			Add-Content -path $netrc -value "`tlogin $login"
 			Add-Content -path $netrc -value "`tpassword $password"
 		}
-	}	
+	}
+
+  $profile_directory = (join-path ([environment]::GetFolderPath([environment+SpecialFolder]::MyDocuments)) WindowsPowerShell)
 	
 	$cert_store = resolve-path (join-path (join-path (join-path "$env:ProgramFiles*" "git") "bin") "curl-ca-bundle.crt")
 	if($cert_store) {
-		$profile_directory = (join-path ([environment]::GetFolderPath([environment+SpecialFolder]::MyDocuments)) WindowsPowerShell)
+		
 		$truefit_cert = get-content (join-path $profile_directory truefit.crt) | out-string
 		if(-not (get-content "$cert_store" | select-string "Interceptor")) {
 			Write-Host "Writing TrueFit certificate to $cert_store"
@@ -113,6 +115,13 @@ function Setup-Truefit {
 	else {
 		Write-Error "Unable to locate git certificate bundle! Have you installed git?"
 	}
+  
+  cd $profile_directory
+  
+  if(!((git remote) -contains "truefit")) {
+    git remote add truefit git://github.com/truefit/WindowsPowerShell.git
+  }
+  
 	
 	pop-location
 }
