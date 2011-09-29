@@ -64,6 +64,7 @@ function Reload-Profile {
 	}    
 }
 
+
 # General Utility Functions
 # https://github.com/dahlbyk/posh-git/blob/master/Utils.ps1
 
@@ -159,5 +160,5 @@ Set-Alias Get-Version $Host.Version
 Set-Alias nano "$(Get-Editor)"
 
 Export-ModuleMember `
-	Get-Editor, Test-Syntax, Reload-Profile, Coalesce-Args, Get-LocalOrParentPath, Debug, Get-ScriptDirectory, Get-Environment, Open-EbizSolution, ConvertTo-PlainText `
+	Get-Editor, Test-Syntax, Reload-Profile, Coalesce-Args, Get-LocalOrParentPath, Debug, Get-ScriptDirectory, Get-Environment, Open-EbizSolution, ConvertTo-PlainText, Reload-Module `
 	-Alias ??, dbg, dev, Get-Env, Get-Version, nano

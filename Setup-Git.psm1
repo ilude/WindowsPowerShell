@@ -12,11 +12,11 @@ function Setup-Git {
 	# unset all aliases
 	git config --get-regexp 'alias.*' | foreach-object { -split $_ | select-object -first 1  } | % { . git config --global --unset "$_" }
 	
-	git config --global alias.alias "config --get-regexp 'alias.*'"
+	git config --global alias.alias "!powershell Display-GitAliases"
 	
 	git config --global alias.co checkout
 	git config --global alias.cb 'checkout -b'
-	git config --global alias.ct 'git checkout -t origin/$1'
+	git config --global alias.ct '!git checkout -t origin/$1'
 	git config --global alias.ci 'commit -m'
 	git config --global alias.s 'status -s'
 	
@@ -28,7 +28,7 @@ function Setup-Git {
   
   # Tagging Aliases
   git config --global alias.dlt 'tag -d '
-  git config --global alias.drt 'git push origin :refs/tags/$1'
+  git config --global alias.drt '!git push origin :refs/tags/$1'
   git config --global alias.mark '!powershell TagDeployment'
   
 	git config --global alias.unstage 'rm -r --cached .'
@@ -116,13 +116,6 @@ function Setup-Truefit {
 	else {
 		Write-Error "Unable to locate git certificate bundle! Have you installed git?"
 	}
-  
-  cd $profile_directory
-  
-  if(!((git remote) -contains "truefit")) {
-    git remote add truefit git://github.com/truefit/WindowsPowerShell.git
-  }
-  
 	
 	pop-location
 }
@@ -389,6 +382,21 @@ function Get-GitBranch($gitDir = $(Get-GitDirectory), [Diagnostics.Stopwatch]$sw
 	}
 }
 
+function Get-GitAliases {
+  $aliases = (git config --get-regexp 'alias.*' | foreach-object { 
+    $array = -split ($_ -replace 'alias\.'); 
+    $output = New-Object PsObject; 
+    Add-Member -InputObject $output NoteProperty Alias ($array[0]); 
+    Add-Member -InputObject $output NoteProperty Command ([string]::join(" ", $array[1..($array.length-1)])); return $output  
+  })
+  
+  return $aliases
+}
+
+function Display-GitAliases {
+  Get-GitAliases | ft -autosize
+}
+
 set-alias g git;
 
-Export-ModuleMember Setup-Git, Setup-Truefit, Check-RemoteRepository, Test-GitRepository, Track-Branches, TagDeployment, Delete-Tag, Delete-Branch, Test-Branch, Enable-GitColors, Get-GitAliasPattern, Get-GitBranch -alias g
+Export-ModuleMember Setup-Git, Setup-Truefit, Check-RemoteRepository, Test-GitRepository, Track-Branches, TagDeployment, Delete-Tag, Delete-Branch, Test-Branch, Enable-GitColors, Get-GitAliasPattern, Get-GitBranch, Display-GitAliases -alias g

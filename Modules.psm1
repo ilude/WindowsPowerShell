@@ -11,12 +11,12 @@ function Reload-Module($ModuleName) {
 		Write-Verbose "Module $ModuleName Unloaded"
 		
 		$pwd = Get-ScriptDirectory
+		$file_path = $ModuleName;
 		if(Test-Path (join-Path $pwd "$ModuleName.psm1")) {
-			Write-Host (join-Path $pwd "$ModuleName.psm1")
-			$ModuleName = (join-Path $pwd "$ModuleName.psm1")
+			$file_path = (join-Path $pwd "$ModuleName.psm1")
 		}
 		
-		import-module $ModuleName
+		import-module "$file_path" -DisableNameChecking -verbose:$false
 		Write-Verbose "Module $ModuleName Loaded"
 	}
 	else {
