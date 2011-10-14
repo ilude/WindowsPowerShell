@@ -23,7 +23,7 @@ function Setup-Git {
   # Branching Aliases
 	git config --global alias.br branch
 	git config --global alias.dlb 'branch -d '
-	git config --global alias.drb 'git push origin :$1'
+	git config --global alias.drb '!git push origin :$1'
 	git config --global alias.track '!powershell Track-Branches'
   
   # Tagging Aliases
