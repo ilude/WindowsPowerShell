@@ -185,13 +185,13 @@ function Get-GitDirectory {
 #
 ###########################
 
-function TrackBranches {
+function Track-Branches {
 	git branch -r | `
 		foreach {
 			$branch = $_.Replace("origin/", "").trim();
 			$count = (-split $_).Count
 			if(($count -eq 1) -and ($branch -ne "HEAD") -and ($branch -ne "master")) {
-				TrackBranch $branch;
+				Track-Branch $branch;
 			}
 		}
 }
@@ -202,7 +202,7 @@ function TrackBranches {
 #
 ###########################
 
-function Track-Branches {
+function Track-Branch {
 	Param(
 		[string]$tagname
 	)
@@ -399,4 +399,4 @@ function Display-GitAliases {
 
 set-alias g git;
 
-Export-ModuleMember Setup-Git, Setup-Truefit, Check-RemoteRepository, Test-GitRepository, Track-Branches, TagDeployment, Delete-Tag, Delete-Branch, Test-Branch, Enable-GitColors, Get-GitAliasPattern, Get-GitBranch, Display-GitAliases -alias g
+Export-ModuleMember Setup-Git, Setup-Truefit, Check-RemoteRepository, Test-GitRepository, Track-Branch, Track-Branches, TagDeployment, Delete-Tag, Delete-Branch, Test-Branch, Enable-GitColors, Get-GitAliasPattern, Get-GitBranch, Display-GitAliases -alias g
