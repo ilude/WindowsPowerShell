@@ -31,7 +31,7 @@ function Setup-Git {
   git config --global alias.drt '!git push origin :refs/tags/$1'
   git config --global alias.mark '!powershell TagDeployment'
   
-	git config --global alias.unstage 'rm -r --cached .'
+	git config --global alias.unstage 'reset .'
 	git config --global alias.aa "!git add -A . && git status -s"
 	git config --global alias.pushall '!git push --all; git push --tags'
 	git config --global alias.ls '!git --no-pager log -20 --date=short --pretty=tformat:\"%C(yellow)%h%Creset - %C(yellow)%an%Creset %C(white)%ad%Creset%C(yellow)%d%Creset %Cgreen%s%Creset\"'
