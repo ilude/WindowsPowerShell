@@ -60,11 +60,11 @@ function script:gitBranches($filter) {
 }
 
 function script:gitLocalTags($filter) {
-  git tag | where { $_.Trim() -eq "$filter" } 
+  (git tag) | where { $_.Trim() -eq "$filter" } 
 }
 
 function script:gitRemoteTags($filter) {
-  git show-ref --tags | where { $_.Trim() -eq "origin/$filter" } | foreach { $_.Trim().Replace("origin/", "") }
+  (git show-ref --tags) | where { $_.Trim() -eq "origin/$filter" } | foreach { $_.Trim().Replace("origin/", "") }
 }
 
 function script:gitTags($filter) {
@@ -176,18 +176,18 @@ function GitTabExpansion($lastBlock) {
 		}
     
     # Handles delete local branch
-		"^(dlt).* (?<branch>\S*)$" {
-				gitLocalTags $matches['branch']
+		"^(dlt).* (?<tag>\S*)$" {
+				gitLocalTags $matches['tag']
 		}
     
 		# Handles delete remote branch and checkout tracking 
-		"^(drt).* (?<branch>\S*)$" {
-				gitRemoteTagss $matches['branch']
+		"^(drt).* (?<tag>\S*)$" {
+				gitRemoteTagss $matches['tag']
 		}
     
     # Handles delete branch
-		"^(dt).* (?<branch>\S*)$" {
-				gitTags $matches['branch']
+		"^(dt).* (?<tag>\S*)$" {
+				gitTags $matches['tag']
 		}
 
 		# Handles git <cmd> (commands & aliases)
