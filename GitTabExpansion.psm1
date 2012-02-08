@@ -51,6 +51,10 @@ function script:gitLocalBranches($filter, $includeHEAD = $false) {
 		where { $_ -ne '(no branch)' -and $_ -like "$filter*" }
 }
 
+function script:gitRemoteBranches($filter) {
+  (git branch -r) | where { $_.Trim() -like "origin/$filter*" } | foreach { $_.Trim().Replace("origin/", "") }
+}
+
 function script:gitStashes($filter) {
 	(git stash list) -replace ':.*','' |
 		where { $_ -like "$filter*" } |
@@ -111,8 +115,12 @@ function GitTabExpansion($lastBlock) {
 		# Need return statement to prevent fall-through.
 		return $tortoiseGitCommands | where { $_ -like "$($matches['cmd'])*" }
 	}
+  
+  $lastBlock = $lastBlock -replace "^$(Get-GitAliasPattern) ",""
+  
+  #Write-Warning "LastBlock => $lastBlock"
 
-	switch -regex ($lastBlock -replace "^$(Get-GitAliasPattern) ","") {
+	switch -regex ($lastBlock) {
 	
 		# Handles git remote <op>
 		# Handles git stash <op>
@@ -134,6 +142,18 @@ function GitTabExpansion($lastBlock) {
 		# Handles git branch <branch name> <start-point>
 		"^branch.* (?<branch>\S*)$" {
 				gitLocalBranches $matches['branch']
+		}
+    
+    # Handles git branch -d|-D|-m|-M <branch name>
+		# Handles git branch <branch name> <start-point>
+		"^(db|dlb).* (?<branch>\S*)$" {
+				gitLocalBranches $matches['branch']
+		}
+    
+    # Handles git branch -d|-D|-m|-M <branch name>
+		# Handles git branch <branch name> <start-point>
+		"^(drb|ct).* (?<branch>\S*)$" {
+				gitRemoteBranches $matches['branch']
 		}
 
 		# Handles git <cmd> (commands & aliases)
