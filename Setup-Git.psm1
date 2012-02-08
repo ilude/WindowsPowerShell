@@ -16,20 +16,21 @@ function Setup-Git {
 	
 	git config --global alias.co checkout
 	git config --global alias.cb 'checkout -b'
-	git config --global alias.ct '!git checkout -t origin/'
+	git config --global alias.ct '!powershell Checkout-And-Track'
 	git config --global alias.ci 'commit -m'
 	git config --global alias.s 'status -s'
 	
   # Branching Aliases
 	git config --global alias.br branch
   git config --global alias.db '!powershell Delete-Branch'
-	git config --global alias.dlb 'branch -d '
-	git config --global alias.drb '!git push origin :'
+	git config --global alias.dlb '!powershell Delete-Branch -l'
+	git config --global alias.drb '!powershell Delete-Branch -r'
 	git config --global alias.track '!powershell Track-Branches'
   
   # Tagging Aliases
-  git config --global alias.dlt 'tag -d '
-  git config --global alias.drt '!git push origin :refs/tags/'
+  git config --global alias.dt '!powershell Delete-Tag'
+  git config --global alias.dlt '!powershell Delete-Tag -l'
+  git config --global alias.drt '!powershell Delete-Tag -r'
   git config --global alias.mark '!powershell TagDeployment'
   
 	git config --global alias.unstage 'reset .'
@@ -199,7 +200,7 @@ function Track-Branches {
 
 ###########################
 #
-# TrackBranch
+# Track-Branch
 #
 ###########################
 
@@ -218,6 +219,21 @@ function Track-Branch {
 
 ###########################
 #
+# Checkout-And-Track
+#
+###########################
+
+function Checkout-And-Track {
+  Param(
+		[parameter(Mandatory=$true)]
+		[string]$name
+	)
+  
+  git checkout -t origin/$name
+}
+
+###########################
+#
 # TagDeployment
 #
 ###########################
@@ -227,6 +243,7 @@ function TagDeployment {
 	git tag -m "Deployed $date" deploy-$date
 }
 
+
 ###########################
 #
 # Delete-Tag
@@ -235,15 +252,66 @@ function TagDeployment {
 
 function Delete-Tag {
 	Param(
+    [switch]$r=$false,
+    [switch]$l=$false,
+		[parameter(Mandatory=$true)]
+		[string]$name
+	)
+  
+  if($r -and -not $l) {
+    if(Test-Tag -r $name) {
+      git push origin :refs/tags/$name
+    }
+    else {
+      Write-Warning "Tag $name does not exist in the remote repository!"
+    }
+  }
+  elseif($l -and -not $r) {
+    if(Test-Tag $name) {
+      git tag -d $name
+    }
+    else {
+      Write-Warning "Tag $name does not exist in the local repository!"
+    }
+  }
+  else {
+    if(Test-Tag -r $name) {
+      git push origin :refs/tags/$name
+    }
+    else {
+      Write-Warning "Tag $name does not exist in the remote repository!"
+    }
+    
+    if(Test-Tag $name) {
+      git tag -d $name
+    }
+    else {
+      Write-Warning "Tag $name does not exist in the local repository!"
+    }
+  }
+}
+
+###########################
+#
+# Test-Tag
+#
+###########################
+
+function Test-Tag {
+  Param(
+		[switch]$r=$false,
 		[parameter(Mandatory=$true)]
 		[string]$name
 	)
 	
-	git tag -d $name
-	if($?) {
-		git push origin :refs/tags/$name
+	if($r) {
+		return (git show-ref --tags | Where-Object { $_.Trim() -eq "origin/$name" } | Measure-Object).Count -eq 1
+	}
+	else {
+		return (git tag | Where-Object { $_.Trim() -eq "$name" } | Measure-Object).Count -eq 1
 	}
 }
+
 
 ###########################
 #
@@ -255,24 +323,46 @@ function Delete-Branch {
 	Param(
 		[switch]$D=$false,
 		[switch]$r=$false,
+    [switch]$l=$false,
 		[parameter(Mandatory=$true)]
 		[string]$name
 	)
+  
+  $force = "-d"
+  if($D) {
+    $force = "-D"
+  }
 	
-	if(($r) -and (Test-Branch -r $name)) {
-		git push origin :$name
+	if($r -and -not $l) {
+    if(Test-Branch -r $name) {
+      git push origin :$name
+    }
+		else {
+      Write-Warning "Branch $name does not exist in the remote repository!"
+    }
 	}
-	else {
-		$force = "-d"
-		if($D) {
-			$force = "-D"
+  elseif($l -and -not $r) {
+    if((Test-Branch $name)) {
+			git branch $force $name
 		}
-		
-		git branch $force $name
-		
-		if($? -and (Test-Branch -r $name)) {
+    else {
+      Write-Warning "Branch $name does not exist in the local repository!"
+    }
+  }
+	else {
+		if((Test-Branch -r $name)) {
 			git push origin :$name
 		}
+    else {
+      Write-Warning "Branch $name does not exist in the remote repository!"
+    }
+		
+		if((Test-Branch $name)) {
+			git branch $force $name
+		}
+    else {
+      Write-Warning "Branch $name does not exist in the local repository!"
+    }
 	}
 }
 
@@ -400,4 +490,4 @@ function Display-GitAliases {
 
 set-alias g git;
 
-Export-ModuleMember Setup-Git, Setup-Truefit, Check-RemoteRepository, Test-GitRepository, Track-Branch, Track-Branches, TagDeployment, Delete-Tag, Delete-Branch, Test-Branch, Enable-GitColors, Get-GitAliasPattern, Get-GitBranch, Display-GitAliases -alias g
+Export-ModuleMember Setup-Git, Setup-Truefit, Check-RemoteRepository, Test-GitRepository, Track-Branch, Track-Branches, Checkout-And-Track, TagDeployment, Delete-Tag, Test-Tag, Delete-RemoteTag, Delete-Branch, Test-Branch, Enable-GitColors, Get-GitAliasPattern, Get-GitBranch, Display-GitAliases -alias g
