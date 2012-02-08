@@ -55,6 +55,10 @@ function script:gitRemoteBranches($filter) {
   (git branch -r) | where { $_.Trim() -like "origin/$filter*" } | foreach { $_.Trim().Replace("origin/", "") }
 }
 
+function script:gitBranches($filter) {
+  @(gitLocalBranches $filter) + @(gitRemoteBranches $filter) | select -uniq
+}
+
 function script:gitStashes($filter) {
 	(git stash list) -replace ':.*','' |
 		where { $_ -like "$filter*" } |
@@ -144,16 +148,19 @@ function GitTabExpansion($lastBlock) {
 				gitLocalBranches $matches['branch']
 		}
     
-    # Handles git branch -d|-D|-m|-M <branch name>
-		# Handles git branch <branch name> <start-point>
-		"^(db|dlb).* (?<branch>\S*)$" {
+		# Handles delete local branch
+		"^(dlb).* (?<branch>\S*)$" {
 				gitLocalBranches $matches['branch']
 		}
     
-    # Handles git branch -d|-D|-m|-M <branch name>
-		# Handles git branch <branch name> <start-point>
+		# Handles delete remote branch and checkout tracking 
 		"^(drb|ct).* (?<branch>\S*)$" {
 				gitRemoteBranches $matches['branch']
+		}
+    
+    # Handles delete branch
+		"^(db).* (?<branch>\S*)$" {
+				gitBranches $matches['branch']
 		}
 
 		# Handles git <cmd> (commands & aliases)
