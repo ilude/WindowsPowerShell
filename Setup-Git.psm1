@@ -16,19 +16,20 @@ function Setup-Git {
 	
 	git config --global alias.co checkout
 	git config --global alias.cb 'checkout -b'
-	git config --global alias.ct '!git checkout -t origin/$1'
+	git config --global alias.ct '!git checkout -t origin/'
 	git config --global alias.ci 'commit -m'
 	git config --global alias.s 'status -s'
 	
   # Branching Aliases
 	git config --global alias.br branch
+  git config --global alias.db '!powershell Delete-Branch'
 	git config --global alias.dlb 'branch -d '
-	git config --global alias.drb '!git push origin :$1'
+	git config --global alias.drb '!git push origin :'
 	git config --global alias.track '!powershell Track-Branches'
   
   # Tagging Aliases
   git config --global alias.dlt 'tag -d '
-  git config --global alias.drt '!git push origin :refs/tags/$1'
+  git config --global alias.drt '!git push origin :refs/tags/'
   git config --global alias.mark '!powershell TagDeployment'
   
 	git config --global alias.unstage 'reset .'
