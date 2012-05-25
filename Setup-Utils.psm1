@@ -6,13 +6,13 @@
 ###########################
 
 function Get-Editor {
-	$path = Resolve-Path (join-path (join-path "$env:ProgramFiles*" "Sublime*") "Sublime_text*");
+	$path = Resolve-Path (join-path (join-path "$env:PROGRAMW6432*" "Sublime*") "Sublime_text*");
 
 	if($path.Path) {
 		return $path.Path;
 	}
 
-	$path = Resolve-Path (join-path (join-path "$env:ProgramFiles*" "notepad*") "notepad*");
+	$path = Resolve-Path (join-path (join-path "$env:PROGRAMW6432*" "notepad*") "notepad*");
 	if($path.Path) {
 		return $path.Path;
 	}
