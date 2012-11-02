@@ -3,10 +3,11 @@ function New-OpenPowerShellContextMenuEntry
     param($Path)
 
     New-Item $Path -ItemType RegistryKey -Force
-    New-ItemProperty $Path -Name '(Default)' -Value 'PowerShell Here'
+    New-ItemProperty $Path -Name '(Default)' -Value 'Console2 Here'
+    New-ItemProperty $Path -Name 'Icon' -Value 'C:\Program Files\Console2\Console.exe,0'
     New-Item $Path\Command -ItemType RegistryKey
     New-ItemProperty $Path\Command -Name '(Default)' `
-        -Value "`"$pshome\powershell.exe`" -NoExit -Command [Environment]::CurrentDirectory=(Set-Location -LiteralPath:'%L' -PassThru).ProviderPath"
+        -Value "C:\Program Files\Console2\ansicon.exe C:\Program Files\Console2\Console.exe -d `"%L`""
 }
 
 New-OpenPowerShellContextMenuEntry 'HKCU:\Software\Classes\Directory\shell\PowerShell'
