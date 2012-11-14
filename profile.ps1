@@ -72,7 +72,7 @@ function prompt {
 ###########################
 
 $defaul_tab_expansion = 'Default_Tab_Expansion'
-if(!(Test-Path Function:\$defaul_tab_expansion)) {
+if((Test-Path Function:\TabExpansion) -and !(Test-Path Function:\$defaul_tab_expansion)) {
     Rename-Item Function:\TabExpansion $defaul_tab_expansion
 }
 
@@ -87,5 +87,3 @@ function TabExpansion($line, $lastWord) {
 }
 
 Check-RemoteRepository $pwd -verbose
-
-
