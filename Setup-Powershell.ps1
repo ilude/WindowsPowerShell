@@ -1,7 +1,14 @@
-function New-OpenPowerShellContextMenuEntry
+function Test-RegistryValue($path, $name)
 {
-    param($Path)
+    $key = Get-Item -LiteralPath $path -ErrorAction SilentlyContinue
+    $key -and $null -ne $key.GetValue($name, $null)
+}
 
+function New-OpenPowerShellContextMenuEntry($Path)
+{
+    if(Test-RegistryValue($Path)) {
+        Remove-Item -Path $Path
+    }
     New-Item $Path -ItemType RegistryKey -Force
     New-ItemProperty $Path -Name '(Default)' -Value 'Console2 Here'
     New-ItemProperty $Path -Name 'Icon' -Value 'C:\Program Files\Console2\Console.exe,0'
