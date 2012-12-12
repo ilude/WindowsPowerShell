@@ -7,7 +7,7 @@ function Test-RegistryValue($path, $name)
 function New-OpenPowerShellContextMenuEntry($Path)
 {
     if(Test-RegistryValue($Path)) {
-        Remove-Item -Path $Path
+        Remove-Item -Recurse -Path $Path
     }
     New-Item $Path -ItemType RegistryKey -Force
     New-ItemProperty $Path -Name '(Default)' -Value 'Console2 Here'
