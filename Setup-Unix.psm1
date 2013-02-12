@@ -175,6 +175,6 @@ function Get-NetworkStatistics
     } 
 }
 
-Set-Alias netstat Get-NetworkStatistics
+Set-Alias listen Get-NetworkStatistics
 
-Export-ModuleMember grep, head, rm, wc -Alias which, netstat
+Export-ModuleMember grep, head, rm, wc, Get-NetworkStatistics -Alias which, listen
