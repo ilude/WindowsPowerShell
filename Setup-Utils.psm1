@@ -156,10 +156,17 @@ function Get-Environment {
 	Get-ChildItem Env:
 }
 
+function Create-Console($path = $(pwd)) {
+  $console = Resolve-Path (join-path (join-path "$env:PROGRAMW6432*" "console*") "ConEmu64*");
+  . $console /config "shell" /dir "$path" /cmd powershell -cur_console:n
+}
+
+Set-Alias sh Create-Console
+
 Set-Alias Get-Env Get-Environment
 Set-Alias Get-Version $Host.Version
 Set-Alias nano "$(Get-Editor)"
 
 Export-ModuleMember `
-	Get-Editor, Test-Syntax, Reload-Profile, Coalesce-Args, Get-LocalOrParentPath, Debug, Get-ScriptDirectory, Get-Environment, ConvertTo-PlainText, Reload-Module `
-	-Alias ??, dbg, Get-Env, Get-Version, nano
+	Get-Editor, Test-Syntax, Reload-Profile, Coalesce-Args, Get-LocalOrParentPath, Debug, Get-ScriptDirectory, Get-Environment, ConvertTo-PlainText, Reload-Module, Create-Console `
+	-Alias ??, dbg, Get-Env, Get-Version, nano, sh
