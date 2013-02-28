@@ -1,5 +1,6 @@
 function Setup-Git {
 	git config --global core.autocrlf true
+  git config --global core.editor "'$(get-editor)' -w"
 	git config --global mergetool.p4merge.trustexitcode false
 	git config --global merge.tool p4merge
 	git config --global diff.tool p4merge
