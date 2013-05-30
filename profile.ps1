@@ -86,4 +86,4 @@ function TabExpansion($line, $lastWord) {
     }
 }
 
-Check-RemoteRepository $pwd -verbose
+#Check-RemoteRepository $pwd -verbose
