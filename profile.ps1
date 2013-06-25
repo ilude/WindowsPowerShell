@@ -36,9 +36,10 @@ catch {
 function prompt {
 	$realLASTEXITCODE = $LASTEXITCODE
 
-	$path = ([string]$pwd)
+	$path = $(get-location).Path
 	$index = $path.LastIndexOf('\') + 1
   $userLocation = $path
+
   if($index -lt $path.Length) {
     $userLocation = $path.Substring($index, $path.Length - $index)
   }
