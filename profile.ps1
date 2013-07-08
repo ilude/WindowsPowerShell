@@ -21,7 +21,7 @@ Get-ChildItem $pwd *.psm1 | foreach {
 }
 
 try {
-  $env:GITDIR = (which git.cmd).Definition | split-path | split-path
+  $env:GITDIR = (which git).Definition | split-path | split-path
 }
 catch {
   Write-Error "Error setting GITDIR! " + Error[0].Exception
@@ -38,11 +38,11 @@ function prompt {
 
 	$path = $(get-location).Path
 	$index = $path.LastIndexOf('\') + 1
-  $userLocation = $path
+	$userLocation = $path
 
-  if($index -lt $path.Length) {
-    $userLocation = $path.Substring($index, $path.Length - $index)
-  }
+	if($index -lt $path.Length) {
+		$userLocation = $path.Substring($index, $path.Length - $index)
+	}
 	
 	Write-Host($userLocation) -nonewline -foregroundcolor Green 
 	
@@ -55,9 +55,9 @@ function prompt {
 		
 		$host.UI.RawUi.WindowTitle = "Git:$userLocation - $pwd"
 	}
-  elseif ($userLocation -eq $pwd) {
-    $host.UI.RawUi.WindowTitle = "$pwd"
-  }
+	elseif ($userLocation -eq $pwd) {
+		$host.UI.RawUi.WindowTitle = "$pwd"
+	}
 	else {
 		$host.UI.RawUi.WindowTitle = "$userLocation - $pwd"
 	}
