@@ -14,8 +14,6 @@ function Setup-Git {
 	git config --get-regexp 'alias.*' | foreach-object { -split $_ | select-object -first 1  } | % { . git config --global --unset "$_" }
 	
 	git config --global alias.alias "!powershell -ExecutionPolicy ByPass Display-GitAliases"
-	
-  git config --global alias.test '!powershell -ExecutionPolicy ByPass echo $(Get-GitHome)'
 
 	git config --global alias.co checkout
 	git config --global alias.cb 'checkout -b'
@@ -65,16 +63,15 @@ function Setup-Git {
 		git config --global user.email "'$email'"
 	}
 	
-	
 	# 
 	# check if truefit upstream is setup and create it if its not
 	#
-	push-location
-	cd (join-path ([environment]::GetFolderPath([environment+SpecialFolder]::MyDocuments)) WindowsPowerShell)
-	if(((git remote) -contains "truefit") -eq $False) {
-		git remote add truefit git://github.com/truefit/WindowsPowerShell.git
-	}
-	pop-location
+	#push-location
+	#cd (join-path ([environment]::GetFolderPath([environment+SpecialFolder]::MyDocuments)) WindowsPowerShell)
+	#if(((git remote) -contains "truefit") -eq $False) {
+	#	git remote add truefit git://github.com/truefit/WindowsPowerShell.git
+	#}
+	#pop-location
 	
 
 	if (Get-Command -CommandType Cmdlet Get-Editor -errorAction SilentlyContinue) {
@@ -83,10 +80,6 @@ function Setup-Git {
 			git config --global core.editor "'$editor' -multiInst -notabbar -nosession -noPlugin"
 		}
 	}
-}
-
-function Get-GitHome {
-   @((which git.exe).Definition)[0]
 }
 
 function Setup-Truefit {
@@ -497,4 +490,4 @@ function Display-GitAliases {
 
 set-alias g git;
 
-Export-ModuleMember Get-GitHome, Setup-Git, Setup-Truefit, Check-RemoteRepository, Test-GitRepository, Track-Branch, Track-Branches, Checkout-And-Track, TagDeployment, Delete-Tag, Test-Tag, Delete-RemoteTag, Delete-Branch, Test-Branch, Enable-GitColors, Get-GitAliasPattern, Get-GitBranch, Display-GitAliases -alias g
+Export-ModuleMember Setup-Git, Setup-Truefit, Check-RemoteRepository, Test-GitRepository, Track-Branch, Track-Branches, Checkout-And-Track, TagDeployment, Delete-Tag, Test-Tag, Delete-RemoteTag, Delete-Branch, Test-Branch, Enable-GitColors, Get-GitAliasPattern, Get-GitBranch, Display-GitAliases -alias g
