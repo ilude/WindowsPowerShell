@@ -13,26 +13,28 @@ function Setup-Git {
 	# unset all aliases
 	git config --get-regexp 'alias.*' | foreach-object { -split $_ | select-object -first 1  } | % { . git config --global --unset "$_" }
 	
-	git config --global alias.alias "!powershell Display-GitAliases"
+	git config --global alias.alias "!powershell -ExecutionPolicy ByPass Display-GitAliases"
 	
+  git config --global alias.test '!powershell -ExecutionPolicy ByPass echo $(Get-GitHome)'
+
 	git config --global alias.co checkout
 	git config --global alias.cb 'checkout -b'
-	git config --global alias.ct '!powershell Checkout-And-Track'
+	git config --global alias.ct '!powershell -ExecutionPolicy ByPass Checkout-And-Track'
 	git config --global alias.ci 'commit -m'
 	git config --global alias.s 'status -s'
 	
   # Branching Aliases
 	git config --global alias.br branch
-  git config --global alias.db '!powershell Delete-Branch'
-	git config --global alias.dlb '!powershell Delete-Branch -l'
-	git config --global alias.drb '!powershell Delete-Branch -r'
-	git config --global alias.track '!powershell Track-Branches'
+  git config --global alias.db '!powershell -ExecutionPolicy ByPass Delete-Branch'
+	git config --global alias.dlb '!powershell -ExecutionPolicy ByPass Delete-Branch -l'
+	git config --global alias.drb '!powershell -ExecutionPolicy ByPass Delete-Branch -r'
+	git config --global alias.track '!powershell -ExecutionPolicy ByPass Track-Branches'
   
   # Tagging Aliases
-  git config --global alias.dt '!powershell Delete-Tag'
-  git config --global alias.dlt '!powershell Delete-Tag -l'
-  git config --global alias.drt '!powershell Delete-Tag -r'
-  git config --global alias.mark '!powershell TagDeployment'
+  git config --global alias.dt '!powershell -ExecutionPolicy ByPass Delete-Tag'
+  git config --global alias.dlt '!powershell -ExecutionPolicy ByPass Delete-Tag -l'
+  git config --global alias.drt '!powershell -ExecutionPolicy ByPass Delete-Tag -r'
+  git config --global alias.mark '!powershell -ExecutionPolicy ByPass TagDeployment'
   
 	git config --global alias.unstage 'reset .'
 	git config --global alias.aa "!git add -A . && git status -s"
@@ -81,6 +83,10 @@ function Setup-Git {
 			git config --global core.editor "'$editor' -multiInst -notabbar -nosession -noPlugin"
 		}
 	}
+}
+
+function Get-GitHome {
+   @((which git.exe).Definition)[0]
 }
 
 function Setup-Truefit {
@@ -491,4 +497,4 @@ function Display-GitAliases {
 
 set-alias g git;
 
-Export-ModuleMember Setup-Git, Setup-Truefit, Check-RemoteRepository, Test-GitRepository, Track-Branch, Track-Branches, Checkout-And-Track, TagDeployment, Delete-Tag, Test-Tag, Delete-RemoteTag, Delete-Branch, Test-Branch, Enable-GitColors, Get-GitAliasPattern, Get-GitBranch, Display-GitAliases -alias g
+Export-ModuleMember Get-GitHome, Setup-Git, Setup-Truefit, Check-RemoteRepository, Test-GitRepository, Track-Branch, Track-Branches, Checkout-And-Track, TagDeployment, Delete-Tag, Test-Tag, Delete-RemoteTag, Delete-Branch, Test-Branch, Enable-GitColors, Get-GitAliasPattern, Get-GitBranch, Display-GitAliases -alias g

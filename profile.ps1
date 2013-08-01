@@ -21,7 +21,10 @@ Get-ChildItem $pwd *.psm1 | foreach {
 }
 
 try {
-  $env:GITDIR = (which git).Definition | split-path | split-path
+  $script:git_exe = @((which git.exe).Definition)[0]
+  if($script:git_exe) {
+    $env:GITDIR =  split-path $script:git_exe | split-path
+  }
 }
 catch {
   Write-Error "Error setting GITDIR! " + Error[0].Exception
