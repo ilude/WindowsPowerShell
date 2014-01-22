@@ -1,6 +1,6 @@
 function Setup-Git {
 	git config --global core.autocrlf true
-  git config --global core.editor "'$(get-editor)' -w"
+	git config --global core.editor "'$(get-editor)' -w"
 	git config --global mergetool.p4merge.trustexitcode false
 	git config --global merge.tool p4merge
 	git config --global diff.tool p4merge
@@ -21,18 +21,18 @@ function Setup-Git {
 	git config --global alias.ci 'commit -m'
 	git config --global alias.s 'status -s'
 	
-  # Branching Aliases
+  	# Branching Aliases
 	git config --global alias.br branch
-  git config --global alias.db '!powershell -ExecutionPolicy ByPass Delete-Branch'
+  	git config --global alias.db '!powershell -ExecutionPolicy ByPass Delete-Branch'
 	git config --global alias.dlb '!powershell -ExecutionPolicy ByPass Delete-Branch -l'
 	git config --global alias.drb '!powershell -ExecutionPolicy ByPass Delete-Branch -r'
 	git config --global alias.track '!powershell -ExecutionPolicy ByPass Track-Branches'
   
-  # Tagging Aliases
-  git config --global alias.dt '!powershell -ExecutionPolicy ByPass Delete-Tag'
-  git config --global alias.dlt '!powershell -ExecutionPolicy ByPass Delete-Tag -l'
-  git config --global alias.drt '!powershell -ExecutionPolicy ByPass Delete-Tag -r'
-  git config --global alias.mark '!powershell -ExecutionPolicy ByPass TagDeployment'
+	# Tagging Aliases
+	git config --global alias.dt '!powershell -ExecutionPolicy ByPass Delete-Tag'
+	git config --global alias.dlt '!powershell -ExecutionPolicy ByPass Delete-Tag -l'
+	git config --global alias.drt '!powershell -ExecutionPolicy ByPass Delete-Tag -r'
+	git config --global alias.mark '!powershell -ExecutionPolicy ByPass TagDeployment'
   
 	git config --global alias.unstage 'reset .'
 	git config --global alias.aa "!git add -A . && git status -s"
