@@ -7,6 +7,7 @@ function Setup-Git {
 	git config --global difftool.prompt false
 	git config --global mergetool.prompt false
 	git config --global mergetool.keepbackup false
+	git config --global core.safecrlf "warn"
 	# rebase on pull instead of merge
 	git config --global branch.autosetuprebase always 
 	
