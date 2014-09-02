@@ -10,11 +10,13 @@ $script:pwd = Split-Path $MyInvocation.MyCommand.Path
 # 	}
 # }
 
-$devkit = "C:\opscode\chefdk\embedded\"
-if(Test-Path $devkit) {
-	$env:RI_DEVKIT = "$devkit"
-	$env:path = "$devkit\bin;$devkit\mingw\bin;$env:path"
-}
+# $devkit = "C:\opscode\chefdk\embedded\"
+# if(Test-Path $devkit) {
+# 	$env:RI_DEVKIT = "$devkit"
+# 	$env:path = "$devkit\bin;$devkit\mingw\bin;$env:path"
+# }
+
+$env:SSL_CERT_FILE = Join-Path $pwd cacert.pem
 
 ###########################
 #
