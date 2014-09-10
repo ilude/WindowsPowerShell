@@ -10,6 +10,12 @@ $script:pwd = Split-Path $MyInvocation.MyCommand.Path
 # 	}
 # }
 
+$script:powershell_path = "C:\Windows\System32\WindowsPowerShell\v1.0".ToLower()
+if((-Not $env:path.ToLower().contains($script:powershell_path)) -And (Test-Path $script:powershell_path)) {
+  $env:path = "$env:path;$script:powershell_path"
+}
+
+
 # $devkit = "C:\opscode\chefdk\embedded\"
 # if(Test-Path $devkit) {
 # 	$env:RI_DEVKIT = "$devkit"
