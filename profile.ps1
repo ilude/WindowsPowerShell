@@ -15,6 +15,11 @@ if((-Not $env:path.ToLower().contains($script:powershell_path)) -And (Test-Path 
   $env:path = "$env:path;$script:powershell_path"
 }
 
+$script:rsync_path = Join-Path $pwd 'rsync'
+if(Test-Path $script:rsync_path) {
+  $env:path = "$env:path;$script:rsync_path"
+}
+
 
 # $devkit = "C:\opscode\chefdk\embedded\"
 # if(Test-Path $devkit) {

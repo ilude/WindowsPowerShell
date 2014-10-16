@@ -1,0 +1,1253 @@
+Content-type: text/html
+
+<HTML><HEAD><TITLE>Manpage of rsyncd.conf</TITLE>
+</HEAD><BODY>
+<H1>rsyncd.conf</H1>
+Section:  (5)<BR>Updated: 26 Jan 2014<BR><A HREF="#index">Index</A>
+<A HREF="http://localhost/cgi-bin/man/man2html">Return to Main Contents</A><HR>
+
+<A NAME="lbAB">&nbsp;</A>
+<H2>NAME</H2>
+
+rsyncd.conf - configuration file for rsync in daemon mode
+<A NAME="lbAC">&nbsp;</A>
+<H2>SYNOPSIS</H2>
+
+<P>
+<P>
+
+rsyncd.conf
+<P>
+
+<A NAME="lbAD">&nbsp;</A>
+<H2>DESCRIPTION</H2>
+
+<P>
+<P>
+
+The rsyncd.conf file is the runtime configuration file for rsync when
+run as an rsync daemon.
+<P>
+
+The rsyncd.conf file controls authentication, access, logging and
+available modules.
+<P>
+
+<A NAME="lbAE">&nbsp;</A>
+<H2>FILE FORMAT</H2>
+
+<P>
+<P>
+
+The file consists of modules and parameters. A module begins with the
+name of the module in square brackets and continues until the next
+module begins. Modules contain parameters of the form dqname = valuedq.
+<P>
+
+The file is line-based -- that is, each newline-terminated line represents
+either a comment, a module name or a parameter.
+<P>
+
+Only the first equals sign in a parameter is significant. Whitespace before
+or after the first equals sign is discarded. Leading, trailing and internal
+whitespace in module and parameter names is irrelevant. Leading and
+trailing whitespace in a parameter value is discarded. Internal whitespace
+within a parameter value is retained verbatim.
+<P>
+
+Any line <B>beginning</B> with a hash (#) is ignored, as are lines containing
+only whitespace. (If a hash occurs after anything other than leading
+whitespace, it is considered a part of the linecqs content.)
+<P>
+
+Any line ending in a \ is dqcontinueddq on the next line in the
+customary UNIX fashion.
+<P>
+
+The values following the equals sign in parameters are all either a string
+(no quotes needed) or a boolean, which may be given as yes/no, 0/1 or
+true/false. Case is not significant in boolean values, but is preserved
+in string values.
+<P>
+
+<A NAME="lbAF">&nbsp;</A>
+<H2>LAUNCHING THE RSYNC DAEMON</H2>
+
+<P>
+<P>
+
+The rsync daemon is launched by specifying the <B>--daemon</B> option to
+rsync.
+<P>
+
+The daemon must run with root privileges if you wish to use chroot, to
+bind to a port numbered under 1024 (as is the default 873), or to set
+file ownership.  Otherwise, it must just have permission to read and
+write the appropriate data, log, and lock files.
+<P>
+
+You can launch it either via inetd, as a stand-alone daemon, or from
+an rsync client via a remote shell.  If run as a stand-alone daemon then
+just run the command dq<B>rsync --daemon</B>dq from a suitable startup script.
+<P>
+
+When run via inetd you should add a line like this to /etc/services:
+<P>
+
+<PRE>
+  rsync           873/tcp
+</PRE>
+
+<P>
+<P>
+
+and a single line something like this to /etc/inetd.conf:
+<P>
+
+<PRE>
+  rsync   stream  tcp     nowait  root   /usr/bin/rsync rsyncd --daemon
+</PRE>
+
+<P>
+<P>
+
+Replace dq/usr/bin/rsyncdq with the path to where you have rsync installed on
+your system.  You will then need to send inetd a HUP signal to tell it to
+reread its config file.
+<P>
+
+Note that you should <B>not</B> send the rsync daemon a HUP signal to force
+it to reread the <TT>rsyncd.conf</TT> file. The file is re-read on each client
+connection.
+<P>
+
+<A NAME="lbAG">&nbsp;</A>
+<H2>GLOBAL PARAMETERS</H2>
+
+<P>
+<P>
+
+The first parameters in the file (before a [module] header) are the
+global parameters.
+<P>
+
+You may also include any module parameters in the global part of the
+config file in which case the supplied value will override the
+default for that parameter.
+<P>
+
+You may use references to environment variables in the values of parameters.
+String parameters will have %VAR% references expanded as late as possible (when
+the string is used in the program), allowing for the use of variables that
+rsync sets at connection time, such as RSYNC_USER_NAME.  Non-string parameters
+(such as true/false settings) are expanded when read from the config file.  If
+a variable does not exist in the environment, or if a sequence of characters is
+not a valid reference (such as an un-paired percent sign), the raw characters
+are passed through unchanged.  This helps with backward compatibility and
+safety (e.g. expanding a non-existent %VAR% to an empty string in a path could
+result in a very unsafe path).  The safest way to insert a literal % into a
+value is to use %%.
+<P>
+
+<DL COMPACT>
+<DT><B>motd file</B><DD>
+This parameter allows you to specify a
+dqmessage of the daydq to display to clients on each connect. This
+usually contains site information and any legal notices. The default
+is no motd file.
+This can be overridden by the <B>--dparam=motdfile=FILE</B>
+command-line option when starting the daemon.
+<DT><DD>
+<DT><B>pid file</B><DD>
+This parameter tells the rsync daemon to write
+its process ID to that file.  If the file already exists, the rsync
+daemon will abort rather than overwrite the file.
+This can be overridden by the <B>--dparam=pidfile=FILE</B>
+command-line option when starting the daemon.
+<DT><DD>
+<DT><B>port</B><DD>
+You can override the default port the daemon will listen on
+by specifying this value (defaults to 873).  This is ignored if the daemon
+is being run by inetd, and is superseded by the <B>--port</B> command-line option.
+<DT><DD>
+<DT><B>address</B><DD>
+You can override the default IP address the daemon
+will listen on by specifying this value.  This is ignored if the daemon is
+being run by inetd, and is superseded by the <B>--address</B> command-line option.
+<DT><DD>
+<DT><B>socket options</B><DD>
+This parameter can provide endless fun for people
+who like to tune their systems to the utmost degree. You can set all
+sorts of socket options which may make transfers faster (or
+slower!). Read the man page for the 
+<TT>setsockopt()</TT>
+system call for
+details on some of the options you may be able to set. By default no
+special socket options are set.  These settings can also be specified
+via the <B>--sockopts</B> command-line option.
+<DT><DD>
+<DT><B>listen backlog</B><DD>
+You can override the default backlog value when the
+daemon listens for connections.  It defaults to 5.
+<DT><DD>
+</DL>
+<A NAME="lbAH">&nbsp;</A>
+<H2>MODULE PARAMETERS</H2>
+
+<P>
+<P>
+
+After the global parameters you should define a number of modules, each
+module exports a directory tree as a symbolic name. Modules are
+exported by specifying a module name in square brackets [module]
+followed by the parameters for that module.
+The module name cannot contain a slash or a closing square bracket.  If the
+name contains whitespace, each internal sequence of whitespace will be
+changed into a single space, while leading or trailing whitespace will be
+discarded.
+<P>
+
+As with GLOBAL PARAMETERS, you may use references to environment variables in
+the values of parameters.  See the GLOBAL PARAMETERS section for more details.
+<P>
+
+<DL COMPACT>
+<DT><B>comment</B><DD>
+This parameter specifies a description string
+that is displayed next to the module name when clients obtain a list
+of available modules. The default is no comment.
+<DT><DD>
+<DT><B>path</B><DD>
+This parameter specifies the directory in the daemoncqs
+filesystem to make available in this module.  You must specify this parameter
+for each module in <TT>rsyncd.conf</TT>.
+<DT><DD>
+You may base the pathcqs value off of an environment variable by surrounding
+the variable name with percent signs.  You can even reference a variable
+that is set by rsync when the user connects.
+For example, this would use the authorizing usercqs name in the path:
+<DT><DD>
+<PRE>
+    path = /home/%RSYNC_USER_NAME% 
+</PRE>
+
+<P>
+<DT><DD>
+It is fine if the path includes internal spaces -- they will be retained
+verbatim (which means that you shouldncqt try to escape them).  If your final
+directory has a trailing space (and this is somehow not something you wish to
+fix), append a trailing slash to the path to avoid losing the trailing
+whitespace.
+<DT><DD>
+<DT><B>use chroot</B><DD>
+If dquse chrootdq is true, the rsync daemon will chroot
+to the dqpathdq before starting the file transfer with the client.  This has
+the advantage of extra protection against possible implementation security
+holes, but it has the disadvantages of requiring super-user privileges,
+of not being able to follow symbolic links that are either absolute or outside
+of the new root path, and of complicating the preservation of users and groups
+by name (see below).
+<DT><DD>
+As an additional safety feature, you can specify a dot-dir in the modulecqs
+dqpathdq to indicate the point where the chroot should occur.  This allows rsync
+to run in a chroot with a non-dq/dq path for the top of the transfer hierarchy.
+Doing this guards against unintended library loading (since those absolute
+paths will not be inside the transfer hierarchy unless you have used an unwise
+pathname), and lets you setup libraries for the chroot that are outside of the
+transfer.  For example, specifying dq/var/rsync/./module1dq will chroot to the
+dq/var/rsyncdq directory and set the inside-chroot path to dq/module1dq.  If you
+had omitted the dot-dir, the chroot would have used the whole path, and the
+inside-chroot path would have been dq/dq.
+<DT><DD>
+When dquse chrootdq is false or the inside-chroot path is not dq/dq, rsync will:
+(1) munge symlinks by
+default for security reasons (see dqmunge symlinksdq for a way to turn this
+off, but only if you trust your users), (2) substitute leading slashes in
+absolute paths with the modulecqs path (so that options such as
+<B>--backup-dir</B>, <B>--compare-dest</B>, etc. interpret an absolute path as
+rooted in the modulecqs dqpathdq dir), and (3) trim dq..dq path elements from
+args if rsync believes they would escape the module hierarchy.
+The default for dquse chrootdq is true, and is the safer choice (especially
+if the module is not read-only).
+<DT><DD>
+When this parameter is enabled, rsync will not attempt to map users and groups
+by name (by default), but instead copy IDs as though <B>--numeric-ids</B> had
+been specified.  In order to enable name-mapping, rsync needs to be able to
+use the standard library functions for looking up names and IDs (i.e.
+<TT>getpwuid()</TT>
+, 
+<TT>getgrgid()</TT>
+, 
+<TT>getpwname()</TT>
+, and 
+<TT>getgrnam()</TT>
+).
+This means the rsync
+process in the chroot hierarchy will need to have access to the resources
+used by these library functions (traditionally /etc/passwd and
+/etc/group, but perhaps additional dynamic libraries as well).
+<DT><DD>
+If you copy the necessary resources into the modulecqs chroot area, you
+should protect them through your OScqs normal user/group or ACL settings (to
+prevent the rsync modulecqs user from being able to change them), and then
+hide them from the usercqs view via dqexcludedq (see how in the discussion of
+that parameter).  At that point it will be safe to enable the mapping of users
+and groups by name using the dqnumeric idsdq daemon parameter (see below).
+<DT><DD>
+Note also that you are free to setup custom user/group information in the
+chroot area that is different from your normal system.  For example, you
+could abbreviate the list of users and groups.
+<DT><DD>
+<DT><B>numeric ids</B><DD>
+Enabling this parameter disables the mapping
+of users and groups by name for the current daemon module.  This prevents
+the daemon from trying to load any user/group-related files or libraries.
+This enabling makes the transfer behave as if the client had passed
+the <B>--numeric-ids</B> command-line option.  By default, this parameter is
+enabled for chroot modules and disabled for non-chroot modules.
+<DT><DD>
+A chroot-enabled module should not have this parameter enabled unless youcqve
+taken steps to ensure that the module has the necessary resources it needs
+to translate names, and that it is not possible for a user to change those
+resources.
+<DT><DD>
+<DT><B>munge symlinks</B><DD>
+This parameter tells rsync to modify
+all symlinks in the same way as the (non-daemon-affecting)
+<B>--munge-links</B> command-line option (using a method described below).
+This should help protect your files from user trickery when
+your daemon module is writable.  The default is disabled when dquse chrootdq
+is on and the inside-chroot path is dq/dq, otherwise it is enabled.
+<DT><DD>
+If you disable this parameter on a daemon that is not read-only, there
+are tricks that a user can play with uploaded symlinks to access
+daemon-excluded items (if your module has any), and, if dquse chrootdq
+is off, rsync can even be tricked into showing or changing data that
+is outside the modulecqs path (as access-permissions allow).
+<DT><DD>
+The way rsync disables the use of symlinks is to prefix each one with
+the string dq/rsyncd-munged/dq.  This prevents the links from being used
+as long as that directory does not exist.  When this parameter is enabled,
+rsync will refuse to run if that path is a directory or a symlink to
+a directory.  When using the dqmunge symlinksdq parameter in a chroot area
+that has an inside-chroot path of dq/dq, you should add dq/rsyncd-munged/dq
+to the exclude setting for the module so that
+a user cancqt try to create it.
+<DT><DD>
+Note:  rsync makes no attempt to verify that any pre-existing symlinks in
+the modulecqs hierarchy are as safe as you want them to be (unless, of
+course, it just copied in the whole hierarchy).  If you setup an rsync
+daemon on a new area or locally add symlinks, you can manually protect your
+symlinks from being abused by prefixing dq/rsyncd-munged/dq to the start of
+every symlinkcqs value.  There is a perl script in the support directory
+of the source code named dqmunge-symlinksdq that can be used to add or remove
+this prefix from your symlinks.
+<DT><DD>
+When this parameter is disabled on a writable module and dquse chrootdq is off
+(or the inside-chroot path is not dq/dq),
+incoming symlinks will be modified to drop a leading slash and to remove dq..dq
+path elements that rsync believes will allow a symlink to escape the modulecqs
+hierarchy.  There are tricky ways to work around this, though, so you had
+better trust your users if you choose this combination of parameters.
+<DT><DD>
+<DT><B>charset</B><DD>
+This specifies the name of the character set in which the
+modulecqs filenames are stored.  If the client uses an <B>--iconv</B> option,
+the daemon will use the value of the dqcharsetdq parameter regardless of the
+character set the client actually passed.  This allows the daemon to
+support charset conversion in a chroot module without extra files in the
+chroot area, and also ensures that name-translation is done in a consistent
+manner.  If the dqcharsetdq parameter is not set, the <B>--iconv</B> option is
+refused, just as if dqiconvdq had been specified via dqrefuse optionsdq.
+<DT><DD>
+If you wish to force users to always use <B>--iconv</B> for a particular
+module, add dqno-iconvdq to the dqrefuse optionsdq parameter.  Keep in mind
+that this will restrict access to your module to very new rsync clients.
+<DT><DD>
+<DT><B>max connections</B><DD>
+This parameter allows you to
+specify the maximum number of simultaneous connections you will allow.
+Any clients connecting when the maximum has been reached will receive a
+message telling them to try later.  The default is 0, which means no limit.
+A negative value disables the module.
+See also the dqlock filedq parameter.
+<DT><DD>
+<DT><B>log file</B><DD>
+When the dqlog filedq parameter is set to a non-empty
+string, the rsync daemon will log messages to the indicated file rather
+than using syslog. This is particularly useful on systems (such as AIX)
+where 
+<TT>syslog()</TT>
+doesncqt work for chrooted programs.  The file is
+opened before 
+<TT>chroot()</TT>
+is called, allowing it to be placed outside
+the transfer.  If this value is set on a per-module basis instead of
+globally, the global log will still contain any authorization failures
+or config-file error messages.
+<DT><DD>
+If the daemon fails to open the specified file, it will fall back to
+using syslog and output an error about the failure.  (Note that the
+failure to open the specified log file used to be a fatal error.)
+<DT><DD>
+This setting can be overridden by using the <B>--log-file=FILE</B> or
+<B>--dparam=logfile=FILE</B> command-line options.  The former overrides
+all the log-file parameters of the daemon and all module settings.
+The latter sets the daemoncqs log file and the default for all the
+modules, which still allows modules to override the default setting.
+<DT><DD>
+<DT><B>syslog facility</B><DD>
+This parameter allows you to
+specify the syslog facility name to use when logging messages from the
+rsync daemon. You may use any standard syslog facility name which is
+defined on your system. Common names are auth, authpriv, cron, daemon,
+ftp, kern, lpr, mail, news, security, syslog, user, uucp, local0,
+local1, local2, local3, local4, local5, local6 and local7. The default
+is daemon.  This setting has no effect if the dqlog filedq setting is a
+non-empty string (either set in the per-modules settings, or inherited
+from the global settings).
+<DT><DD>
+<DT><B>max verbosity</B><DD>
+This parameter allows you to control
+the maximum amount of verbose information that youcqll allow the daemon to
+generate (since the information goes into the log file). The default is 1,
+which allows the client to request one level of verbosity.
+<DT><DD>
+<DT><B>lock file</B><DD>
+This parameter specifies the file to use to
+support the dqmax connectionsdq parameter. The rsync daemon uses record
+locking on this file to ensure that the max connections limit is not
+exceeded for the modules sharing the lock file.
+The default is <TT>/var/run/rsyncd.lock</TT>.
+<DT><DD>
+<DT><B>read only</B><DD>
+This parameter determines whether clients
+will be able to upload files or not. If dqread onlydq is true then any
+attempted uploads will fail. If dqread onlydq is false then uploads will
+be possible if file permissions on the daemon side allow them. The default
+is for all modules to be read only.
+<DT><DD>
+Note that dqauth usersdq can override this setting on a per-user basis.
+<DT><DD>
+<DT><B>write only</B><DD>
+This parameter determines whether clients
+will be able to download files or not. If dqwrite onlydq is true then any
+attempted downloads will fail. If dqwrite onlydq is false then downloads
+will be possible if file permissions on the daemon side allow them.  The
+default is for this parameter to be disabled.
+<DT><DD>
+<DT><B>list</B><DD>
+This parameter determines whether this module is
+listed when the client asks for a listing of available modules.  In addition,
+if this is false, the daemon will pretend the module does not exist
+when a client denied by dqhosts allowdq or dqhosts denydq attempts to access it.
+Realize that if dqreverse lookupdq is disabled globally but enabled for the
+module, the resulting reverse lookup to a potentially client-controlled DNS
+server may still reveal to the client that it hit an existing module.
+The default is for modules to be listable.
+<DT><DD>
+<DT><B>uid</B><DD>
+This parameter specifies the user name or user ID that
+file transfers to and from that module should take place as when the daemon
+was run as root. In combination with the dqgiddq parameter this determines what
+file permissions are available. The default when run by a super-user is to
+switch to the systemcqs dqnobodydq user.  The default for a non-super-user is to
+not try to change the user.  See also the dqgiddq parameter.
+<DT><DD>
+The RSYNC_USER_NAME environment variable may be used to request that rsync run
+as the authorizing user.  For example, if you want a rsync to run as the same
+user that was received for the rsync authentication, this setup is useful:
+<DT><DD>
+<PRE>
+    uid = %RSYNC_USER_NAME%
+    gid = * 
+</PRE>
+
+<P>
+<DT><DD>
+<DT><B>gid</B><DD>
+This parameter specifies one or more group names/IDs that will be
+used when accessing the module.  The first one will be the default group, and
+any extra ones be set as supplemental groups.  You may also specify a dq*dq as
+the first gid in the list, which will be replaced by all the normal groups for
+the transfercqs user (see dquiddq).  The default when run by a super-user is to
+switch to your OScqs dqnobodydq (or perhaps dqnogroupdq) group with no other
+supplementary groups.  The default for a non-super-user is to not change any
+group attributes (and indeed, your OS may not allow a non-super-user to try to
+change their group settings).
+<DT><DD>
+<DT><B>fake super</B><DD>
+Setting dqfake super = yesdq for a module causes the
+daemon side to behave as if the <B>--fake-super</B> command-line option had
+been specified.  This allows the full attributes of a file to be stored
+without having to have the daemon actually running as root.
+<DT><DD>
+<DT><B>filter</B><DD>
+The daemon has its own filter chain that determines what files
+it will let the client access.  This chain is not sent to the client and is
+independent of any filters the client may have specified.  Files excluded by
+the daemon filter chain (<B>daemon-excluded</B> files) are treated as non-existent
+if the client tries to pull them, are skipped with an error message if the
+client tries to push them (triggering exit code 23), and are never deleted from
+the module.  You can use daemon filters to prevent clients from downloading or
+tampering with private administrative files, such as files you may add to
+support uid/gid name translations.
+<DT><DD>
+The daemon filter chain is built from the dqfilterdq, dqinclude fromdq, dqincludedq,
+dqexclude fromdq, and dqexcludedq parameters, in that order of priority.  Anchored
+patterns are anchored at the root of the module.  To prevent access to an
+entire subtree, for example, dq/secretdq, you <I>must</I> exclude everything in the
+subtree; the easiest way to do this is with a triple-star pattern like
+dq/secret/***dq.
+<DT><DD>
+The dqfilterdq parameter takes a space-separated list of daemon filter rules,
+though it is smart enough to know not to split a token at an internal space in
+a rule (e.g. dq- /foo  - /bardq is parsed as two rules).  You may specify one or
+more merge-file rules using the normal syntax.  Only one dqfilterdq parameter can
+apply to a given module in the config file, so put all the rules you want in a
+single parameter.  Note that per-directory merge-file rules do not provide as
+much protection as global rules, but they can be used to make <B>--delete</B> work
+better during a client download operation if the per-dir merge files are
+included in the transfer and the client requests that they be used.
+<DT><DD>
+<DT><B>exclude</B><DD>
+This parameter takes a space-separated list of daemon
+exclude patterns.  As with the client <B>--exclude</B> option, patterns can be
+qualified with dq- dq or dq+ dq to explicitly indicate exclude/include.  Only one
+dqexcludedq parameter can apply to a given module.  See the dqfilterdq parameter
+for a description of how excluded files affect the daemon.
+<DT><DD>
+<DT><B>include</B><DD>
+Use an dqincludedq to override the effects of the dqexcludedq
+parameter.  Only one dqincludedq parameter can apply to a given module.  See the
+dqfilterdq parameter for a description of how excluded files affect the daemon.
+<DT><DD>
+<DT><B>exclude from</B><DD>
+This parameter specifies the name of a file
+on the daemon that contains daemon exclude patterns, one per line.  Only one
+dqexclude fromdq parameter can apply to a given module; if you have multiple
+exclude-from files, you can specify them as a merge file in the dqfilterdq
+parameter.  See the dqfilterdq parameter for a description of how excluded files
+affect the daemon.
+<DT><DD>
+<DT><B>include from</B><DD>
+Analogue of dqexclude fromdq for a file of daemon include
+patterns.  Only one dqinclude fromdq parameter can apply to a given module.  See
+the dqfilterdq parameter for a description of how excluded files affect the
+daemon.
+<DT><DD>
+<DT><B>incoming chmod</B><DD>
+This parameter allows you to specify a set of
+comma-separated chmod strings that will affect the permissions of all
+incoming files (files that are being received by the daemon).  These
+changes happen after all other permission calculations, and this will
+even override destination-default and/or existing permissions when the
+client does not specify <B>--perms</B>.
+See the description of the <B>--chmod</B> rsync option and the <B><A HREF="http://localhost/cgi-bin/man/man2html?1+chmod">chmod</A></B>(1)
+manpage for information on the format of this string.
+<DT><DD>
+<DT><B>outgoing chmod</B><DD>
+This parameter allows you to specify a set of
+comma-separated chmod strings that will affect the permissions of all
+outgoing files (files that are being sent out from the daemon).  These
+changes happen first, making the sent permissions appear to be different
+than those stored in the filesystem itself.  For instance, you could
+disable group write permissions on the server while having it appear to
+be on to the clients.
+See the description of the <B>--chmod</B> rsync option and the <B><A HREF="http://localhost/cgi-bin/man/man2html?1+chmod">chmod</A></B>(1)
+manpage for information on the format of this string.
+<DT><DD>
+<DT><B>auth users</B><DD>
+This parameter specifies a comma and/or space-separated
+list of authorization rules.  In its simplest form, you list the usernames
+that will be allowed to connect to
+this module. The usernames do not need to exist on the local
+system. The rules may contain shell wildcard characters that will be matched
+against the username provided by the client for authentication. If
+dqauth usersdq is set then the client will be challenged to supply a
+username and password to connect to the module. A challenge response
+authentication protocol is used for this exchange. The plain text
+usernames and passwords are stored in the file specified by the
+dqsecrets filedq parameter. The default is for all users to be able to
+connect without a password (this is called dqanonymous rsyncdq).
+<DT><DD>
+In addition to username matching, you can specify groupname matching via a cq@cq
+prefix.  When using groupname matching, the authenticating username must be a
+real user on the system, or it will be assumed to be a member of no groups.
+For example, specifying <A HREF="mailto:dq@rsyncdq">dq@rsyncdq</A> will match the authenticating user if the
+named user is a member of the rsync group.
+<DT><DD>
+Finally, options may be specified after a colon (:).  The options allow you to
+dqdenydq a user or a group, set the access to dqrodq (read-only), or set the access
+to dqrwdq (read/write).  Setting an auth-rule-specific ro/rw setting overrides
+the modulecqs dqread onlydq setting.
+<DT><DD>
+Be sure to put the rules in the order you want them to be matched, because the
+checking stops at the first matching user or group, and that is the only auth
+that is checked.  For example:
+<DT><DD>
+<PRE>
+  auth users = joe:deny @guest:deny admin:rw @rsync:ro susan joe sam 
+</PRE>
+
+<P>
+<DT><DD>
+In the above rule, user joe will be denied access no matter what.  Any user
+that is in the group dqguestdq is also denied access.  The user dqadmindq gets
+access in read/write mode, but only if the admin user is not in group dqguestdq
+(because the admin user-matching rule would never be reached if the user is in
+group dqguestdq).  Any other user who is in group dqrsyncdq will get read-only
+access.  Finally, users susan, joe, and sam get the ro/rw setting of the
+module, but only if the user didncqt match an earlier group-matching rule.
+<DT><DD>
+See the description of the secrets file for how you can have per-user passwords
+as well as per-group passwords.  It also explains how a user can authenticate
+using their user password or (when applicable) a group password, depending on
+what rule is being authenticated.
+<DT><DD>
+See also the section entitled dqUSING RSYNC-DAEMON FEATURES VIA A REMOTE
+SHELL CONNECTIONdq in <B><A HREF="http://localhost/cgi-bin/man/man2html?1+rsync">rsync</A></B>(1) for information on how handle an
+rsyncd.conf-level username that differs from the remote-shell-level
+username when using a remote shell to connect to an rsync daemon.
+<DT><DD>
+<DT><B>secrets file</B><DD>
+This parameter specifies the name of a file that contains
+the username:password and/or @groupname:password pairs used for authenticating
+this module. This file is only consulted if the dqauth usersdq parameter is
+specified.  The file is line-based and contains one name:password pair per
+line.  Any line has a hash (#) as the very first character on the line is
+considered a comment and is skipped.  The passwords can contain any characters
+but be warned that many operating systems limit the length of passwords that
+can be typed at the client end, so you may find that passwords longer than 8
+characters doncqt work.
+<DT><DD>
+The use of group-specific lines are only relevant when the module is being
+authorized using a matching <A HREF="mailto:dq@groupnamedq">dq@groupnamedq</A> rule.  When that happens, the user
+can be authorized via either their dqusername:passworddq line or the
+<A HREF="mailto:dq@groupname">dq@groupname</A>:passworddq line for the group that triggered the authentication.
+<DT><DD>
+It is up to you what kind of password entries you want to include, either
+users, groups, or both.  The use of group rules in dqauth usersdq does not
+require that you specify a group password if you do not want to use shared
+passwords.
+<DT><DD>
+There is no default for the dqsecrets filedq parameter, you must choose a name
+(such as <TT>/etc/rsyncd.secrets</TT>).  The file must normally not be readable
+by dqotherdq; see dqstrict modesdq.  If the file is not found or is rejected, no
+logins for a dquser authdq module will be possible.
+<DT><DD>
+<DT><B>strict modes</B><DD>
+This parameter determines whether or not
+the permissions on the secrets file will be checked.  If dqstrict modesdq is
+true, then the secrets file must not be readable by any user ID other
+than the one that the rsync daemon is running under.  If dqstrict modesdq is
+false, the check is not performed.  The default is true.  This parameter
+was added to accommodate rsync running on the Windows operating system.
+<DT><DD>
+<DT><B>hosts allow</B><DD>
+This parameter allows you to specify a
+list of patterns that are matched against a connecting clients
+hostname and IP address. If none of the patterns match then the
+connection is rejected.
+<DT><DD>
+Each pattern can be in one of five forms:
+<DT><DD>
+<DL COMPACT><DT><DD>
+<DL COMPACT>
+<DT>o<DD>
+a dotted decimal IPv4 address of the form a.b.c.d, or an IPv6 address
+of the form a:b:c::d:e:f. In this case the incoming machinecqs IP address
+must match exactly.
+<DT>o<DD>
+an address/mask in the form ipaddr/n where ipaddr is the IP address
+and n is the number of one bits in the netmask.  All IP addresses which
+match the masked IP address will be allowed in.
+<DT>o<DD>
+an address/mask in the form ipaddr/maskaddr where ipaddr is the
+IP address and maskaddr is the netmask in dotted decimal notation for IPv4,
+or similar for IPv6, e.g. ffff:ffff:ffff:ffff:: instead of /64. All IP
+addresses which match the masked IP address will be allowed in.
+<DT>o<DD>
+a hostname pattern using wildcards. If the hostname of the connecting IP
+(as determined by a reverse lookup) matches the wildcarded name (using the
+same rules as normal unix filename matching), the client is allowed in.  This
+only works if dqreverse lookupdq is enabled (the default).
+<DT>o<DD>
+a hostname. A plain hostname is matched against the reverse DNS of the
+connecting IP (if dqreverse lookupdq is enabled), and/or the IP of the given
+hostname is matched against the connecting IP (if dqforward lookupdq is
+enabled, as it is by default).  Any match will be allowed in.
+</DL>
+</DL>
+
+<P>
+<DT><DD>
+Note IPv6 link-local addresses can have a scope in the address specification:
+<DT><DD>
+<DL COMPACT><DT><DD>
+<TT>    fe80::1%link1</TT>
+<BR>
+
+<TT>    fe80::%link1/64</TT>
+<BR>
+
+<TT>    fe80::%link1/ffff:ffff:ffff:ffff::</TT>
+<BR>
+
+</DL>
+
+<P>
+<DT><DD>
+You can also combine dqhosts allowdq with a separate dqhosts denydq
+parameter. If both parameters are specified then the dqhosts allowdq parameter is
+checked first and a match results in the client being able to
+connect. The dqhosts denydq parameter is then checked and a match means
+that the host is rejected. If the host does not match either the
+dqhosts allowdq or the dqhosts denydq patterns then it is allowed to
+connect.
+<DT><DD>
+The default is no dqhosts allowdq parameter, which means all hosts can connect.
+<DT><DD>
+<DT><B>hosts deny</B><DD>
+This parameter allows you to specify a
+list of patterns that are matched against a connecting clients
+hostname and IP address. If the pattern matches then the connection is
+rejected. See the dqhosts allowdq parameter for more information.
+<DT><DD>
+The default is no dqhosts denydq parameter, which means all hosts can connect.
+<DT><DD>
+<DT><B>reverse lookup</B><DD>
+Controls whether the daemon performs a reverse lookup
+on the clientcqs IP address to determine its hostname, which is used for
+dqhosts allowdq/dqhosts denydq checks and the dq%hdq log escape.  This is enabled by
+default, but you may wish to disable it to save time if you know the lookup will
+not return a useful result, in which case the daemon will use the name
+dqUNDETERMINEDdq instead.
+<DT><DD>
+If this parameter is enabled globally (even by default), rsync performs the
+lookup as soon as a client connects, so disabling it for a module will not
+avoid the lookup.  Thus, you probably want to disable it globally and then
+enable it for modules that need the information.
+<DT><DD>
+<DT><B>forward lookup</B><DD>
+Controls whether the daemon performs a forward lookup
+on any hostname specified in an hosts allow/deny setting.  By default this is
+enabled, allowing the use of an explicit hostname that would not be returned
+by reverse DNS of the connecting IP.
+<DT><DD>
+<DT><B>ignore errors</B><DD>
+This parameter tells rsyncd to
+ignore I/O errors on the daemon when deciding whether to run the delete
+phase of the transfer. Normally rsync skips the <B>--delete</B> step if any
+I/O errors have occurred in order to prevent disastrous deletion due
+to a temporary resource shortage or other I/O error. In some cases this
+test is counter productive so you can use this parameter to turn off this
+behavior.
+<DT><DD>
+<DT><B>ignore nonreadable</B><DD>
+This tells the rsync daemon to completely
+ignore files that are not readable by the user. This is useful for
+public archives that may have some non-readable files among the
+directories, and the sysadmin doesncqt want those files to be seen at all.
+<DT><DD>
+<DT><B>transfer logging</B><DD>
+This parameter enables per-file
+logging of downloads and uploads in a format somewhat similar to that
+used by ftp daemons.  The daemon always logs the transfer at the end, so
+if a transfer is aborted, no mention will be made in the log file.
+<DT><DD>
+If you want to customize the log lines, see the dqlog formatdq parameter.
+<DT><DD>
+<DT><B>log format</B><DD>
+This parameter allows you to specify the
+format used for logging file transfers when transfer logging is enabled.
+The format is a text string containing embedded single-character escape
+sequences prefixed with a percent (%) character.  An optional numeric
+field width may also be specified between the percent and the escape
+letter (e.g. dq<B>%-50n %8l %07p</B>dq).
+In addition, one or more apostrophes may be specified prior to a numerical
+escape to indicate that the numerical value should be made more human-readable.
+The 3 supported levels are the same as for the <B>--human-readable</B>
+command-line option, though the default is for human-readability to be off.
+Each added apostrophe increases the level (e.g. dq<B>%''l %'b %f</B>dq).
+<DT><DD>
+The default log format is dq%o %h [%a] %m (%u) %f %ldq, and a dq%t [%p] dq
+is always prefixed when using the dqlog filedq parameter.
+(A perl script that will summarize this default log format is included
+in the rsync source code distribution in the dqsupportdq subdirectory:
+rsyncstats.)
+<DT><DD>
+The single-character escapes that are understood are as follows:
+<DT><DD>
+<DL COMPACT><DT><DD>
+<DL COMPACT>
+<DT>o<DD>
+%a the remote IP address (only available for a daemon)
+<DT>o<DD>
+%b the number of bytes actually transferred
+<DT>o<DD>
+%B the permission bits of the file (e.g. rwxrwxrwt)
+<DT>o<DD>
+%c the total size of the block checksums received for the basis file (only when sending)
+<DT>o<DD>
+%C the full-file MD5 checksum if <B>--checksum</B> is enabled or a file was transferred (only for protocol 30 or above).
+<DT>o<DD>
+%f the filename (long form on sender; no trailing dq/dq)
+<DT>o<DD>
+%G the gid of the file (decimal) or dqDEFAULTdq
+<DT>o<DD>
+%h the remote host name (only available for a daemon)
+<DT>o<DD>
+%i an itemized list of what is being updated
+<DT>o<DD>
+%l the length of the file in bytes
+<DT>o<DD>
+%L the string dq -&gt; SYMLINKdq, dq =&gt; HARDLINKdq, or dqdq (where <B>SYMLINK</B> or <B>HARDLINK</B> is a filename)
+<DT>o<DD>
+%m the module name
+<DT>o<DD>
+%M the last-modified time of the file
+<DT>o<DD>
+%n the filename (short form; trailing dq/dq on dir)
+<DT>o<DD>
+%o the operation, which is dqsenddq, dqrecvdq, or dqdel.dq (the latter includes the trailing period)
+<DT>o<DD>
+%p the process ID of this rsync session
+<DT>o<DD>
+%P the module path
+<DT>o<DD>
+%t the current date time
+<DT>o<DD>
+%u the authenticated username or an empty string
+<DT>o<DD>
+%U the uid of the file (decimal)
+</DL>
+</DL>
+
+<P>
+<DT><DD>
+For a list of what the characters mean that are output by dq%idq, see the
+<B>--itemize-changes</B> option in the rsync manpage.
+<DT><DD>
+Note that some of the logged output changes when talking with older
+rsync versions.  For instance, deleted files were only output as verbose
+messages prior to rsync 2.6.4.
+<DT><DD>
+<DT><B>timeout</B><DD>
+This parameter allows you to override the
+clients choice for I/O timeout for this module. Using this parameter you
+can ensure that rsync woncqt wait on a dead client forever. The timeout
+is specified in seconds. A value of zero means no timeout and is the
+default. A good choice for anonymous rsync daemons may be 600 (giving
+a 10 minute timeout).
+<DT><DD>
+<DT><B>refuse options</B><DD>
+This parameter allows you to
+specify a space-separated list of rsync command line options that will
+be refused by your rsync daemon.
+You may specify the full option name, its one-letter abbreviation, or a
+wild-card string that matches multiple options.
+For example, this would refuse <B>--checksum</B> (<B>-c</B>) and all the various
+delete options:
+<DT><DD>
+<DL COMPACT><DT><DD>
+<TT>    refuse options = c delete</TT>
+</DL>
+
+<P>
+<DT><DD>
+The reason the above refuses all delete options is that the options imply
+<B>--delete</B>, and implied options are refused just like explicit options.
+As an additional safety feature, the refusal of dqdeletedq also refuses
+<B>remove-source-files</B> when the daemon is the sender; if you want the latter
+without the former, instead refuse dqdelete-*dq -- that refuses all the
+delete modes without affecting <B>--remove-source-files</B>.
+<DT><DD>
+When an option is refused, the daemon prints an error message and exits.
+To prevent all compression when serving files,
+you can use dqdont compress = *dq (see below)
+instead of dqrefuse options = compressdq to avoid returning an error to a
+client that requests compression.
+<DT><DD>
+<DT><B>dont compress</B><DD>
+This parameter allows you to select
+filenames based on wildcard patterns that should not be compressed
+when pulling files from the daemon (no analogous parameter exists to
+govern the pushing of files to a daemon).
+Compression is expensive in terms of CPU usage, so it
+is usually good to not try to compress files that woncqt compress well,
+such as already compressed files.
+<DT><DD>
+The dqdont compressdq parameter takes a space-separated list of
+case-insensitive wildcard patterns. Any source filename matching one
+of the patterns will not be compressed during transfer.
+<DT><DD>
+See the <B>--skip-compress</B> parameter in the <B><A HREF="http://localhost/cgi-bin/man/man2html?1+rsync">rsync</A></B>(1) manpage for the list
+of file suffixes that are not compressed by default.  Specifying a value
+for the dqdont compressdq parameter changes the default when the daemon is
+the sender.
+<DT><DD>
+<DT><B>pre-xfer exec</B>, <B>post-xfer exec</B><DD>
+You may specify a command to be run
+before and/or after the transfer.  If the <B>pre-xfer exec</B> command fails, the
+transfer is aborted before it begins.  Any output from the script on stdout (up
+to several KB) will be displayed to the user when aborting, but is NOT
+displayed if the script returns success.  Any output from the script on stderr
+goes to the daemoncqs stderr, which is typically discarded (though see
+--no-detatch option for a way to see the stderr output, which can assist with
+debugging).
+<DT><DD>
+The following environment variables will be set, though some are
+specific to the pre-xfer or the post-xfer environment:
+<DT><DD>
+<DL COMPACT><DT><DD>
+<DL COMPACT>
+<DT>o<DD>
+<B>RSYNC_MODULE_NAME</B>: The name of the module being accessed.
+<DT>o<DD>
+<B>RSYNC_MODULE_PATH</B>: The path configured for the module.
+<DT>o<DD>
+<B>RSYNC_HOST_ADDR</B>: The accessing hostcqs IP address.
+<DT>o<DD>
+<B>RSYNC_HOST_NAME</B>: The accessing hostcqs name.
+<DT>o<DD>
+<B>RSYNC_USER_NAME</B>: The accessing usercqs name (empty if no user).
+<DT>o<DD>
+<B>RSYNC_PID</B>: A unique number for this transfer.
+<DT>o<DD>
+<B>RSYNC_REQUEST</B>: (pre-xfer only) The module/path info specified
+by the user.  Note that the user can specify multiple source files,
+so the request can be something like dqmod/path1 mod/path2dq, etc.
+<DT>o<DD>
+<B>RSYNC_ARG#</B>: (pre-xfer only) The pre-request arguments are set
+in these numbered values. RSYNC_ARG0 is always dqrsyncddq, followed by
+the options that were used in RSYNC_ARG1, and so on.  There will be a
+value of dq.dq indicating that the options are done and the path args
+are beginning -- these contain similar information to RSYNC_REQUEST,
+but with values separated and the module name stripped off.
+<DT>o<DD>
+<B>RSYNC_EXIT_STATUS</B>: (post-xfer only) the server sidecqs exit value.
+This will be 0 for a successful run, a positive value for an error that the
+server generated, or a -1 if rsync failed to exit properly.  Note that an
+error that occurs on the client side does not currently get sent to the
+server side, so this is not the final exit status for the whole transfer.
+<DT>o<DD>
+<B>RSYNC_RAW_STATUS</B>: (post-xfer only) the raw exit value from 
+<TT>waitpid()</TT>
+.
+</DL>
+</DL>
+
+<P>
+<DT><DD>
+Even though the commands can be associated with a particular module, they
+are run using the permissions of the user that started the daemon (not the
+modulecqs uid/gid setting) without any chroot restrictions.
+<DT><DD>
+</DL>
+<A NAME="lbAI">&nbsp;</A>
+<H2>CONFIG DIRECTIVES</H2>
+
+<P>
+<P>
+
+There are currently two config directives available that allow a config file to
+incorporate the contents of other files:  <B>&amp;include</B> and <B>&amp;merge</B>.  Both
+allow a reference to either a file or a directory.  They differ in how
+segregated the filecqs contents are considered to be.
+<P>
+
+The <B>&amp;include</B> directive treats each file as more distinct, with each one
+inheriting the defaults of the parent file, starting the parameter parsing
+as globals/defaults, and leaving the defaults unchanged for the parsing of
+the rest of the parent file.
+<P>
+
+The <B>&amp;merge</B> directive, on the other hand, treats the filecqs contents as
+if it were simply inserted in place of the directive, and thus it can set
+parameters in a module started in another file, can affect the defaults for
+other files, etc.
+<P>
+
+When an <B>&amp;include</B> or <B>&amp;merge</B> directive refers to a directory, it will read
+in all the <B>*.conf</B> or <B>*.inc</B> files (respectively) that are contained inside
+that directory (without any
+recursive scanning), with the files sorted into alpha order.  So, if you have a
+directory named dqrsyncd.ddq with the files dqfoo.confdq, dqbar.confdq, and
+dqbaz.confdq inside it, this directive:
+<P>
+
+<PRE>
+    &amp;include /path/rsyncd.d 
+</PRE>
+
+<P>
+<P>
+
+would be the same as this set of directives:
+<P>
+
+<PRE>
+    &amp;include /path/rsyncd.d/bar.conf
+    &amp;include /path/rsyncd.d/baz.conf
+    &amp;include /path/rsyncd.d/foo.conf 
+</PRE>
+
+<P>
+<P>
+
+except that it adjusts as files are added and removed from the directory.
+<P>
+
+The advantage of the <B>&amp;include</B> directive is that you can define one or more
+modules in a separate file without worrying about unintended side-effects
+between the self-contained module files.
+<P>
+
+The advantage of the <B>&amp;merge</B> directive is that you can load config snippets
+that can be included into multiple module definitions, and you can also set
+global values that will affect connections (such as <B>motd file</B>), or globals
+that will affect other include files.
+<P>
+
+For example, this is a useful /etc/rsyncd.conf file:
+<P>
+
+<PRE>
+    port = 873
+    log file = /var/log/rsync.log
+    pid file = /var/lock/rsync.lock
+
+    &amp;merge /etc/rsyncd.d
+    &amp;include /etc/rsyncd.d 
+</PRE>
+
+<P>
+<P>
+
+This would merge any /etc/rsyncd.d/*.inc files (for global values that should
+stay in effect), and then include any /etc/rsyncd.d/*.conf files (defining
+modules without any global-value cross-talk).
+<P>
+
+<A NAME="lbAJ">&nbsp;</A>
+<H2>AUTHENTICATION STRENGTH</H2>
+
+<P>
+<P>
+
+The authentication protocol used in rsync is a 128 bit MD4 based
+challenge response system. This is fairly weak protection, though (with
+at least one brute-force hash-finding algorithm publicly available), so
+if you want really top-quality security, then I recommend that you run
+rsync over ssh.  (Yes, a future version of rsync will switch over to a
+stronger hashing method.)
+<P>
+
+Also note that the rsync daemon protocol does not currently provide any
+encryption of the data that is transferred over the connection. Only
+authentication is provided. Use ssh as the transport if you want
+encryption.
+<P>
+
+Future versions of rsync may support SSL for better authentication and
+encryption, but that is still being investigated.
+<P>
+
+<A NAME="lbAK">&nbsp;</A>
+<H2>EXAMPLES</H2>
+
+<P>
+<P>
+
+A simple rsyncd.conf file that allow anonymous rsync to a ftp area at
+<TT>/home/ftp</TT> would be:
+<P>
+
+<PRE>
+
+[ftp]
+        path = /home/ftp
+        comment = ftp export area
+
+</PRE>
+
+<P>
+<P>
+
+A more sophisticated example would be:
+<P>
+
+<PRE>
+
+uid = nobody
+gid = nobody
+use chroot = yes
+max connections = 4
+syslog facility = local5
+pid file = /var/run/rsyncd.pid
+
+[ftp]
+        path = /var/ftp/./pub
+        comment = whole ftp area (approx 6.1 GB)
+
+[sambaftp]
+        path = /var/ftp/./pub/samba
+        comment = Samba ftp area (approx 300 MB)
+
+[rsyncftp]
+        path = /var/ftp/./pub/rsync
+        comment = rsync ftp area (approx 6 MB)
+
+[sambawww]
+        path = /public_html/samba
+        comment = Samba WWW pages (approx 240 MB)
+
+[cvs]
+        path = /data/cvs
+        comment = CVS repository (requires authentication)
+        auth users = tridge, susan
+        secrets file = /etc/rsyncd.secrets
+
+</PRE>
+
+<P>
+<P>
+
+The /etc/rsyncd.secrets file would look something like this:
+<P>
+
+<DL COMPACT><DT><DD>
+<TT>tridge:mypass</TT>
+<BR>
+
+<TT>susan:herpass</TT>
+<BR>
+
+</DL>
+
+<P>
+<P>
+
+<A NAME="lbAL">&nbsp;</A>
+<H2>FILES</H2>
+
+<P>
+<P>
+
+/etc/rsyncd.conf or rsyncd.conf
+<P>
+
+<A NAME="lbAM">&nbsp;</A>
+<H2>SEE ALSO</H2>
+
+<P>
+<P>
+
+<B><A HREF="http://localhost/cgi-bin/man/man2html?1+rsync">rsync</A></B>(1)
+<P>
+
+<A NAME="lbAN">&nbsp;</A>
+<H2>DIAGNOSTICS</H2>
+
+<P>
+<P>
+
+<A NAME="lbAO">&nbsp;</A>
+<H2>BUGS</H2>
+
+<P>
+<P>
+
+Please report bugs! The rsync bug tracking system is online at
+<A HREF="http://rsync.samba.org/">http://rsync.samba.org/</A>
+<P>
+
+<A NAME="lbAP">&nbsp;</A>
+<H2>VERSION</H2>
+
+<P>
+<P>
+
+This man page is current for version 3.1.1pre1 of rsync.
+<P>
+
+<A NAME="lbAQ">&nbsp;</A>
+<H2>CREDITS</H2>
+
+<P>
+<P>
+
+rsync is distributed under the GNU General Public License.  See the file
+COPYING for details.
+<P>
+
+The primary ftp site for rsync is
+<A HREF="ftp://rsync.samba.org/pub/rsync.">ftp://rsync.samba.org/pub/rsync.</A>
+<P>
+
+A WEB site is available at
+<A HREF="http://rsync.samba.org/">http://rsync.samba.org/</A>
+<P>
+
+We would be delighted to hear from you if you like this program.
+<P>
+
+This program uses the zlib compression library written by Jean-loup
+Gailly and Mark Adler.
+<P>
+
+<A NAME="lbAR">&nbsp;</A>
+<H2>THANKS</H2>
+
+<P>
+<P>
+
+Thanks to Warren Stanley for his original idea and patch for the rsync
+daemon. Thanks to Karsten Thygesen for his many suggestions and
+documentation!
+<P>
+
+<A NAME="lbAS">&nbsp;</A>
+<H2>AUTHOR</H2>
+
+<P>
+<P>
+
+rsync was written by Andrew Tridgell and Paul Mackerras.
+Many people have later contributed to it.
+<P>
+
+Mailing lists for support and development are available at
+<A HREF="http://lists.samba.org">http://lists.samba.org</A>
+<P>
+
+<HR>
+<A NAME="index">&nbsp;</A><H2>Index</H2>
+<DL>
+<DT><A HREF="#lbAB">NAME</A><DD>
+<DT><A HREF="#lbAC">SYNOPSIS</A><DD>
+<DT><A HREF="#lbAD">DESCRIPTION</A><DD>
+<DT><A HREF="#lbAE">FILE FORMAT</A><DD>
+<DT><A HREF="#lbAF">LAUNCHING THE RSYNC DAEMON</A><DD>
+<DT><A HREF="#lbAG">GLOBAL PARAMETERS</A><DD>
+<DT><A HREF="#lbAH">MODULE PARAMETERS</A><DD>
+<DT><A HREF="#lbAI">CONFIG DIRECTIVES</A><DD>
+<DT><A HREF="#lbAJ">AUTHENTICATION STRENGTH</A><DD>
+<DT><A HREF="#lbAK">EXAMPLES</A><DD>
+<DT><A HREF="#lbAL">FILES</A><DD>
+<DT><A HREF="#lbAM">SEE ALSO</A><DD>
+<DT><A HREF="#lbAN">DIAGNOSTICS</A><DD>
+<DT><A HREF="#lbAO">BUGS</A><DD>
+<DT><A HREF="#lbAP">VERSION</A><DD>
+<DT><A HREF="#lbAQ">CREDITS</A><DD>
+<DT><A HREF="#lbAR">THANKS</A><DD>
+<DT><A HREF="#lbAS">AUTHOR</A><DD>
+</DL>
+<HR>
+This document was created by
+<A HREF="http://localhost/cgi-bin/man/man2html">man2html</A>,
+using the manual pages.<BR>
+Time: 18:48:52 GMT, April 18, 2014
+</BODY>
+</HTML>

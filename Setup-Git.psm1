@@ -7,7 +7,7 @@ function Setup-Git {
 	git config --global difftool.prompt false
 	git config --global mergetool.prompt false
 	git config --global mergetool.keepbackup false
-	git config --global core.safecrlf "warn"
+	git config --global core.safecrlf "false"
 	# rebase on pull instead of merge
 	git config --global branch.autosetuprebase always 
 	
@@ -20,6 +20,7 @@ function Setup-Git {
 	git config --global alias.cb 'checkout -b'
 	git config --global alias.ct '!powershell -ExecutionPolicy ByPass Checkout-And-Track'
 	git config --global alias.ci 'commit -m'
+  git config --global alias.ca '!git add -A . && git status -s && git commit -m'
 	git config --global alias.s 'status -s'
 	
   	# Branching Aliases
