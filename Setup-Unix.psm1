@@ -5,7 +5,11 @@
 #
 ###########################
 
-Set-Alias which get-command
+#Set-Alias which get-command
+
+function which($name) {
+    Get-Command $name | Select-Object -ExpandProperty Definition
+}
 
 ###########################
 #
@@ -177,4 +181,4 @@ function Get-NetworkStatistics
 
 Set-Alias listen Get-NetworkStatistics
 
-Export-ModuleMember grep, head, rm, wc, Get-NetworkStatistics -Alias which, listen
+Export-ModuleMember grep, head, rm, wc, which, Get-NetworkStatistics -Alias which, listen
