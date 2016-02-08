@@ -29,6 +29,10 @@ if(Test-Path $script:rsync_path) {
 
 $env:SSL_CERT_FILE = Join-Path $pwd cacert.pem
 
+# set vagrant default provider
+# https://www.vagrantup.com/docs/providers/default.html
+$env:VAGRANT_DEFAULT_PROVIDER = "vmware_workstation"
+
 ###########################
 #
 # Load all modules
