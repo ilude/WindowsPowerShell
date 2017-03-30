@@ -8,6 +8,7 @@ function Setup-Git {
 	git config --global mergetool.prompt false
 	git config --global mergetool.keepbackup false
 	git config --global core.safecrlf "false"
+  git config --global fetch.prune true
 	# rebase on pull instead of merge
 	git config --global branch.autosetuprebase always 
 	
