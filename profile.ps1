@@ -113,4 +113,7 @@ function TabExpansion($line, $lastWord) {
     }
 }
 
+# https://github.com/samneirinck/posh-docker
+Import-Module posh-docker
+
 #Check-RemoteRepository $pwd -verbose
