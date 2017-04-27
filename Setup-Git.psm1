@@ -1,5 +1,6 @@
 function Setup-Git {
-	git config --global core.autocrlf true
+	git config --global core.eol lf
+  git config --global core.autocrlf input
 	git config --global core.editor "'$(get-editor)' -w"
 	git config --global mergetool.p4merge.trustexitcode false
 	git config --global merge.tool p4merge
@@ -7,7 +8,6 @@ function Setup-Git {
 	git config --global difftool.prompt false
 	git config --global mergetool.prompt false
 	git config --global mergetool.keepbackup false
-	git config --global core.safecrlf "false"
   git config --global fetch.prune true
 	# rebase on pull instead of merge
 	git config --global branch.autosetuprebase always 

@@ -42,12 +42,12 @@ function dkd {
 
 # Run interactive container, e.g., $dki base /bin/bash
 function dki {
-  docker run -i -t -P $args
+  docker run --rm -i -t -P $args /bin/bash
 }
 
 # Execute interactive container, e.g., $dex base /bin/bash
 function dex {
-  docker exec -i -t $args
+  docker exec -it $args
 }
 
 # delete all non running containers
