@@ -1,17 +1,17 @@
 # Directory where this file is located
-$script:pwd = Split-Path $MyInvocation.MyCommand.Path
+$script:current_directory = Split-Path $MyInvocation.MyCommand.Path
 
 $script:powershell_path = "C:\Windows\System32\WindowsPowerShell\v1.0".ToLower()
 if((-Not $env:path.ToLower().contains($script:powershell_path)) -And (Test-Path $script:powershell_path)) {
   $env:path = "$env:path;$script:powershell_path"
 }
 
-$script:rsync_path = Join-Path $script:pwd 'rsync'
+$script:rsync_path = Join-Path $script:current_directory 'rsync'
 if(Test-Path $script:rsync_path) {
   $env:path = "$env:path;$script:rsync_path"
 }
 
-$env:SSL_CERT_FILE = Join-Path $script:pwd cacert.pem
+$env:SSL_CERT_FILE = Join-Path $script:current_directory cacert.pem
 
 # set vagrant default provider
 # https://www.vagrantup.com/docs/providers/default.html
@@ -23,7 +23,7 @@ $env:VAGRANT_DEFAULT_PROVIDER = "hyperv"
 #
 ###########################
 
-Get-ChildItem $script:pwd *.psm1 | foreach {
+Get-ChildItem $script:current_directory *.psm1 | foreach {
 	Import-Module $_.VersionInfo.FileName -DisableNameChecking -verbose:$false
 }
 
@@ -63,13 +63,13 @@ function prompt {
 		Write-Host $branch -nonewline -foregroundcolor Cyan
 		Write-Host ']' -nonewline -foregroundcolor Yellow
 		
-		$host.UI.RawUi.WindowTitle = "Git:$userLocation - $script:pwd"
+		$host.UI.RawUi.WindowTitle = "Git:$userLocation - $script:current_directory"
 	}
-	elseif ($userLocation -eq $script:pwd) {
-		$host.UI.RawUi.WindowTitle = "$script:pwd"
+	elseif ($userLocation -eq $script:current_directory) {
+		$host.UI.RawUi.WindowTitle = "$script:current_directory"
 	}
 	else {
-		$host.UI.RawUi.WindowTitle = "$userLocation - $script:pwd"
+		$host.UI.RawUi.WindowTitle = "$userLocation - $script:current_directory"
 	}
     
 	$LASTEXITCODE = $realLASTEXITCODE
