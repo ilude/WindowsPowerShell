@@ -10,10 +10,10 @@ function Reload-Module($ModuleName) {
 		remove-module $ModuleName
 		Write-Verbose "Module $ModuleName Unloaded"
 		
-		$pwd = Get-ScriptDirectory
+		$current_directory = Get-ScriptDirectory
 		$file_path = $ModuleName;
-		if(Test-Path (join-Path $pwd "$ModuleName.psm1")) {
-			$file_path = (join-Path $pwd "$ModuleName.psm1")
+		if(Test-Path (join-Path $current_directory "$ModuleName.psm1")) {
+			$file_path = (join-Path $current_directory "$ModuleName.psm1")
 		}
 		
 		import-module "$file_path" -DisableNameChecking -verbose:$false

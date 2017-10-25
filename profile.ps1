@@ -1,33 +1,17 @@
 # Directory where this file is located
 $script:pwd = Split-Path $MyInvocation.MyCommand.Path
 
-# $paths = Join-Path $pwd paths.txt
-# if(Test-Path $paths) {
-# 	Get-Content $paths | foreach {
-# 		if(Test-Path $_) {
-# 			$env:Path += ";" + $_
-# 		}
-# 	}
-# }
-
 $script:powershell_path = "C:\Windows\System32\WindowsPowerShell\v1.0".ToLower()
 if((-Not $env:path.ToLower().contains($script:powershell_path)) -And (Test-Path $script:powershell_path)) {
   $env:path = "$env:path;$script:powershell_path"
 }
 
-$script:rsync_path = Join-Path $pwd 'rsync'
+$script:rsync_path = Join-Path $script:pwd 'rsync'
 if(Test-Path $script:rsync_path) {
   $env:path = "$env:path;$script:rsync_path"
 }
 
-
-# $devkit = "C:\opscode\chefdk\embedded\"
-# if(Test-Path $devkit) {
-# 	$env:RI_DEVKIT = "$devkit"
-# 	$env:path = "$devkit\bin;$devkit\mingw\bin;$env:path"
-# }
-
-$env:SSL_CERT_FILE = Join-Path $pwd cacert.pem
+$env:SSL_CERT_FILE = Join-Path $script:pwd cacert.pem
 
 # set vagrant default provider
 # https://www.vagrantup.com/docs/providers/default.html
@@ -39,7 +23,7 @@ $env:VAGRANT_DEFAULT_PROVIDER = "hyperv"
 #
 ###########################
 
-Get-ChildItem $pwd *.psm1 | foreach {
+Get-ChildItem $script:pwd *.psm1 | foreach {
 	Import-Module $_.VersionInfo.FileName -DisableNameChecking -verbose:$false
 }
 
@@ -79,13 +63,13 @@ function prompt {
 		Write-Host $branch -nonewline -foregroundcolor Cyan
 		Write-Host ']' -nonewline -foregroundcolor Yellow
 		
-		$host.UI.RawUi.WindowTitle = "Git:$userLocation - $pwd"
+		$host.UI.RawUi.WindowTitle = "Git:$userLocation - $script:pwd"
 	}
-	elseif ($userLocation -eq $pwd) {
-		$host.UI.RawUi.WindowTitle = "$pwd"
+	elseif ($userLocation -eq $script:pwd) {
+		$host.UI.RawUi.WindowTitle = "$script:pwd"
 	}
 	else {
-		$host.UI.RawUi.WindowTitle = "$userLocation - $pwd"
+		$host.UI.RawUi.WindowTitle = "$userLocation - $script:pwd"
 	}
     
 	$LASTEXITCODE = $realLASTEXITCODE
@@ -115,5 +99,3 @@ function TabExpansion($line, $lastWord) {
 
 # https://github.com/samneirinck/posh-docker
 Import-Module posh-docker
-
-#Check-RemoteRepository $pwd -verbose

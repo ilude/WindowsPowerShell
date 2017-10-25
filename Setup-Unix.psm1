@@ -29,7 +29,7 @@ function grep {
 		[switch]$l  # List filenames
 	)
 
-	$path = $pwd 
+	$path = $(pwd) 
 
 	# need to add filter for files only, no directories
 	$files = Get-ChildItem $path -include "$filefilter" -recurse:$r 
