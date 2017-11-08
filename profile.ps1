@@ -97,5 +97,7 @@ function TabExpansion($line, $lastWord) {
     }
 }
 
-# https://github.com/samneirinck/posh-docker
-Import-Module posh-docker
+if (Get-Module -ListAvailable -Name posh-docker) {
+  # https://github.com/samneirinck/posh-docker
+  Import-Module posh-docker
+} 
