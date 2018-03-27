@@ -1,6 +1,6 @@
 function Setup-Git {
 	git config --global core.eol lf
-  	git config --global core.autocrlf input
+  git config --global core.autocrlf input
 	git config --global core.editor "'$(get-editor)' -w"
 	git config --global mergetool.p4merge.trustexitcode false
 	git config --global merge.tool p4merge
@@ -8,7 +8,7 @@ function Setup-Git {
 	git config --global difftool.prompt false
 	git config --global mergetool.prompt false
 	git config --global mergetool.keepbackup false
-  	git config --global fetch.prune true
+  git config --global fetch.prune true
 	# rebase on pull instead of merge
 	git config --global branch.autosetuprebase always 
 	
@@ -21,12 +21,12 @@ function Setup-Git {
 	git config --global alias.cb 'checkout -b'
 	git config --global alias.ct '!powershell -ExecutionPolicy ByPass Checkout-And-Track'
 	git config --global alias.ci 'commit -m'
-  	git config --global alias.ca '!git add -A . && git status -s && git commit -m'
+  git config --global alias.ca '!git add -A . && git status -s && git commit -m'
 	git config --global alias.s 'status -s'
 	
   	# Branching Aliases
 	git config --global alias.br branch
-  	git config --global alias.db '!powershell -ExecutionPolicy ByPass Delete-Branch'
+  git config --global alias.db '!powershell -ExecutionPolicy ByPass Delete-Branch'
 	git config --global alias.dlb '!powershell -ExecutionPolicy ByPass Delete-Branch -l'
 	git config --global alias.drb '!powershell -ExecutionPolicy ByPass Delete-Branch -r'
 	git config --global alias.track '!powershell -ExecutionPolicy ByPass Track-Branches'
