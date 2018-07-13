@@ -36,6 +36,7 @@ function Setup-Git {
 	git config --global alias.dlt '!powershell -ExecutionPolicy ByPass Delete-Tag -l'
 	git config --global alias.drt '!powershell -ExecutionPolicy ByPass Delete-Tag -r'
 	git config --global alias.mark '!powershell -ExecutionPolicy ByPass TagDeployment'
+	git config --global alias.ts 'tag -n10'
   
 	git config --global alias.unstage 'reset .'
 	git config --global alias.aa "!git add -A . && git status -s"
