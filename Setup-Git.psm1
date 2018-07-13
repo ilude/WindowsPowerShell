@@ -262,35 +262,14 @@ function Delete-Tag {
 	)
   
   if($r -and -not $l) {
-    if(Test-Tag -r $name) {
-      git push origin :refs/tags/$name
-    }
-    else {
-      Write-Warning "Tag $name does not exist in the remote repository!"
-    }
+    git push --delete origin $name
   }
   elseif($l -and -not $r) {
-    if(Test-Tag $name) {
-      git tag -d $name
-    }
-    else {
-      Write-Warning "Tag $name does not exist in the local repository!"
-    }
+    git tag -d $name
   }
   else {
-    if(Test-Tag -r $name) {
-      git push origin :refs/tags/$name
-    }
-    else {
-      Write-Warning "Tag $name does not exist in the remote repository!"
-    }
-    
-    if(Test-Tag $name) {
-      git tag -d $name
-    }
-    else {
-      Write-Warning "Tag $name does not exist in the local repository!"
-    }
+		git push --delete origin $name
+    git tag -d $name
   }
 }
 
