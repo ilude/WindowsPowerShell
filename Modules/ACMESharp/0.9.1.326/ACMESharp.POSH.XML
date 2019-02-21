@@ -1,0 +1,820 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ACMESharp.POSH</name>
+    </assembly>
+    <members>
+        <member name="T:ACMESharp.POSH.AcmeCmdlet">
+            <summary>
+            Base class for all ACMESharp cmdlets implementing common logic.
+            </summary>
+        </member>
+        <member name="T:ACMESharp.POSH.GetCertificate">
+            <summary>
+            <para type="synopsis">
+              Gets the status and details of a Certificate stored in the Vault.
+            </para>
+            <para type="description">
+              This cmdlet retrieves the details of a Certificate defined in the Vault.
+              It is also used to export various artificates associated with the Certificate
+              to various formats.
+            </para>
+            <para type="link">New-Certificate</para>
+            <para type="link">Submit-Certificate</para>
+            <para type="link">Update-Certificate</para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.GetCertificate.CertificateRef">
+            <summary>
+            <para type="description">
+                A reference (ID or alias) to a previously defined Certificate request.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.GetCertificate.ExportKeyPEM">
+            <summary>
+            <para type="description">
+                Optionally, specifies a file path where the private key associated
+                with the referenced Certificate will be saved in PEM format.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.GetCertificate.ExportCsrPEM">
+            <summary>
+            <para type="description">
+                Optionally, specifies a file path where the CSR associated
+                with the referenced Certificate will be saved in PEM format.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.GetCertificate.ExportCertificatePEM">
+            <summary>
+            <para type="description">
+                Optionally, specifies a file path where the referenced Certificate
+                will be saved in PEM format.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.GetCertificate.ExportCertificateDER">
+            <summary>
+            <para type="description">
+                Optionally, specifies a file path where the referenced Certificate
+                will be saved in DER format.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.GetCertificate.ExportIssuerPEM">
+            <summary>
+            <para type="description">
+                Optionally, specifies a file path where the referenced Issuer
+                Certificate will be saved in PEM format.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.GetCertificate.ExportIssuerDER">
+            <summary>
+            <para type="description">
+                Optionally, specifies a file path where the referenced Issuer
+                Certificate will be saved in DER format.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.GetCertificate.ExportPkcs12">
+            <summary>
+            <para type="description">
+                Optionally, specifies a file path where the referenced Certificate
+                and related artifacts will be saved into a PKCS#12 archive format.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.GetCertificate.CertificatePassword">
+            <summary>
+            <para type="description">
+                Optionally, specifies a password to use to secure an exported
+                PKCS#12 archive file.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.GetCertificate.Overwrite">
+            <summary>
+            <para type="description">
+                This flag indicates that any existing files matching any of the
+                requested export parameter paths will be overwritten.  If not
+                specified, existing files will cause this cmdlet to error.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.GetCertificate.VaultProfile">
+            <summary>
+            <para type="description">
+                Specifies a Vault profile name that will resolve to the Vault instance to be
+                used for all related operations and storage/retrieval of all related assets.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.GetCertificate.PkiTool">
+            <summary>
+            <para type="description">
+                Specifies a PKI tool provider (i.e. CertificateProvider) to be used in
+                all PKI related operations such as private key generation, CSR generation
+                and certificate importing and exporting.  If left unspecified a default
+                PKI tool provider will be used.
+            </para>
+            </summary>
+        </member>
+        <member name="T:ACMESharp.POSH.GetIdentifier">
+            <summary>
+            <para type="synopsis">Lists all, or retrieves details for, Identifiers submitted for
+                verification.</para>
+            <para type="description">
+              Use this cmdlet to list all of the Identifier that have been previously
+              defined and submitted to the ACME CA Server of the current Vault.  You
+              also use this cmdlet to specify specific Identifier references (ID or alias)
+              to retrieve more specific details as they are captured in the Vault.
+            </para>
+            <para type="link">New-Identifier</para>
+            <para type="link">Update-Identifier</para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.GetIdentifier.IdentifierRef">
+            <summary>
+            <para type="description">
+                A reference (ID or alias) to a previously defined Identifier submitted
+                to the ACME CA Server for verification.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.GetIdentifier.VaultProfile">
+            <summary>
+            <para type="description">
+                Specifies a Vault profile name that will resolve to the Vault instance to be
+                used for all related operations and storage/retrieval of all related assets.
+            </para>
+            </summary>
+        </member>
+        <member name="T:ACMESharp.POSH.CompleteChallenge">
+            <summary>
+            <para type="synopsis">Completes a Challenge using a prescribed Handler.</para>
+            <para type="description">
+              Use this cmdlet to complete a Challenge associated with an Identifier
+              defined in an ACMESharp Vault that has been submitted for verification
+              to an ACME CA Server.
+            </para>
+            <para type="link">Get-ChallengeHandlerProfile</para>
+            <para type="link">Set-ChallengeHandlerProfile</para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.CompleteChallenge.IdentifierRef">
+            <summary>
+            <para type="description">
+                A reference (ID or alias) to a previously defined Identifier submitted
+                to the ACME CA Server for verification.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.CompleteChallenge.HandlerProfileRef">
+            <summary>
+            <para type="description">
+                Specifies a reference (ID or alias) to a previously defined Challenge
+                Handler profile in the associated Vault that defines the Handler
+                provider and associated instance parameters that should be used to
+                resolve the Challenge.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.CompleteChallenge.ChallengeType">
+            <summary>
+            <para type="description">
+                Specifies the ACME Challenge type that should be handled.  This type
+                is expected to be found in the list of Challenges returned by the
+                ACME CA Server for the associated Identifier.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.CompleteChallenge.Handler">
+            <summary>
+            <para type="description">
+                Specifies the Challenge Handler instance provider that will be used to
+                handle the associated Challenge.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.CompleteChallenge.HandlerParameters">
+            <summary>
+            <para type="description">
+                Specifies the parameters that will be passed to the Challenge Handler
+                instance that will be used to handle the associated Challenge.
+            </para>
+            <para type="description">
+                If this cmdlet is invoked *in-line*, then these are the only parameters
+                that will be passed to the handler.  If this cmdlet is invoked with a
+                handler profile reference, then these parameters are merged with, and
+                override, whatever parameters are already defined within the profile.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.CompleteChallenge.CleanUp">
+            <summary>
+            <para type="description">
+                When specified, executes the <i>clean up</i> operation associated with
+                the resolved Challenge Handler.  This is typcially invoked after the
+                challenge has been previously successfully completed and submitted to
+                the ACME server, and is used to remove any residual resources or traces
+                of the steps that were needed during the challenge-handling process.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.CompleteChallenge.RepeatDecoder">
+            <summary>
+            <para type="description">
+                When specified, will force the decoding and regeneration of any ACME-defined
+                heuristics and parameters for the given Challenge type.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.CompleteChallenge.RepeatHandler">
+            <summary>
+            <para type="description">
+                When specified, forces the resolved Handler to repeat the process of
+                handling the given Challenge, even if the process has already been
+                completed previously.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.CompleteChallenge.UseBaseUri">
+            <summary>
+            <para type="description">
+                Overrides the base URI associated with the target Registration and used
+                for subsequent communication with the associated ACME CA Server.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.CompleteChallenge.VaultProfile">
+            <summary>
+            <para type="description">
+                Specifies a Vault profile name that will resolve to the Vault instance to be
+                used for all related operations and storage/retrieval of all related assets.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.CompleteChallenge.Force">
+            <summary>
+            <para type="description">
+                Forces an attempt to complete the challenge even when the state of the
+                current Identifier authorization is in a failed or completed state.
+            </para>
+            </summary>
+        </member>
+        <member name="T:ACMESharp.POSH.InstallCertificate">
+            <summary>
+            <para type="synopsis">Invokes an Installer to install a PKI certificate.</para>
+            <para type="description">
+              Use this cmdlet to invoke an instance of an Installer Provider defined
+              by a profile stored in an ACMESharp Vault.  The profile will specify
+              the provider name as well as any parameters that will be applied during
+              the instance creation and invocation.  Alternatively, you can specify
+              all the details captured in a profile "inline" during this cmdlet's
+              invocation.
+            </para>
+            <para type="link">Get-InstallerProfile</para>
+            <para type="link">Set-InstallerProfile</para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.InstallCertificate.CertificateRef">
+            <summary>
+            <para type="description">
+                A reference (ID or alias) to a previously retrieved and resolved
+                Certificated provided by an ACME CA Server.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.InstallCertificate.InstallerProfileRef">
+            <summary>
+            <para type="description">
+                Specifies a reference (ID or alias) to a previously defined
+                Installer profile in the associated Vault that defines the Installer
+                provider and associated instance parameters that should be used to
+                install the certificate.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.InstallCertificate.Installer">
+            <summary>
+            <para type="description">
+                Specifies the Installer instance provider that will be used to
+                install the associated certificate.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.InstallCertificate.InstallerParameters">
+            <summary>
+            <para type="description">
+                Specifies the parameters that will be passed to the Installer
+                instance that will be used to install the associated certificate.
+            </para>
+            <para type="description">
+                If this cmdlet is invoked *in-line*, then these are the only parameters
+                that will be passed to the handler.  If this cmdlet is invoked with a
+                handler profile reference, then these parameters are merged with, and
+                override, whatever parameters are already defined within the profile.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.InstallCertificate.VaultProfile">
+            <summary>
+            <para type="description">
+                Specifies a Vault profile name that will resolve to the Vault instance to be
+                used for all related operations and storage/retrieval of all related assets.
+            </para>
+            </summary>
+        </member>
+        <member name="T:ACMESharp.POSH.NewCertificate">
+            <summary>
+            <para type="synopsis">
+              Initiates a request to issue a request for previously authorized Identifier.
+            </para>
+            <para type="description">
+              This cmdlet is used to request a new certificate for a DNS Identifier
+              that has already been verified by the ACME CA Server.  It is also used
+              to import, generate or define the certificate parameters and artifacts
+              needed for the request, such as the private key and CSR details.
+            </para>
+            <para type="link">New-Identifier</para>
+            <para type="link">Complete-Challenge</para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.NewCertificate.IdentifierRef">
+            <summary>
+            <para type="description">
+              A reference (ID or alias) to a previously defined and authorized
+              Identifier verified by the ACME CA Server.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.NewCertificate.KeyPemFile">
+            <summary>
+            <para type="description">
+              Specifies an existing private key in PEM file format that should be
+              used to generate the Certificate Request.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.NewCertificate.CsrPemFile">
+            <summary>
+            <para type="description">
+              Specifies an existing CSR in PEM file format containing all the
+              details of the Certificate that should be used to generate the
+              Certificate Request.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.NewCertificate.Generate">
+            <summary>
+            <para type="description">
+              Indicates that new Certificate Request parameters and artificats
+              should be generated.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.NewCertificate.CsrDetails">
+            <summary>
+            <para type="description">
+              An optional set of certificate details to be included in the
+              generated CSR.
+            </para>
+            <para type="description">
+              The common name will be set based on the DNS name of the associated
+              Identifier, however all other details will be specified as set in
+              this parameter.  The following elements are defined, however not all
+              of these may be supported or honored by the target ACME CA Server:
+              
+                  *  Country;          // C;
+                  *  StateOrProvince;  // ST;
+                  *  Locality;         // L;
+                  *  Organization;     // O;
+                  *  OrganizationUnit; // OU;
+                  *  Description;      // D;
+                  *  Surname;          // S;
+                  *  GivenName;        // G;
+                  *  Initials;         // I;
+                  *  Title;            // T;
+                  *  SerialNumber;     // SN;
+                  *  UniqueIdentifier; // UID;
+                  *  AlternativeNames; // X509 SAN Extension (manually overridden)
+            </para>
+            <para type="description">
+              For any elements that except multiple values (such as SAN), specify
+              a string of values separated by space, comma or semicolon
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.NewCertificate.AlternativeIdentifierRefs">
+            <summary>
+            <para type="description">
+              A collection of one or more references (ID or alias) to previously
+              defined and authorized Identifiers verified by the ACME CA Server
+              which will be included in the X509 extension for the list of
+              Subject Alternative Names (SAN).
+            </para>
+            <para type="description">
+              There is no need to repeat the reference to the primary common name
+              Identifier as it will be automatically included at the start of this list.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.NewCertificate.Alias">
+            <summary>
+            <para type="description">
+              An optional, unique alias to assign to the Certificate for future
+              reference.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.NewCertificate.Label">
+            <summary>
+            <para type="description">
+              An optional, human-friendly label to assign to the Certificate for
+              easy recognition.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.NewCertificate.Memo">
+            <summary>
+            <para type="description">
+              An optional, arbitrary text field to capture any notes or details
+              associated with the Certificate.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.NewCertificate.VaultProfile">
+            <summary>
+            <para type="description">
+                Specifies a Vault profile name that will resolve to the Vault instance to be
+                used for all related operations and storage/retrieval of all related assets.
+            </para>
+            </summary>
+        </member>
+        <member name="T:ACMESharp.POSH.NewIdentifier">
+            <summary>
+            <para type="synopsis">
+              Creates and submits a new Identifier to be verified to the ACME CA Server.
+            </para>
+            <para type="description">
+              Currently, the only Identifier type supported is the DNS type.
+            </para>
+            <para type="link">Get-Identifier</para>
+            <para type="link">Update-Identifier</para>
+            <para type="link">Complete-Challenge</para>
+            <para type="link">Submit-Challenge</para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.NewIdentifier.Dns">
+            <summary>
+            <para type="description">
+              Specifies the DNS name to be submitted for verification.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.NewIdentifier.Alias">
+            <summary>
+            <para type="description">
+              An optional, unique alias to assign to the Identifier for future
+              reference.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.NewIdentifier.Label">
+            <summary>
+            <para type="description">
+              An optional, human-friendly label to assign to the Identifier for
+              easy recognition.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.NewIdentifier.Memo">
+            <summary>
+            <para type="description">
+              An optional, arbitrary text field to capture any notes or details
+              associated with the Identifier.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.NewIdentifier.VaultProfile">
+            <summary>
+            <para type="description">
+                Specifies a Vault profile name that will resolve to the Vault instance to be
+                used for all related operations and storage/retrieval of all related assets.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.SetVault.PkiTool">
+            <summary>
+            <para type="description">
+                Specifies a PKI tool provider (i.e. CertificateProvider) to be used by
+                default in all subsequent operations against this vault.  In most cases
+                this can be overridden on a call-by-call basis but typically, all
+                PKI-related operations should be performed by a single PKI Tool provider
+                because of the internal workings of the provider and interdependencies
+                of the operations.  Such operations include private key generation,
+                CSR generation and certificate importing and exporting.
+                If left unspecified a default PKI tool provider will be used.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.SubmitCertificate.CertificateRef">
+            <summary>
+            <para type="description">
+                A reference (ID or alias) to a previously defined Certificate request.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.SubmitCertificate.VaultProfile">
+            <summary>
+            <para type="description">
+                Specifies a Vault profile name that will resolve to the Vault instance to be
+                used for all related operations and storage/retrieval of all related assets.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.SubmitCertificate.PkiTool">
+            <summary>
+            <para type="description">
+                Specifies a PKI tool provider (i.e. CertificateProvider) to be used in
+                all PKI related operations such as private key generation, CSR generation
+                and certificate importing and exporting.  If left unspecified a default
+                PKI tool provider will be used.
+            </para>
+            </summary>
+        </member>
+        <member name="T:ACMESharp.POSH.SubmitChallenge">
+            <summary>
+            <para type="synopsis">
+                Submits a completed Challenge for verification by ACME CA Server.
+            </para>
+            <para type="description">
+              After a Challenge has been handled and completed, it needs to be submitted to the
+              ACME CA Server that issued the Challenge.  This cmdlet submits the Challenge of a
+              particular type to the ACME Server to be verified.  If the ACME Server issued multiple
+              Challenges and combinations that will satisfy the validation of ownership of an
+              Identifier, you can use this cmdlet to submit each Challenge type completed.
+            </para>
+            <para type="link">New-Identifier</para>
+            <para type="link">Complete-Challenge</para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.SubmitChallenge.IdentifierRef">
+            <summary>
+            <para type="description">
+                A reference (ID or alias) to a previously defined Identifier submitted
+                to the ACME CA Server for verification.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.SubmitChallenge.ChallengeType">
+            <summary>
+            <para type="description">
+                Specifies the ACME Challenge type that should be submitted.  This type
+                is expected to be found in the list of Challenges returned by the
+                ACME CA Server for the associated Identifier and it should already have
+                been handled previously, either externally to the ACMESharp operations
+                or via the Handler mechanisms within.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.SubmitChallenge.UseBaseUri">
+            <summary>
+            <para type="description">
+                Overrides the base URI associated with the target Registration and used
+                for subsequent communication with the associated ACME CA Server.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.SubmitChallenge.VaultProfile">
+            <summary>
+            <para type="description">
+                Specifies a Vault profile name that will resolve to the Vault instance to be
+                used for all related operations and storage/retrieval of all related assets.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.SubmitChallenge.Force">
+            <summary>
+            <para type="description">
+                Forces an attempt to submit the challenge even when the state of the
+                current Identifier authorization is in a failed or completed state.
+            </para>
+            </summary>
+        </member>
+        <member name="T:ACMESharp.POSH.UpdateCertificate">
+            <summary>
+            <para type="synopsis">
+              Updates the status and details of a Certificate stored in the Vault.
+            </para>
+            <para type="description">
+              Use this cmdlet to update characteristics of an Identifier that are
+              defined locally, such as the Alias or Label.
+            </para>
+            <para type="description">
+              Also use this cmdlet to refresh the state and status of a Certificate
+              including retrieving the certificate and intermediate signing certificate
+              from the associated ACME CA Server.
+            </para>
+            <para type="link">New-Certificate</para>
+            <para type="link">Get-Certificate</para>
+            <para type="link">Submit-Certificate</para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.UpdateCertificate.CertificateRef">
+            <summary>
+            <para type="description">
+                A reference (ID or alias) to a previously defined Certificate request.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.UpdateCertificate.UseBaseUri">
+            <summary>
+            <para type="description">
+                Overrides the base URI associated with the target Registration and used
+                for subsequent communication with the associated ACME CA Server.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.UpdateCertificate.Repeat">
+            <summary>
+            <para type="description">
+              When specified, this flag instructs the cmdlet to repeat the retrieval of
+              the issued certificate and related artifacts (e.g. intermediate signing cert).
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.UpdateCertificate.LocalOnly">
+            <summary>
+            <para type="description">
+              Indicates that updates should be performed locally only, and no attempt
+              should be made to retrieve the current status from the ACME CA Server.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.UpdateCertificate.NewAlias">
+            <summary>
+            <para type="description">
+              Optionaly, set or update the unique alias assigned to the Certificate
+              for future reference.  To remove the alias, use the empty string.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.UpdateCertificate.Label">
+            <summary>
+            <para type="description">
+              Optionally, set or update the human-friendly label to assigned to the
+              Certificate for easy recognition.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.UpdateCertificate.Memo">
+            <summary>
+            <para type="description">
+              Optionall, set or update the arbitrary text field used to capture any
+              notes or details associated with the Certificate.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.UpdateCertificate.VaultProfile">
+            <summary>
+            <para type="description">
+                Specifies a Vault profile name that will resolve to the Vault instance to be
+                used for all related operations and storage/retrieval of all related assets.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.UpdateCertificate.PkiTool">
+            <summary>
+            <para type="description">
+                Specifies a PKI tool provider (i.e. CertificateProvider) to be used in
+                all PKI related operations such as private key generation, CSR generation
+                and certificate importing and exporting.  If left unspecified a default
+                PKI tool provider will be used.
+            </para>
+            </summary>
+        </member>
+        <member name="T:ACMESharp.POSH.UpdateIdentifier">
+            <summary>
+            <para type="synopsis">
+              Updates the status and details of an Identifier stored in the Vault.
+            </para>
+            <para type="description">
+              Use this cmdlet to update characteristics of an Identifier that are
+              defined locally, such as the Alias or Label.
+            </para>
+            <para type="description">
+              Also use this cmdlet to refresh the state and status of an Identifier
+              by probing the associated ACME CA Server for Identifier details.
+            </para>
+            <para type="link">New-Identifier</para>
+            <para type="link">Get-Identifier</para>
+            <para type="link">Complete-Challenge</para>
+            <para type="link">Submit-Challenge</para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.UpdateIdentifier.IdentifierRef">
+            <summary>
+            <para type="description">
+                A reference (ID or alias) to a previously defined Identifier submitted
+                to the ACME CA Server for verification.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.UpdateIdentifier.ChallengeType">
+            <summary>
+            <para type="description">
+                Specifies the ACME Challenge type that should be updated.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.UpdateIdentifier.UseBaseUri">
+            <summary>
+            <para type="description">
+                Overrides the base URI associated with the target Registration and used
+                for subsequent communication with the associated ACME CA Server.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.UpdateIdentifier.LocalOnly">
+            <summary>
+            <para type="description">
+              Indicates that updates should be performed locally only, and no attempt
+              should be made to retrieve the current status from the ACME CA Server.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.UpdateIdentifier.NewAlias">
+            <summary>
+            <para type="description">
+              Optionaly, set or update the unique alias assigned to the Identifier
+              for future reference.  To remove the alias, use the empty string.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.UpdateIdentifier.Label">
+            <summary>
+            <para type="description">
+              Optionally, set or update the human-friendly label to assigned to the
+              Identifier for easy recognition.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.UpdateIdentifier.Memo">
+            <summary>
+            <para type="description">
+              Optionall, set or update the arbitrary text field used to capture any
+              notes or details associated with the Identifier.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.UpdateIdentifier.VaultProfile">
+            <summary>
+            <para type="description">
+                Specifies a Vault profile name that will resolve to the Vault instance to be
+                used for all related operations and storage/retrieval of all related assets.
+            </para>
+            </summary>
+        </member>
+        <member name="P:ACMESharp.POSH.UpdateRegistration.NewAlias">
+            <summary>
+            <para type="description">
+              Optionaly, set or update the unique alias assigned to the Certificate
+              for future reference.  To remove the alias, use the empty string.
+            </para>
+            </summary>
+        </member>
+        <member name="M:ACMESharp.POSH.Util.PoshHelper.BeforeExtAccess">
+            <summary>
+            This routine must be invoked from any CMDLET that relies on the Ext
+            mechanism when running under POSH, but does not make use of Vault.
+            </summary>
+        </member>
+        <member name="F:ACMESharp.POSH.Util.PoshHelper.PROBLEM_DETAIL_TYPE_URN">
+            <summary>
+            Defines the well-defined ACME problem detail type URN prefix.
+            </summary>
+        </member>
+        <member name="F:ACMESharp.POSH.Util.PoshHelper.PROBLEM_DETAIL_TYPE_TO_ERROR_CATEGORY">
+            <summary>
+            Defines a mapping from well-defined ACME problem detail type URNs to
+            POSH <see cref="T:System.Management.Automation.ErrorCategory">error categories</see>.
+            </summary>
+            <remarks>
+            This list was compiled from:  https://ietf-wg-acme.github.io/acme/#rfc.section.5.4
+            </remarks>
+        </member>
+        <member name="M:ACMESharp.POSH.Util.PoshHelper.CreateErrorRecord(ACMESharp.AcmeClient.AcmeWebException,System.Object)">
+            <summary>
+            Constructs an <see cref="T:System.Management.Automation.ErrorRecord"/> from an <see cref="T:ACMESharp.AcmeClient.AcmeWebException"/>,
+            populating as much detail as can be derived.
+            </summary>
+            <param name="ex"></param>
+            <param name="targetObject"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>
