@@ -103,3 +103,5 @@ if (Get-Module -ListAvailable -Name posh-docker) {
 } 
 
 $Env:COMPOSE_CONVERT_WINDOWS_PATHS=1
+
+$Env:HOME = $Env:USERPROFILE
