@@ -14,7 +14,8 @@ Start > Run > Powershell
 
 	Set-ExecutionPolicy remotesigned -force
 	cd ([environment]::GetFolderPath([environment+SpecialFolder]::MyDocuments))
-	git clone git://github.com/ilude/WindowsPowerShell.git
+	git clone git://github.com/ilude/WindowsPowerShell.git Powershell
+	& $profile
 	exit
 
 restart powershell
