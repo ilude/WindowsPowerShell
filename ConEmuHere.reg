@@ -1,0 +1,19 @@
+Windows Registry Editor Version 5.00
+[HKEY_CLASSES_ROOT\Directory\shell\console]
+@="Console Here"
+"Icon"="C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe,0"
+[HKEY_CLASSES_ROOT\Directory\shell\console\command]
+@="\"C:\\Program Files\\ConEmu\\ConEmu64.exe\" /config \"shell\" /dir \"%1\" /run {Shells::PowerShell Core}"
+
+[HKEY_CLASSES_ROOT\Drive\shell\console]
+@="Console Here"
+"Icon"="C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe,0"
+[HKEY_CLASSES_ROOT\Drive\shell\console\command]
+@="\"C:\\Program Files\\ConEmu\\ConEmu64.exe\" /config \"shell\" /dir \"%1\" /run {Shells::PowerShell Core}"
+
+[HKEY_CLASSES_ROOT\Directory\shell\runas]
+@="Console Here - Admin" 
+"Icon"="C:\\Windows\\System32\\imageres.dll,-78"
+
+[HKEY_CLASSES_ROOT\Directory\shell\runas\command]
+@="\"C:\\Program Files\\ConEmu\\ConEmu64.exe\" /config \"shell\" /dir \"%1\" /run {Shells::PowerShell Core (Admin)}"

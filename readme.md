@@ -11,6 +11,8 @@ Start > Run > Powershell
 	iex((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 	choco install powershell-core -y
 	choco install git -y
+	choco install conemu -y
+	reg import .\ConEmuHere.reg
 
 	cd ([environment]::GetFolderPath([environment+SpecialFolder]::MyDocuments))
 	git clone git://github.com/ilude/WindowsPowerShell.git Powershell
