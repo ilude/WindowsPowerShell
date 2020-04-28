@@ -1,25 +1,18 @@
-Install Windows Powershell
---------------------------
 
-Windows 7 & Windows Server 2008 come with powershell 2.0 installed by default
-
-[Download Powershell 3.0](http://www.microsoft.com/en-us/download/details.aspx?id=34595) for Windows 7, Windows Server 2008 & 2012
-
-for all others you can [download the installer here](http://support.microsoft.com/kb/968930)
 
 Run Powershell
 --------------
 
 Start > Run > Powershell
 
+	Start-Process powershell -Verb runAs
 	Set-ExecutionPolicy remotesigned -force
+	Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; 
+	iex((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+	choco install powershell-core
+
 	cd ([environment]::GetFolderPath([environment+SpecialFolder]::MyDocuments))
 	git clone git://github.com/ilude/WindowsPowerShell.git Powershell
 	& $profile
-	exit
-
-restart powershell
-
-And run the following command to setup git configuration info and aliases 
-
 	Setup-Git
+	exit
