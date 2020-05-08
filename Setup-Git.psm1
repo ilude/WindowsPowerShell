@@ -15,27 +15,28 @@ function Setup-Git {
 	# unset all aliases
 	git config --get-regexp 'alias.*' | foreach-object { -split $_ | select-object -first 1  } | % { . git config --global --unset "$_" }
 	
-	git config --global alias.alias "!powershell -ExecutionPolicy ByPass Display-GitAliases"
+	git config --global alias.alias '!f(){ cmd=\"git config --get-regexp \"alias.*\" | colrm 1 6 | sed \"s/[ ]/ = /\"\"; echo $cmd; $cmd; }; f'
 
 	git config --global alias.co checkout
-	git config --global alias.cb 'checkout -b'
-	git config --global alias.ct '!powershell -ExecutionPolicy ByPass Checkout-And-Track'
-	git config --global alias.ci 'commit -m'
+	git config --global alias.cb ''checkout -b''
+	git config --global alias.ci ''commit -m''
   git config --global alias.ca '!git add -A . && git status -s && git commit -m'
 	git config --global alias.s 'status -s'
 	
   	# Branching Aliases
 	git config --global alias.br branch
-  git config --global alias.db '!powershell -ExecutionPolicy ByPass Delete-Branch'
-	git config --global alias.dlb '!powershell -ExecutionPolicy ByPass Delete-Branch -l'
-	git config --global alias.drb '!powershell -ExecutionPolicy ByPass Delete-Branch -r'
-	git config --global alias.track '!powershell -ExecutionPolicy ByPass Track-Branches'
-  
+	git checkout -t origin/$name
+	git config --global alias.ct '!f(){ cmd=\"git checkout -t origin/$1\"; echo $cmd; $cmd; }; f'
+	git config --global alias.db '!f(){ cmd=\"git branch -D $1 && git push origin :$1\"; echo $cmd; $cmd; }; f'
+	git config --global alias.dlb '!f(){ cmd=\"git branch -D $1\"; echo $cmd; $cmd; }; f'
+	git config --global alias.drb '!f(){ cmd=\"git push origin :$1\"; echo $cmd; $cmd; }; f'
+	git config --global alias.track '!f(){ branch=$(git name-rev --name-only HEAD); cmd=\"git branch --track $branch ${1:-origin}/${2:-$branch}\"; echo $cmd; $cmd; }; f'
+
 	# Tagging Aliases
-	git config --global alias.dt '!powershell -ExecutionPolicy ByPass Delete-Tag'
-	git config --global alias.dlt '!powershell -ExecutionPolicy ByPass Delete-Tag -l'
-	git config --global alias.drt '!powershell -ExecutionPolicy ByPass Delete-Tag -r'
-	git config --global alias.mark '!powershell -ExecutionPolicy ByPass TagDeployment'
+	# git config --global alias.dt '!powershell -ExecutionPolicy ByPass Delete-Tag'
+	# git config --global alias.dlt '!powershell -ExecutionPolicy ByPass Delete-Tag -l'
+	# git config --global alias.drt '!powershell -ExecutionPolicy ByPass Delete-Tag -r'
+	# git config --global alias.mark '!powershell -ExecutionPolicy ByPass TagDeployment'
 	git config --global alias.ts 'tag -n10'
   
 	git config --global alias.unstage 'reset .'
