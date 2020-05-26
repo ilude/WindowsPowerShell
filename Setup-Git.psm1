@@ -8,7 +8,8 @@ function Setup-Git {
 	git config --global difftool.prompt false
 	git config --global mergetool.prompt false
 	git config --global mergetool.keepbackup false
-  git config --global fetch.prune true
+	git config --global fetch.prune true
+	git config --global push.default current
 	# rebase on pull instead of merge
 	git config --global branch.autosetuprebase always 
 	
@@ -25,8 +26,8 @@ function Setup-Git {
 	
   	# Branching Aliases
 	git config --global alias.br branch
-	git config --global alias.ct '!f(){ cmd=\"git checkout -t origin/$1\"; echo $cmd; $cmd; }; f'
-	git config --global alias.db '!f(){ cmd=\"git branch -D $1 && git push origin :$1\"; echo $cmd; $cmd; }; f'
+	git config --global alias.ct  '!f(){ cmd=\"git checkout -t origin/$1\"; echo $cmd; $cmd; }; f'
+	git config --global alias.db  '!f(){ cmd=\"git branch -D $1; git push origin --delete $1\"; echo $cmd; $cmd; }; f'
 	git config --global alias.dlb '!f(){ cmd=\"git branch -D $1\"; echo $cmd; $cmd; }; f'
 	git config --global alias.drb '!f(){ cmd=\"git push origin :$1\"; echo $cmd; $cmd; }; f'
 	git config --global alias.track '!f(){ branch=$(git name-rev --name-only HEAD); cmd=\"git branch --track $branch ${1:-origin}/${2:-$branch}\"; echo $cmd; $cmd; }; f'
