@@ -8,15 +8,17 @@ function Setup-Git {
 	git config --global difftool.prompt false
 	git config --global mergetool.prompt false
 	git config --global mergetool.keepbackup false
-  git config --global fetch.prune true
+	git config --global fetch.prune true
+	git config --global push.default current
 	# rebase on pull instead of merge
 	git config --global branch.autosetuprebase always 
 	
 	# unset all aliases
 	git config --get-regexp 'alias.*' | foreach-object { -split $_ | select-object -first 1  } | % { . git config --global --unset "$_" }
 	
-	git config --global alias.alias '!git config --get-regexp alias.* | cat'
-	git config --global alias.co checkout
+	git config --global alias.alias 'config --get-regexp \"alias.*\"'
+
+	git config --global alias.co 'checkout'
 	git config --global alias.cb 'checkout -b'
 	git config --global alias.ci 'commit -m'
   git config --global alias.ca '!git add -A . && git status -s && git commit -m'
@@ -24,8 +26,8 @@ function Setup-Git {
 	
   	# Branching Aliases
 	git config --global alias.br branch
-	git config --global alias.ct '!f(){ cmd=\"git checkout -t origin/$1\"; echo $cmd; $cmd; }; f'
-	git config --global alias.db '!f(){ cmd=\"git branch -D $1 && git push origin :$1\"; echo $cmd; $cmd; }; f'
+	git config --global alias.ct  '!f(){ cmd=\"git checkout -t origin/$1\"; echo $cmd; $cmd; }; f'
+	git config --global alias.db  '!f(){ cmd=\"git branch -D $1; git push origin --delete $1\"; echo $cmd; $cmd; }; f'
 	git config --global alias.dlb '!f(){ cmd=\"git branch -D $1\"; echo $cmd; $cmd; }; f'
 	git config --global alias.drb '!f(){ cmd=\"git push origin :$1\"; echo $cmd; $cmd; }; f'
 	git config --global alias.track '!f(){ branch=$(git name-rev --name-only HEAD); cmd=\"git branch --track $branch ${1:-origin}/${2:-$branch}\"; echo $cmd; $cmd; }; f'
@@ -65,17 +67,6 @@ function Setup-Git {
 	if($email) {
 		git config --global user.email "'$email'"
 	}
-	
-	# 
-	# check if truefit upstream is setup and create it if its not
-	#
-	#push-location
-	#cd (join-path ([environment]::GetFolderPath([environment+SpecialFolder]::MyDocuments)) WindowsPowerShell)
-	#if(((git remote) -contains "truefit") -eq $False) {
-	#	git remote add truefit git://github.com/truefit/WindowsPowerShell.git
-	#}
-	#pop-location
-	
 
 	if (Get-Command -CommandType Cmdlet Get-Editor -errorAction SilentlyContinue) {
 		$editor = Get-Editor
@@ -84,47 +75,6 @@ function Setup-Git {
 		}
 	}
 }
-
-# function Setup-Truefit {
-# 	push-location
-# 	cd ~
-	
-# 	$netrc = "_netrc";
-	
-# 	if((Test-Path $netrc) -eq $False) {
-# 		$login = Read-Host "Enter TrueFit login"
-# 		$password = ConvertTo-PlainText (Read-Host "Enter password" -AsSecureString)
-	
-# 		if($login -and $password) {
-# 			Add-Content -path $netrc -value "machine git.truefitsolutions.com"
-# 			Add-Content -path $netrc -value "`tlogin $login"
-# 			Add-Content -path $netrc -value "`tpassword $password"
-# 		}
-# 	}
-
-#   $profile_directory = (join-path ([environment]::GetFolderPath([environment+SpecialFolder]::MyDocuments)) WindowsPowerShell)
-	
-# 	$cert_store = resolve-path (join-path (join-path (join-path "$env:ProgramFiles*" "git") "bin") "curl-ca-bundle.crt")
-# 	if($cert_store) {
-		
-# 		$truefit_cert = get-content (join-path $profile_directory truefit.crt) | out-string
-# 		if(-not (get-content "$cert_store" | select-string "Interceptor")) {
-# 			Write-Host "Writing TrueFit certificate to $cert_store"
-			
-# 			Add-Content -path "$cert_store" -value ""
-# 			Add-Content -path "$cert_store" -value "$truefit_cert"
-# 		}
-# 		else {
-# 			Write-Host "TrueFit certificate already exists in $cert_store"
-# 		}
-#  	}
-# 	else {
-# 		Write-Error "Unable to locate git certificate bundle! Have you installed git?"
-# 	}
-	
-# 	pop-location
-# }
-
 
 ###########################
 #
@@ -470,6 +420,5 @@ function Display-GitAliases {
   Get-GitAliases | ft -autosize
 }
 
-#set-alias g git;
 
-Export-ModuleMember Setup-Git, Check-RemoteRepository, Test-GitRepository, Track-Branch, Track-Branches, Checkout-And-Track, TagDeployment, Delete-Tag, Test-Tag, Delete-RemoteTag, Delete-Branch, Test-Branch, Enable-GitColors, Get-GitAliasPattern, Get-GitBranch, Display-GitAliases -alias g
+Export-ModuleMember Setup-Git, Check-RemoteRepository, Test-GitRepository, Track-Branch, Track-Branches, Checkout-And-Track, TagDeployment, Delete-Tag, Test-Tag, Delete-RemoteTag, Delete-Branch, Test-Branch, Enable-GitColors, Get-GitAliasPattern, Get-GitBranch, Display-GitAliases
