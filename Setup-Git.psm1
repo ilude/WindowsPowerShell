@@ -15,17 +15,15 @@ function Setup-Git {
 	# unset all aliases
 	git config --get-regexp 'alias.*' | foreach-object { -split $_ | select-object -first 1  } | % { . git config --global --unset "$_" }
 	
-	git config --global alias.alias '!f(){ cmd=\"git config --get-regexp \"alias.*\" | colrm 1 6 | sed \"s/[ ]/ = /\"\"; echo $cmd; $cmd; }; f'
-
+	git config --global alias.alias '!git config --get-regexp alias.* | cat'
 	git config --global alias.co checkout
-	git config --global alias.cb ''checkout -b''
-	git config --global alias.ci ''commit -m''
+	git config --global alias.cb 'checkout -b'
+	git config --global alias.ci 'commit -m'
   git config --global alias.ca '!git add -A . && git status -s && git commit -m'
 	git config --global alias.s 'status -s'
 	
   	# Branching Aliases
 	git config --global alias.br branch
-	git checkout -t origin/$name
 	git config --global alias.ct '!f(){ cmd=\"git checkout -t origin/$1\"; echo $cmd; $cmd; }; f'
 	git config --global alias.db '!f(){ cmd=\"git branch -D $1 && git push origin :$1\"; echo $cmd; $cmd; }; f'
 	git config --global alias.dlb '!f(){ cmd=\"git branch -D $1\"; echo $cmd; $cmd; }; f'

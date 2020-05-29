@@ -27,15 +27,15 @@ Get-ChildItem $script:current_directory *.psm1 | foreach {
   Import-Module $_.VersionInfo.FileName -DisableNameChecking -verbose:$false
 }
 
-try {
-  $script:git_exe = @((which git.exe).Definition)[0]
-  if ($script:git_exe) {
-    $env:GITDIR = split-path $script:git_exe | split-path
-  }
-}
-catch {
-  Write-Error "Error setting GITDIR! " + Error[0].Exception
-}
+# try {
+#   $script:git_exe = @((which git.exe).Definition)[0]
+#   if ($script:git_exe) {
+#     $env:GITDIR = split-path $script:git_exe | split-path
+#   }
+# }
+# catch {
+#   Write-Error "Error setting GITDIR! " + Error[0].Exception
+# }
 
 ###########################
 #
