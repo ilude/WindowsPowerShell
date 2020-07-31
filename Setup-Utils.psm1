@@ -36,7 +36,7 @@ function Test-Syntax {
 	param($path, [switch]$verbose)
 
 	if ($verbose) {
-		$VerbosePreference = ‘Continue’
+		$VerbosePreference = ï¿½Continueï¿½
 	}
 
 	trap { Write-Warning $_; $false; continue }
@@ -167,6 +167,8 @@ Set-Alias Get-Env Get-Environment
 Set-Alias Get-Version $Host.Version
 Set-Alias nano "$(Get-Editor)"
 
-Export-ModuleMember `
-	Get-Editor, Test-Syntax, Reload-Profile, Coalesce-Args, Get-LocalOrParentPath, Debug, Get-ScriptDirectory, Get-Environment, ConvertTo-PlainText, Reload-Module, Create-Console `
-	-Alias ??, dbg, Get-Env, Get-Version, nano, sh
+# Export-ModuleMember -Function  -Alias
+
+# Export-ModuleMember `
+# 	Get-Editor, Test-Syntax, Reload-Profile, Coalesce-Args, Get-LocalOrParentPath, Debug, Get-ScriptDirectory, Get-Environment, ConvertTo-PlainText, Reload-Module, Create-Console `
+# 	-Alias ??, dbg, Get-Env, Get-Version, nano, sh

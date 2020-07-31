@@ -67,4 +67,4 @@ function Get-NetworkStatistics
 
 Set-Alias listen Get-NetworkStatistics
 
-Export-ModuleMember  Get-NetworkStatistics -Alias which, listen
+Export-ModuleMember  -function which, Get-NetworkStatistics -Alias which, listen
