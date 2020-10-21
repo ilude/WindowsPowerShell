@@ -4,28 +4,6 @@ Run Powershell
 --------------
 
 Start > Run > Powershell
-
-	if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))  
-	{  
-	  $arguments = "& '" +$myinvocation.mycommand.definition + "'"
-	  Start-Process powershell -Verb runAs -ArgumentList $arguments
-	  Break
-	}
-	Function pause ($message)
-	{
-		# Check if running Powershell ISE
-		if ($psISE)
-		{
-			Add-Type -AssemblyName System.Windows.Forms
-			[System.Windows.Forms.MessageBox]::Show("$message")
-		}
-		else
-		{
-			Write-Host "$message" -ForegroundColor Yellow
-			$x = $host.ui.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-		}
-	}
-
 	Set-ExecutionPolicy remotesigned -force
 	Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; 
 	iex((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
