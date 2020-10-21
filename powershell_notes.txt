@@ -1,0 +1,23 @@
+	# this did not work
+  # but it should allow you to start a  standard powershell window 
+  # and have that spawn an Admin window and continue running the script
+  if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))  
+	{  
+	  $arguments = "& '" +$myinvocation.mycommand.definition + "'"
+	  Start-Process powershell -Verb runAs -ArgumentList $arguments
+	  Break
+	}
+	Function pause ($message)
+	{
+		# Check if running Powershell ISE
+		if ($psISE)
+		{
+			Add-Type -AssemblyName System.Windows.Forms
+			[System.Windows.Forms.MessageBox]::Show("$message")
+		}
+		else
+		{
+			Write-Host "$message" -ForegroundColor Yellow
+			$x = $host.ui.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+		}
+	}
