@@ -4,7 +4,7 @@ Run Powershell
 --------------
 
 Start > Run > Powershell
-	Set-ExecutionPolicy remotesigned -force
+  Set-ExecutionPolicy remotesigned -force
   Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; 
   iex((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
   choco install powershell-core -y
@@ -27,7 +27,7 @@ Start > Run > Powershell
   $rubygem_path = Get-ChildItem $rubygem_path -Recurse | Where-Object { $_.PSIsContainer -and $_.Name.EndsWith("bin")}
   [Environment]::SetEnvironmentVariable("Path", $existing_path + ";$rubygem_path", $machine)
   cd ([environment]::GetFolderPath([environment+SpecialFolder]::MyDocuments))
-  git clone git://github.com/ilude/WindowsPowerShell.git Powershell
+  git clone git@github.com:ilude/WindowsPowerShell.git Powershell
   cd Powershell
   reg import .\ConEmuHere.reg
   & $profile
