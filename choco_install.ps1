@@ -6,6 +6,7 @@ choco install -y open-shell -installArgs ADDLOCAL=StartMenu
 choco install -y ccleaner
 choco install -y ccenhancer
 choco install -y chefdk
+choco install -y chocolateygui --source https://www.myget.org/F/chocolateygui/ --pre
 choco install -y cobian-backup
 choco install -y ConEmu
 choco install -y curl
@@ -30,7 +31,8 @@ choco install -y P4Merge
 # choco install -y postman
 choco install -y powershell-core
 choco install -y procexp
-choco install -y kitty
+choco install -y putty
+#choco install -y kitty
 choco install -y rsync
 choco install -y rufus
 choco install -y screenpresso
