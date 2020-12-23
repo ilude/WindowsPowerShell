@@ -5,7 +5,6 @@ choco install -y avidemux
 choco install -y open-shell -installArgs ADDLOCAL=StartMenu
 choco install -y ccleaner
 choco install -y ccenhancer
-choco install -y ccenhancer.install
 choco install -y chefdk
 choco install -y cobian-backup
 choco install -y ConEmu
@@ -17,8 +16,7 @@ choco install -y DotNet3.5
 choco install -y DotNet4.6
 choco install -y dotnetfx
 choco install -y f.lux
-choco install -y flashplayerplugin
-choco install -y git
+choco install -y git --params "/GitAndUnixToolsOnPath /NoShellIntegration"
 choco install -y googlechrome
 choco install -y handbrake
 choco install -y inkscape
@@ -29,7 +27,7 @@ choco install -y office365business
 choco install -y openvpn
 choco install -y paint.net
 choco install -y P4Merge
-choco install -y postman
+# choco install -y postman
 choco install -y powershell-core
 choco install -y procexp
 choco install -y kitty
