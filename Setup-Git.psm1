@@ -1,6 +1,6 @@
 function Setup-Git {
 	git config --global core.eol lf
-  git config --global core.autocrlf input
+  	git config --global core.autocrlf input
 	git config --global core.editor "'$(get-editor)' -w"
 	git config --global mergetool.p4merge.trustexitcode false
 	git config --global merge.tool p4merge
@@ -21,7 +21,7 @@ function Setup-Git {
 	git config --global alias.co 'checkout'
 	git config --global alias.cb 'checkout -b'
 	git config --global alias.ci 'commit -m'
-  git config --global alias.ca '!git add -A . && git status -s && git commit -m'
+  	git config --global alias.ca '!git add -A . && git status -s && git commit -m'
 	git config --global alias.s 'status -s'
 	
   	# Branching Aliases
