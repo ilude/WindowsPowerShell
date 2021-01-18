@@ -2,6 +2,7 @@
 choco install -y ansicon
 choco install -y chefdk 
 choco install -y curl
+choco install -y docker-desktop
 choco install -y git --params "/GitAndUnixToolsOnPath /WindowsTerminal /NoShellIntegration /NoGuiHereIntegration /NoShellHereIntegration"
 choco install -y microsoft-windows-terminal
 choco install -y P4Merge
