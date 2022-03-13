@@ -13,12 +13,12 @@ choco install -y DotNet3.5
 choco install -y DotNet4.6
 choco install -y dotnetfx
 choco install -y f.lux
-choco install -y googlechrome
 choco install -y handbrake
 choco install -y inkscape
 choco install -y k-litecodecpackfull
 choco install -y mysql.workbench
 choco install -y notepadplusplus
+choco install -y obsidian
 choco install -y office365business
 choco install -y openvpn
 choco install -y paint.net
