@@ -25,13 +25,14 @@ choco install -y avidemux
 choco install -y ccenhancer
 choco install -y cobian-backup
 choco install -y displayfusion
+choco install -y exoduswallet
 choco install -y handbrake
 choco install -y inkscape
 choco install -y office365business
 choco install -y openvpn
 choco install -y procexp # Process Explorer - SysInternals
 choco install -y rufus
-choco install -y sql-server-management-studio
+
 
 choco install -y nvidia-geforce-now
 choco install -y unifying 
@@ -48,10 +49,9 @@ choco install -y P4Merge
 choco install -y putty
 choco install -y ruby
 choco install -y rsync
-choco install -y vagrant
+choco install -y sql-server-management-studio
 choco install -y winscp
 choco install -y wsl2
-choco install -y wsl-ubuntu-2004
 
 # VSCode and plugins
 choco install vscode
@@ -64,5 +64,12 @@ choco install vscode-codespellchecker
 choco install vscode-gitlens
 choco install vscode-powershell
 choco install vscode-icons
+
+# Optional Dev Tools
+choco install -y vagrant
+choco install -y wsl-alpine
+choco install -y wsl-ubuntu-2004
+
+
 
 #iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/ilude/WindowsPowerShell/master/choco_install_development.ps1'))
