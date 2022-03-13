@@ -1,11 +1,12 @@
 # Development Tools
 choco install -y ansicon
-choco install -y chefdk 
+# choco install -y chefdk 
 choco install -y curl
 choco install -y docker-desktop
 choco install -y git --params "/GitAndUnixToolsOnPath /WindowsTerminal /NoShellIntegration /NoGuiHereIntegration /NoShellHereIntegration"
 choco install -y microsoft-windows-terminal
 choco install -y P4Merge
+choco install -y ruby
 choco install -y vagrant
 choco install -y wsl2
 choco install -y wsl-ubuntu-2004
