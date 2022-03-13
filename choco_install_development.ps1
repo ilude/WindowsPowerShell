@@ -7,6 +7,7 @@ choco install -y git --params "/GitAndUnixToolsOnPath /WindowsTerminal /NoShellI
 choco install -y microsoft-windows-terminal
 choco install -y P4Merge
 choco install -y ruby
+choco install -y rsync
 choco install -y vagrant
 choco install -y wsl2
 choco install -y wsl-ubuntu-2004
