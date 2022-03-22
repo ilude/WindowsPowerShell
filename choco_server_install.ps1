@@ -11,3 +11,7 @@ choco install -y t-clock
 choco install -y wiztree
 
 choco install -y teamviewer
+
+# Activate Windows Server
+DISM.exe /Online /Get-TargetEditions
+DISM /online /Set-Edition:ServerStandard /ProductKey:ENTER-YOUR-SERIAL-KEY-HERE /AcceptEula
