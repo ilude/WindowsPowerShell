@@ -48,6 +48,7 @@ choco install -y mysql.workbench
 choco install -y P4Merge
 choco install -y putty
 choco install -y ruby
+choco install -y msys2 
 choco install -y rsync
 choco install -y sql-server-management-studio
 choco install -y winscp
