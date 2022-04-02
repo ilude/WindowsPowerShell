@@ -101,8 +101,10 @@ if (Get-Module -ListAvailable -Name posh-docker) {
   # https://github.com/samneirinck/posh-docker
   Import-Module posh-docker
 } 
-
-Import-Module 'C:\Projects\docker\posh-git\src\posh-git.psd1'
+if (Get-Module -ListAvailable -Name posh-git) {
+  # https://github.com/samneirinck/posh-docker
+  Import-Module posh-git
+} 
 
 $Env:COMPOSE_CONVERT_WINDOWS_PATHS = 1
 
