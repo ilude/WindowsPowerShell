@@ -15,6 +15,7 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManage
 # $rubygem_path = Get-ChildItem $rubygem_path -Recurse | Where-Object { $_.PSIsContainer -and $_.Name.EndsWith("bin")}  
 # [Environment]::SetEnvironmentVariable("Path", $existing_path + ";$rubygem_path", $machine) 
 PowerShellGet\Install-Module posh-git -Scope CurrentUser -Force
+PowerShellGet\Install-Module posh-docker -Scope CurrentUser -Force
 cd ([environment]::GetFolderPath([environment+SpecialFolder]::MyDocuments))  
 git clone git@github.com:ilude/WindowsPowerShell.git Powershell  
 cd Powershell  
