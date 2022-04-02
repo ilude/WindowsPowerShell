@@ -13,7 +13,8 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManage
 # $existing_path = [Environment]::GetEnvironmentVariable("Path", $machine)  
 # $rubygem_path = Join-Path -Path $env:LOCALAPPDATA -childpath "chefdk\gem\ruby"  
 # $rubygem_path = Get-ChildItem $rubygem_path -Recurse | Where-Object { $_.PSIsContainer -and $_.Name.EndsWith("bin")}  
-# [Environment]::SetEnvironmentVariable("Path", $existing_path + ";$rubygem_path", $machine)  
+# [Environment]::SetEnvironmentVariable("Path", $existing_path + ";$rubygem_path", $machine) 
+PowerShellGet\Install-Module posh-git -Scope CurrentUser -Force
 cd ([environment]::GetFolderPath([environment+SpecialFolder]::MyDocuments))  
 git clone git@github.com:ilude/WindowsPowerShell.git Powershell  
 cd Powershell  
