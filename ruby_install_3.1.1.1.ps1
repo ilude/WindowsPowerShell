@@ -3,3 +3,5 @@ rubyinstaller.exe /silent /dir="c:/tools/ruby--3.1.1-1"
 Update-SessionEnvironment
 ridk install 1 3
 Update-SessionEnvironment
+
+rm rubyinstaller.exe
