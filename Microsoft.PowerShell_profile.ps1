@@ -109,5 +109,3 @@ if (Get-Module -ListAvailable -Name posh-git) {
 $Env:COMPOSE_CONVERT_WINDOWS_PATHS = 1
 
 $Env:HOME = $Env:USERPROFILE
-
-remove-item alias:cat
