@@ -1,52 +1,53 @@
 Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 
-# minimal
+# Minimal
 choco install -y 7zip
 choco install -y open-shell -installArgs ADDLOCAL=StartMenu
 choco install -y brave
 choco pin add -n brave
 choco install -y ccleaner
 choco pin add -n ccleaner
-choco install -y discord
-choco pin add -n discord
-choco install -y epicgameslauncher
-choco pin add -n epicgameslauncher
+choco install -y chocolateygui 
 choco install -y k-litecodecpackfull
-choco install -y notepadplusplus
-choco install -y obsidian
-choco install -y paint.net
+choco install -y notepadplusplus\
 choco install -y powershell-core
+choco install -y procexp # Process Explorer - SysInternals
 choco install -y screenpresso
 choco pin add -n screenpresso
 choco install -y spywareblaster
-choco install -y steam
-choco pin add -n steam
-choco install -y synctrayzor
 choco install -y t-clock
 choco install -y teamviewer
 choco pin add -n teamviewer
 choco install -y vlc
 choco install -y wiztree
 
-choco install -y avidemux
+# Probably 
+choco install -y msiafterburner
 choco install -y ccenhancer
 choco install -y cobian-backup
-choco install -y displayfusion
+choco install -y discord
+choco pin add -n discord
 choco install -y exoduswallet
+choco install -y obsidian
+choco install -y synctrayzor
+
+# Gaming
+choco install -y steam
+choco pin add -n steam
+choco install -y epicgameslauncher
+choco pin add -n epicgameslauncher
+
+# Video Drivers
+choco feature enable -n=useRememberedArgumentsForUpgrades
+cinst nvidia-display-driver --package-parameters="'/dch'" -y
+
+# AV
+choco install -y avidemux
 choco install -y handbrake
 choco install -y inkscape
-choco install -y office365business
-choco pin add -n office365business
-choco install -y openvpn
-choco install -y procexp # Process Explorer - SysInternals
-choco install -y rufus
-
-choco install -y nvidia-geforce-now
-choco pin add -n nvidia-geforce-now
-choco install -y unifying 
+choco install -y paint.net
 
 # Development Tools
-# choco install -y chefdk 
 choco install -y ansicon
 choco install -y curl
 choco install -y docker-desktop
@@ -88,5 +89,8 @@ choco install -y vagrant
 choco install -y wsl-alpine
 choco install -y wsl-ubuntu-2004
 
-
-#iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/ilude/WindowsPowerShell/master/choco_install_development.ps1'))
+# Optional Work Stuff
+choco install -y office365business
+choco pin add -n office365business
+choco install -y openvpn
+choco install -y displayfusion
