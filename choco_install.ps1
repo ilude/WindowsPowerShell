@@ -62,25 +62,25 @@ choco install -y winscp
 choco install -y wsl2
 
 # VSCode and plugins
-choco install vscode
+choco install -y vscode
 choco pin add -n vscode
-choco install vscode-gitignore
+choco install -y vscode-gitignore
 choco pin add -n vscode-gitignore
-choco install vscode-ansible
+choco install -y vscode-ansible
 choco pin add -n vscode-ansible
-choco install vscode-ruby
+choco install -y vscode-ruby
 choco pin add -n vscode-ruby
-choco install vscode-yaml
+choco install -y vscode-yaml
 choco pin add -n vscode-yaml
-choco install vscode-gitattributes
+choco install -y vscode-gitattributes
 choco pin add -n vscode-gitattributes
-choco install vscode-codespellchecker
+choco install -y vscode-codespellchecker
 choco pin add -n vscode-codespellchecker
-choco install vscode-gitlens
+choco install -y vscode-gitlens
 choco pin add -n vscode-gitlens
-choco install vscode-powershell
+choco install -y vscode-powershell
 choco pin add -n vscode-powershell
-choco install vscode-icons
+choco install -y vscode-icons
 choco pin add -n vscode-icons
 
 # Optional Dev Tools
