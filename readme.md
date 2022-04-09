@@ -9,7 +9,7 @@ Start > Run > Powershell
 Set-ExecutionPolicy remotesigned -force  
 Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072;   
 iex((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))  
-iex((New-Object System.Net.WebClient).DownloadString('https://github.com/ilude/WindowsPowerShell/blob/master/ruby_install_3.1.1.1.ps1')) 
+iex((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/ilude/WindowsPowerShell/master/ruby_install_3.1.1.1.ps1')) 
 PowerShellGet\Install-Module posh-git -Scope CurrentUser -Force
 PowerShellGet\Install-Module posh-docker -Scope CurrentUser -Force
 cd ([environment]::GetFolderPath([environment+SpecialFolder]::MyDocuments))  
