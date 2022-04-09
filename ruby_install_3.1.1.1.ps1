@@ -2,7 +2,7 @@ Invoke-WebRequest "https://github.com/oneclick/rubyinstaller2/releases/download/
 ./rubyinstaller.exe /silent /dir="c:/tools/ruby-3.1.1-1"
 refreshenv 
 # $env:Path += ";c:\tools\ruby-3.1.1-1\bin"
-ridk install 1 3
-ridk install 2
+c:/tools/ruby-3.1.1-1/ridk install 1 3
+c:/tools/ruby-3.1.1-1/ridk install 2
 
-rm rubyinstaller.exe
+rm ./rubyinstaller.exe
