@@ -11,3 +11,14 @@ rm ./rubyinstaller.exe
 refreshenv 
 
 gem install solargraph debug gitploy
+
+Invoke-WebRequest  https://github.com/mutagen-io/mutagen/releases/download/v0.13.1/mutagen_windows_amd64_v0.13.1.zip -Out mutagen.zip
+Invoke-WebRequest  https://github.com/mutagen-io/mutagen-compose/releases/download/v0.13.1/mutagen-compose_windows_amd64_v0.13.1.zip -Out mutagen-compose.zip
+
+unzip mutagen.zip 
+unzip mutagen-compose.zip
+rm mutagen.zip
+rm mutagen-compose.zip
+
+cp mutagen*.* "C:\Tools\ruby-$ruby_version\bin\" -force
+rm mutagen*.*
