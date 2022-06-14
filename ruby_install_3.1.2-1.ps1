@@ -1,3 +1,5 @@
+cd ~\Downloads
+
 # Install the latest version of ruby with devkit 
 $ruby_version = '3.1.2-1'
 
@@ -8,7 +10,7 @@ refreshenv
 refreshenv 
 . "C:\Tools\ruby-$ruby_version\bin\ridk" install 2
 
-rm ./rubyinstaller.exe
+# rm ./rubyinstaller.exe
 refreshenv 
 
 # Install global gems
