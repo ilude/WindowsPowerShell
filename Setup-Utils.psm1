@@ -6,7 +6,7 @@
 ###########################
 
 function Get-Editor {
-	$path = Resolve-Path (join-path (join-path "$env:PROGRAMW6432*" "Sublime*") "Sublime_text*");
+	$path = Resolve-Path (join-path (join-path "$env:PROGRAMW6432*" "*code") "code.exe");
 
 	if($path.Path) {
 		return $path.Path;
@@ -166,9 +166,3 @@ Set-Alias sh Create-Console
 Set-Alias Get-Env Get-Environment
 Set-Alias Get-Version $Host.Version
 Set-Alias nano "$(Get-Editor)"
-
-# Export-ModuleMember -Function  -Alias
-
-# Export-ModuleMember `
-# 	Get-Editor, Test-Syntax, Reload-Profile, Coalesce-Args, Get-LocalOrParentPath, Debug, Get-ScriptDirectory, Get-Environment, ConvertTo-PlainText, Reload-Module, Create-Console `
-# 	-Alias ??, dbg, Get-Env, Get-Version, nano, sh
