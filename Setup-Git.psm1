@@ -21,7 +21,7 @@ function Setup-Git {
 	git config --global alias.co 'checkout'
 	git config --global alias.cb 'checkout -b'
 	git config --global alias.ci 'commit -m'
-  git config --global alias.ca '!git add -A . && git status -s && git commit -m'
+        git config --global alias.ca '!git add -A . && git status -s && git commit -m'
 	git config --global alias.s 'status -s'
 	
   	# Branching Aliases
