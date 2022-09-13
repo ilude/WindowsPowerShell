@@ -9,3 +9,16 @@ ridk install 1 3
 ridk install 2
 
 rm rubyinstaller.exe
+
+
+# Install global gems
+gem install solargraph debug gitploy
+
+# install Chocolatey 
+iex((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+refreshenv
+choco install make -y
+
+# powershell quality of life improvements
+PowerShellGet\Install-Module posh-git -Scope CurrentUser -Force
+PowerShellGet\Install-Module posh-docker -Scope CurrentUser -Force
