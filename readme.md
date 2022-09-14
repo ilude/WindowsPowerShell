@@ -16,9 +16,10 @@ cd ([environment]::GetFolderPath([environment+SpecialFolder]::MyDocuments))
 mkdir -p Powershell -f | out-null
 cd Powershell
 git init
+git config --global --add safe.directory ([environment]::GetFolderPath([environment+SpecialFolder]::MyDocuments))/Powershell
 git remote add origin https://github.com/ilude/WindowsPowerShell.git
 git fetch
-git reset origin/master
+git reset --hard origin/master
 & $profile  
 Setup-Git  
 pause "Press any key to continue..."  
@@ -26,10 +27,5 @@ pause "Press any key to continue..."
 
 Notes on updating env vars like path and importing reg settings
 ```
-# $machine = [EnvironmentVariableTarget]::Machine  
-# $existing_path = [Environment]::GetEnvironmentVariable("Path", $machine)  
-# $rubygem_path = Join-Path -Path $env:LOCALAPPDATA -childpath "chefdk\gem\ruby"  
-# $rubygem_path = Get-ChildItem $rubygem_path -Recurse | Where-Object { $_.PSIsContainer -and $_.Name.EndsWith("bin")}  
-# [Environment]::SetEnvironmentVariable("Path", $existing_path + ";$rubygem_path", $machine) 
 # reg import .\ConEmuHere.reg 
 ```
