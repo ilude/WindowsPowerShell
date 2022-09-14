@@ -1,3 +1,6 @@
+# Powershell export run => code --list-extensions | % { "code --install-extension $_" }
+# Linux export run => code --list-extensions | xargs -L 1 echo code --install-extension
+
 code --install-extension aki77.rails-db-schema
 code --install-extension aki77.rails-partial
 code --install-extension alexcvzz.vscode-sqlite
@@ -56,9 +59,6 @@ code --install-extension ms-mssql.sql-database-projects-vscode
 code --install-extension ms-python.python
 code --install-extension ms-python.vscode-pylance
 code --install-extension ms-toolsai.jupyter
-# Powershell export run => code --list-extensions | % { "code --install-extension $_" }
-# Linux export run => code --list-extensions | xargs -L 1 echo code --install-extension
-
 code --install-extension ms-toolsai.jupyter-keymap
 code --install-extension ms-toolsai.jupyter-renderers
 code --install-extension ms-vscode-remote.remote-containers
