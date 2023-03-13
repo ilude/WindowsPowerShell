@@ -12,6 +12,7 @@ ridk enable
 
 rm rubyinstaller.exe
 
+pacman -S mingw-w64-x86_64-freetds
 
 # Install global gems
 gem install solargraph debug gitploy
