@@ -13,6 +13,7 @@ ridk enable
 rm rubyinstaller.exe
 
 pacman -S mingw-w64-x86_64-freetds
+gem install tiny_tds -- --with-freetds-include=C:\Tools\Ruby31-x64\msys64\mingw64\include\freetds
 
 # Install global gems
 gem install solargraph debug gitploy
