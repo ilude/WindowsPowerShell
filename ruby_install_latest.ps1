@@ -8,6 +8,8 @@ refreshenv
 ridk install 1 3
 ridk install 2
 
+ridk enable
+
 rm rubyinstaller.exe
 
 
