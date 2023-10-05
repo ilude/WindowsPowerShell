@@ -1,6 +1,6 @@
 function Setup-Git {
 	git config --global core.eol lf
-  	git config --global core.autocrlf input
+	git config --global core.autocrlf input
 	git config --global core.editor "'$(get-editor)' -w"
 	git config --global mergetool.p4merge.trustexitcode false
 	git config --global merge.tool p4merge
@@ -22,28 +22,21 @@ function Setup-Git {
 	git config --global alias.co 'checkout'
 	git config --global alias.cb 'checkout -b'
 	git config --global alias.ci 'commit -m'
-  	git config --global alias.ca '!git add -A . && git status -s && git commit -m'
+        git config --global alias.ca '!git add -A . && git status -s && git commit -m'
 	git config --global alias.s 'status -s'
 	
   	# Branching Aliases
 	git config --global alias.br branch
-	git config --global alias.ct  '!f(){ cmd=\"git checkout -t origin/$1\"; echo $cmd; $cmd; }; f'
-	git config --global alias.db  '!f(){ cmd=\"git branch -D $1; git push origin --delete $1\"; echo $cmd; $cmd; }; f'
-	git config --global alias.dlb '!f(){ cmd=\"git branch -D $1\"; echo $cmd; $cmd; }; f'
-	git config --global alias.drb '!f(){ cmd=\"git push origin :$1\"; echo $cmd; $cmd; }; f'
+	git config --global alias.ct  'checkout --track origin/$1'
+	git config --global alias.db  '!f(){ cmd=\"git branch -D $1; git push --delete origin $1\"; echo $cmd; $cmd; }; f'
+	git config --global alias.dlb 'branch -D $1'
+	git config --global alias.drb 'push --delete origin $1'
 	git config --global alias.track '!f(){ branch=$(git name-rev --name-only HEAD); cmd=\"git branch --track $branch ${1:-origin}/${2:-$branch}\"; echo $cmd; $cmd; }; f'
-
-	# Tagging Aliases
-	# git config --global alias.dt '!powershell -ExecutionPolicy ByPass Delete-Tag'
-	# git config --global alias.dlt '!powershell -ExecutionPolicy ByPass Delete-Tag -l'
-	# git config --global alias.drt '!powershell -ExecutionPolicy ByPass Delete-Tag -r'
-	# git config --global alias.mark '!powershell -ExecutionPolicy ByPass TagDeployment'
-	git config --global alias.ts 'tag -n10'
   
 	git config --global alias.unstage 'reset .'
 	git config --global alias.aa "!git add -A . && git status -s"
 	git config --global alias.pushall '!git push --all; git push --tags'
-	git config --global alias.ls '!git --no-pager log -20 --date=short --pretty=tformat:\"%C(yellow)%h%Creset - %C(yellow)%an%Creset %C(white)%ad%Creset%C(yellow)%d%Creset %Cgreen%s%Creset\"'
+	git config --global alias.ls '!git --no-pager log -10 --date=short --pretty=tformat:\"%C(yellow)%h%Creset - %C(yellow)%an%Creset %C(white)%ad%Creset%C(yellow)%d%Creset %Cgreen%s%Creset\"'
 	git config --global alias.ll '!git log --date=short --pretty=tformat:\"%C(yellow)%h%Creset - %C(yellow)%an%Creset %C(white)%ad%Creset%C(yellow)%d%Creset %Cgreen%s%Creset\"'
 	git config --global alias.lg 'log --graph --abbrev-commit --date=relative --pretty=format:\"%C(yellow)%h%Creset - %C(yellow)%an%Creset%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset\"'
 	# show files in commit
@@ -133,192 +126,7 @@ function Test-GitRepository {
 
 function Get-GitDirectory {
 	Get-LocalOrParentPath .git
-}
-
-###########################
-#
-# TrackBranches
-#
-###########################
-
-function Track-Branches {
-	git branch -r | `
-		foreach {
-			$branch = $_.Replace("origin/", "").trim();
-			$count = (-split $_).Count
-			if(($count -eq 1) -and ($branch -ne "HEAD") -and ($branch -ne "master")) {
-				Track-Branch $branch;
-			}
-		}
-}
-
-###########################
-#
-# Track-Branch
-#
-###########################
-
-function Track-Branch {
-	Param(
-		[string]$tagname
-	)
-	
-	if(-not $tagname){
-		$tagname = Get-GitBranch
-	}
-	
-	git config branch.$tagname.remote origin
-	git config branch.$tagname.merge refs/heads/$tagname
-}
-
-###########################
-#
-# Checkout-And-Track
-#
-###########################
-
-function Checkout-And-Track {
-  Param(
-		[parameter(Mandatory=$true)]
-		[string]$name
-	)
-  
-  git checkout -t origin/$name
-}
-
-###########################
-#
-# TagDeployment
-#
-###########################
-
-function TagDeployment {
-	$date = Get-Date -format yyyy-MM-dd.HH.mm.ss
-	git tag -m "Deployed $date" deploy-$date
-}
-
-
-###########################
-#
-# Delete-Tag
-#
-###########################
-
-function Delete-Tag {
-	Param(
-    [switch]$r=$false,
-    [switch]$l=$false,
-		[parameter(Mandatory=$true)]
-		[string]$name
-	)
-  
-  if($r -and -not $l) {
-    git push --delete origin $name
-  }
-  elseif($l -and -not $r) {
-    git tag -d $name
-  }
-  else {
-		git push --delete origin $name
-    git tag -d $name
-  }
-}
-
-###########################
-#
-# Test-Tag
-#
-###########################
-
-function Test-Tag {
-  Param(
-		[switch]$r=$false,
-		[parameter(Mandatory=$true)]
-		[string]$name
-	)
-	
-	if($r) {
-		return (git show-ref --tags | Where-Object { $_.Trim() -eq "origin/$name" } | Measure-Object).Count -eq 1
-	}
-	else {
-		return (git tag | Where-Object { $_.Trim() -eq "$name" } | Measure-Object).Count -eq 1
-	}
-}
-
-
-###########################
-#
-# Delete-Branch
-#
-###########################
-
-function Delete-Branch {
-	Param(
-		[switch]$D=$false,
-		[switch]$r=$false,
-    [switch]$l=$false,
-		[parameter(Mandatory=$true)]
-		[string]$name
-	)
-  
-  $force = "-d"
-  if($D) {
-    $force = "-D"
-  }
-	
-	if($r -and -not $l) {
-    if(Test-Branch -r $name) {
-      git push origin :$name
-    }
-		else {
-      Write-Warning "Branch $name does not exist in the remote repository!"
-    }
-	}
-  elseif($l -and -not $r) {
-    if((Test-Branch $name)) {
-			git branch $force $name
-		}
-    else {
-      Write-Warning "Branch $name does not exist in the local repository!"
-    }
-  }
-	else {
-		if((Test-Branch -r $name)) {
-			git push origin :$name
-		}
-    else {
-      Write-Warning "Branch $name does not exist in the remote repository!"
-    }
-		
-		if((Test-Branch $name)) {
-			git branch $force $name
-		}
-    else {
-      Write-Warning "Branch $name does not exist in the local repository!"
-    }
-	}
-}
-
-###########################
-#
-# Test-Branch
-#
-###########################
-
-function Test-Branch {
-	Param(
-		[switch]$r=$false,
-		[parameter(Mandatory=$true)]
-		[string]$name
-	)
-	
-	if($r) {
-		return (git branch -r | Where-Object { $_.Trim() -eq "origin/$name" } | Measure-Object).Count -eq 1
-	}
-	else {
-		return (git branch | Where-Object { $_.Trim() -eq "$name" } | Measure-Object).Count -eq 1
-	}
-}
+} 
 
 ###########################
 #
@@ -422,4 +230,4 @@ function Display-GitAliases {
 }
 
 
-Export-ModuleMember Setup-Git, Check-RemoteRepository, Test-GitRepository, Track-Branch, Track-Branches, Checkout-And-Track, TagDeployment, Delete-Tag, Test-Tag, Delete-RemoteTag, Delete-Branch, Test-Branch, Enable-GitColors, Get-GitAliasPattern, Get-GitBranch, Display-GitAliases
+Export-ModuleMember -Function * -Alias *

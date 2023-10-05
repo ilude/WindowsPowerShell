@@ -13,7 +13,11 @@ function dl {
 
 # Get container process
 function dps  {
-  docker ps $args
+  docker ps --format="table {{.Names}}\t{{.ID}}\t{{.Image}}\t{{.RunningFor}}\t{{.State}}\t{{.Status}}"
+}
+
+function dpsp {
+  docker ps --format="table {{.Names}}\t{{.ID}}\t{{.Image}}\t{{.RunningFor}}\t{{.State}}\t{{.Status}}\t{{.Ports}}"
 }
 
 # Get process included stop container
@@ -61,6 +65,6 @@ function dri {
 }
 
 
-Set-Alias dc "docker-compose"
+Set-Alias dc "docker compose"
 
 Export-ModuleMember -Function * -Alias *
