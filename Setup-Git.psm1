@@ -10,6 +10,7 @@ function Setup-Git {
 	git config --global mergetool.keepbackup false
 	git config --global fetch.prune true
 	git config --global push.default current
+	git config --global push.autoSetupRemote true
 	# rebase on pull instead of merge
 	git config --global branch.autosetuprebase always 
 	
