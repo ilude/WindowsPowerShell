@@ -9,7 +9,7 @@ choco install -y ccleaner
 choco pin add -n ccleaner
 choco install -y chocolateygui 
 choco install -y k-litecodecpackfull
-choco install -y notepadplusplus\
+choco install -y notepadplusplus
 choco install -y powershell-core
 choco install -y procexp # Process Explorer - SysInternals
 choco install -y screenpresso
