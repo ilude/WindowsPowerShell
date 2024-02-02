@@ -1,0 +1,8 @@
+
+choco pin remove -n docker-desktop
+choco uninstall -y docker-desktop
+
+# manually uninstall docker-desktop if needed
+
+choco install -y docker-desktop --version 4.26.1
+choco pin add -n docker-desktop
