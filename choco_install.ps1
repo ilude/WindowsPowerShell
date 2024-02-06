@@ -8,7 +8,10 @@ choco pin add -n brave
 choco install -y ccleaner
 choco pin add -n ccleaner
 choco install -y chocolateygui 
-choco install -y k-litecodecpackfull
+
+choco install -y ecm # Easy Context Menu https://www.sordum.org/7615/
+winget install --id=valinet.ExplorerPatcher  -e
+
 choco install -y notepadplusplus
 choco install -y powershell-core
 choco install -y procexp # Process Explorer - SysInternals
@@ -45,6 +48,7 @@ cinst nvidia-display-driver --package-parameters="'/dch'" -y
 choco install -y avidemux
 choco install -y handbrake
 choco install -y inkscape
+choco install -y k-litecodecpackfull
 choco install -y paint.net
 
 # Development Tools
@@ -61,6 +65,7 @@ choco install -y rsync
 choco install -y sql-server-management-studio
 choco install -y winscp
 choco install -y wsl2
+
 
 # VSCode and plugins
 choco install -y vscode
