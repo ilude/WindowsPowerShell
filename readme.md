@@ -28,8 +28,3 @@ env
 Setup-Git  
 pause "Press any key to continue..."  
 ```
-
-Notes on updating env vars like path and importing reg settings
-```
-# reg import .\ConEmuHere.reg 
-```
