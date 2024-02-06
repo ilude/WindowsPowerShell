@@ -24,6 +24,8 @@ choco install -y tailscale
 choco install -y t-clock
 choco install -y teamviewer
 choco pin add -n teamviewer
+choco install -y vscode
+choco pin add -n vscode
 choco install -y vlc
 choco install -y wiztree
 
@@ -54,6 +56,12 @@ choco install -y inkscape
 choco install -y k-litecodecpackfull
 choco install -y paint.net
 
+# Optional Work Stuff
+choco install -y office365business
+choco pin add -n office365business
+choco install -y openvpn
+choco install -y displayfusion
+
 # Development Tools
 choco install -y ansicon
 choco install -y curl
@@ -68,13 +76,14 @@ choco install -y sql-server-management-studio
 choco install -y winscp
 choco install -y wsl2
 
+# Optional Dev Tools
 choco install -y mysql.workbench
 choco install -y P4Merge
+choco install -y vagrant
+choco install -y wsl-alpine
+choco install -y wsl-ubuntu-2204
 
-
-# VSCode and plugins
-choco install -y vscode
-choco pin add -n vscode
+# VSCode plugins Optional
 choco install -y vscode-gitignore
 choco pin add -n vscode-gitignore
 choco install -y vscode-ansible
@@ -94,13 +103,4 @@ choco pin add -n vscode-powershell
 choco install -y vscode-icons
 choco pin add -n vscode-icons
 
-# Optional Dev Tools
-choco install -y vagrant
-choco install -y wsl-alpine
-choco install -y wsl-ubuntu-2204
 
-# Optional Work Stuff
-choco install -y office365business
-choco pin add -n office365business
-choco install -y openvpn
-choco install -y displayfusion
