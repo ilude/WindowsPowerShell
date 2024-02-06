@@ -2,22 +2,25 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManage
 
 # Minimal
 choco install -y 7zip
-choco install -y open-shell -installArgs ADDLOCAL=StartMenu
 choco install -y brave
 choco pin add -n brave
 choco install -y ccleaner
 choco pin add -n ccleaner
-choco install -y chocolateygui 
+choco install -y chocolateygui
+choco install -y cobian-backup
+choco install -y displayfusion
 
 choco install -y ecm # Easy Context Menu https://www.sordum.org/7615/
 winget install --id=valinet.ExplorerPatcher  -e
 
 choco install -y notepadplusplus
+choco install -y open-shell -installArgs ADDLOCAL=StartMenu
 choco install -y powershell-core
-choco install -y procexp # Process Explorer - SysInternals
 choco install -y screenpresso
 choco pin add -n screenpresso
 choco install -y spywareblaster
+choco install -y sysinternals
+choco install -y tailscale
 choco install -y t-clock
 choco install -y teamviewer
 choco pin add -n teamviewer
@@ -57,14 +60,16 @@ choco install -y curl
 choco install -y docker-desktop
 choco pin add -n docker-desktop
 choco install -y git --params "/GitAndUnixToolsOnPath /WindowsTerminal /NoShellIntegration /NoGuiHereIntegration /NoShellHereIntegration"
+choco install -y jq
 choco install -y microsoft-windows-terminal
-choco install -y mysql.workbench
-choco install -y P4Merge
 choco install -y putty
 choco install -y rsync
 choco install -y sql-server-management-studio
 choco install -y winscp
 choco install -y wsl2
+
+choco install -y mysql.workbench
+choco install -y P4Merge
 
 
 # VSCode and plugins
@@ -92,7 +97,7 @@ choco pin add -n vscode-icons
 # Optional Dev Tools
 choco install -y vagrant
 choco install -y wsl-alpine
-choco install -y wsl-ubuntu-2004
+choco install -y wsl-ubuntu-2204
 
 # Optional Work Stuff
 choco install -y office365business
