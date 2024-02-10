@@ -47,7 +47,7 @@ choco pin add -n epicgameslauncher
 
 # Video Drivers
 choco feature enable -n=useRememberedArgumentsForUpgrades
-cinst nvidia-display-driver --package-parameters="'/dch'" -y
+choco install nvidia-display-driver --package-parameters="'/dch'" -y
 
 # AV
 choco install -y avidemux
