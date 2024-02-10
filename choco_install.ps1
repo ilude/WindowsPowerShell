@@ -80,25 +80,3 @@ choco install -y P4Merge
 choco install -y vagrant
 choco install -y wsl-alpine
 choco install -y wsl-ubuntu-2204
-
-# VSCode plugins Optional
-choco install -y vscode-gitignore
-choco pin add -n vscode-gitignore
-choco install -y vscode-ansible
-choco pin add -n vscode-ansible
-choco install -y vscode-ruby
-choco pin add -n vscode-ruby
-choco install -y vscode-yaml
-choco pin add -n vscode-yaml
-choco install -y vscode-gitattributes
-choco pin add -n vscode-gitattributes
-choco install -y vscode-codespellchecker
-choco pin add -n vscode-codespellchecker
-choco install -y vscode-gitlens
-choco pin add -n vscode-gitlens
-choco install -y vscode-powershell
-choco pin add -n vscode-powershell
-choco install -y vscode-icons
-choco pin add -n vscode-icons
-
-
