@@ -56,11 +56,9 @@ choco install -y inkscape
 choco install -y k-litecodecpackfull
 choco install -y paint.net
 
-# Optional Work Stuff
+# Optional Stuff
 choco install -y office365business
 choco pin add -n office365business
-choco install -y openvpn
-choco install -y displayfusion
 
 # Development Tools
 choco install -y ansicon
