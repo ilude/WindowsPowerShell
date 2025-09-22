@@ -6,16 +6,16 @@ if ((-Not $env:path.ToLower().contains($script:powershell_path)) -And (Test-Path
   $env:path = "$env:path;$script:powershell_path"
 }
 
-$script:rsync_path = Join-Path $script:current_directory 'rsync'
-if (Test-Path $script:rsync_path) {
-  $env:path = "$env:path;$script:rsync_path"
-}
+# $script:rsync_path = Join-Path $script:current_directory 'rsync'
+# if (Test-Path $script:rsync_path) {
+#   $env:path = "$env:path;$script:rsync_path"
+# }
 
-$env:SSL_CERT_FILE = Join-Path $script:current_directory cacert.pem
+# $env:SSL_CERT_FILE = Join-Path $script:current_directory cacert.pem
 
-# set vagrant default provider
-# https://www.vagrantup.com/docs/providers/default.html
-$env:VAGRANT_DEFAULT_PROVIDER = "hyperv"
+# # set vagrant default provider
+# # https://www.vagrantup.com/docs/providers/default.html
+# $env:VAGRANT_DEFAULT_PROVIDER = "hyperv"
 
 ###########################
 #
