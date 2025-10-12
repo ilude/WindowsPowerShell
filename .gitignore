@@ -1,2 +1,4 @@
 connect_o365.ps1
 Modules/
+.specstory/
+Scripts/Bitwarden_Exact_Match_Domains.txt
