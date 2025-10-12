@@ -15,6 +15,8 @@ if (Test-Path $script:scripts_path) {
   }
 }
 
+$env:Path = "$env:USERPROFILE\.local\bin;$env:Path" 
+
 # $script:rsync_path = Join-Path $script:current_directory 'rsync'
 # if (Test-Path $script:rsync_path) {
 #   $env:path = "$env:path;$script:rsync_path"
