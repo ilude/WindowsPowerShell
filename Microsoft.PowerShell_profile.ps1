@@ -107,4 +107,5 @@ if (Get-Module -ListAvailable -Name posh-git) {
 } 
 
 $Env:COMPOSE_CONVERT_WINDOWS_PATHS = 1
+$Env:DOCKER_BUILDKIT=1
 
