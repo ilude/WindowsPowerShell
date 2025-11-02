@@ -17,36 +17,15 @@ if (Test-Path $script:scripts_path) {
 
 $env:Path = "$env:USERPROFILE\.local\bin;$env:Path" 
 
-# $script:rsync_path = Join-Path $script:current_directory 'rsync'
-# if (Test-Path $script:rsync_path) {
-#   $env:path = "$env:path;$script:rsync_path"
-# }
-
-# $env:SSL_CERT_FILE = Join-Path $script:current_directory cacert.pem
-
-# # set vagrant default provider
-# # https://www.vagrantup.com/docs/providers/default.html
-# $env:VAGRANT_DEFAULT_PROVIDER = "hyperv"
-
 ###########################
 #
 # Load all modules
 #
 ###########################
 
-Get-ChildItem $script:current_directory *.psm1 | foreach {
-  Import-Module $_.VersionInfo.FileName -DisableNameChecking -verbose:$false
+Get-ChildItem -Path $script:current_directory -Filter '*.psm1' -File | ForEach-Object {
+  Import-Module $_.FullName -DisableNameChecking -Verbose:$false
 }
-
-# try {
-#   $script:git_exe = @((which git.exe).Definition)[0]
-#   if ($script:git_exe) {
-#     $env:GITDIR = split-path $script:git_exe | split-path
-#   }
-# }
-# catch {
-#   Write-Error "Error setting GITDIR! " + Error[0].Exception
-# }
 
 ###########################
 #
@@ -57,23 +36,23 @@ Get-ChildItem $script:current_directory *.psm1 | foreach {
 function prompt {
   $realLASTEXITCODE = $LASTEXITCODE
 
-  $path = $(get-location).Path
+  $path = $(Get-Location).Path
   $index = $path.LastIndexOf('\') + 1
   $userLocation = $path
 
   if ($index -lt $path.Length) {
     $userLocation = $path.Substring($index, $path.Length - $index)
   }
-	
-  Write-Host($userLocation) -nonewline -foregroundcolor Green 
-	
+
+  Write-Host $userLocation -NoNewLine -ForegroundColor Green
+
   if (Test-GitRepository) {
     $branch = Get-GitBranch
 
-    Write-Host '[' -nonewline -foregroundcolor Yellow
-    Write-Host $branch -nonewline -foregroundcolor Cyan
-    Write-Host ']' -nonewline -foregroundcolor Yellow
-		
+    Write-Host '[' -NoNewLine -ForegroundColor Yellow
+    Write-Host $branch -NoNewLine -ForegroundColor Cyan
+    Write-Host ']' -NoNewLine -ForegroundColor Yellow
+
     $host.UI.RawUi.WindowTitle = "Git:$userLocation - $script:current_directory"
   }
   elseif ($userLocation -eq $script:current_directory) {
@@ -82,7 +61,7 @@ function prompt {
   else {
     $host.UI.RawUi.WindowTitle = "$userLocation - $script:current_directory"
   }
-    
+
   $LASTEXITCODE = $realLASTEXITCODE
   return "> "
 }
@@ -112,7 +91,9 @@ function Show-GitRepoSyncHints {
       $val = $env:PROFILE_GIT_FETCH.ToLower()
       if (@('0','false','no') -contains $val) { $doFetch = $false }
     }
-    if ($doFetch) { & git -C "$RepoPath" fetch --quiet 2>$null | Out-Null }
+    if ($doFetch) {
+      & git -C "$RepoPath" fetch --quiet 2>$null | Out-Null
+    }
 
     $branch   = (& git -C "$RepoPath" rev-parse --abbrev-ref HEAD 2>$null)
     $upstream = (& git -C "$RepoPath" rev-parse --abbrev-ref '@{u}' 2>$null)

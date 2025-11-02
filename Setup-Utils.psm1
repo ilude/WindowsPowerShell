@@ -6,43 +6,54 @@
 ###########################
 
 function Get-Editor {
-	$path = Resolve-Path (join-path (join-path "$env:PROGRAMW6432*" "*code") "code.exe");
-
-	if($path.Path) {
-		return $path.Path;
+	# Try to find VS Code
+	$vscodeExe = Get-Command code.exe -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source | Select-Object -First 1
+	if ($vscodeExe) {
+		return $vscodeExe
 	}
 
-	$path = Resolve-Path (join-path (join-path "$env:PROGRAMW6432*" "notepad*") "notepad*");
-	if($path.Path) {
-		return $path.Path;
+	# Try Program Files locations
+	$editorPaths = @(
+		(Join-Path $env:PROGRAMFILES 'Microsoft VS Code\code.exe'),
+		(Join-Path $env:PROGRAMFILES 'Microsoft VS Code\bin\code.exe'),
+		(Join-Path $env:PROGRAMFILES 'Notepad++\notepad++.exe'),
+		(Join-Path $env:WINDIR 'System32\notepad.exe')
+	)
+
+	foreach ($editorPath in $editorPaths) {
+		if (Test-Path $editorPath) {
+			return $editorPath
+		}
 	}
-	
-	$path = Join-Path $env:windir "\system32\notepad.exe"
-	if(Test-Path $path) {
-		return $path;
-	}
-	
-	return $null;
+
+	return $null
 }
 
 ###########################
 #
-# Approve-Syntax
+# Test-Syntax
 # http://rkeithhill.wordpress.com/2007/10/30/powershell-quicktip-preparsing-scripts-to-check-for-syntax-errors/
 #
 ###########################
 
 function Test-Syntax {
-	param($path, [switch]$verbose)
+	[CmdletBinding()]
+	param(
+		[Parameter(Mandatory=$true)]
+		[ValidateScript({Test-Path $_ -PathType Leaf})]
+		[string]$Path,
 
-	if ($verbose) {
-		$VerbosePreference = �Continue�
+		[switch]$Verbose
+	)
+
+	if ($Verbose) {
+		$VerbosePreference = 'Continue'
 	}
 
 	trap { Write-Warning $_; $false; continue }
 	& `
 	{
-		$contents = get-content $path
+		$contents = Get-Content $Path
 		$contents = [string]::Join([Environment]::NewLine, $contents)
 		[void]$ExecutionContext.InvokeCommand.NewScriptBlock($contents)
 		Write-Verbose "Parsed without errors"
@@ -57,17 +68,20 @@ function Test-Syntax {
 ###########################
 
 function Reload-Profile {
+	[CmdletBinding()]
+	param()
+
 	@(
 		$Profile.AllUsersAllHosts,
 		$Profile.AllUsersCurrentHost,
 		$Profile.CurrentUserAllHosts,
 		$Profile.CurrentUserCurrentHost
-	) | foreach {
+	) | ForEach-Object {
 		if(Test-Path $_){
 			Write-Verbose "Running $_"
 			. $_
 		}
-	}    
+	}
 }
 
 
@@ -81,16 +95,22 @@ function Reload-Profile {
 ###########################
 
 function Coalesce-Args {
-    $result = $null
-    foreach($arg in $args) {
-        if ($arg -is [ScriptBlock]) {
-            $result = & $arg
-        } else {
-            $result = $arg
-        }
-        if ($result) { break }
-    }
-    $result
+	[CmdletBinding()]
+	param(
+		[Parameter(ValueFromRemainingArguments=$true)]
+		[object[]]$Arguments
+	)
+
+	$result = $null
+	foreach($arg in $Arguments) {
+		if ($arg -is [ScriptBlock]) {
+			$result = & $arg
+		} else {
+			$result = $arg
+		}
+		if ($result) { break }
+	}
+	$result
 }
 
 Set-Alias ?? Coalesce-Args -Force
@@ -101,17 +121,23 @@ Set-Alias ?? Coalesce-Args -Force
 #
 ###########################
 
-function Get-LocalOrParentPath($path) {
-    $checkIn = Get-Item .
-    while ($checkIn -ne $NULL) {
-        $pathToTest = [System.IO.Path]::Combine($checkIn.fullname, $path)
-        if (Test-Path $pathToTest) {
-            return $pathToTest
-        } else {
-            $checkIn = $checkIn.parent
-        }
-    }
-    return $null
+function Get-LocalOrParentPath {
+	[CmdletBinding()]
+	param(
+		[Parameter(Mandatory=$true)]
+		[string]$Path
+	)
+
+	$checkIn = Get-Item .
+	while ($checkIn -ne $NULL) {
+		$pathToTest = [System.IO.Path]::Combine($checkIn.fullname, $Path)
+		if (Test-Path $pathToTest) {
+			return $pathToTest
+		} else {
+			$checkIn = $checkIn.parent
+		}
+	}
+	return $null
 }
 
 ###########################
@@ -120,11 +146,18 @@ function Get-LocalOrParentPath($path) {
 #
 ###########################
 
-function Debug($Message, [Diagnostics.Stopwatch]$Stopwatch) {
-    if($Stopwatch) {
-        Write-Verbose ('{0:00000}:{1}' -f $Stopwatch.ElapsedMilliseconds,$Message) -Verbose # -ForegroundColor Yellow
-    }
-		# Write-Warning $Message
+function Debug {
+	[CmdletBinding()]
+	param(
+		[Parameter(Mandatory=$true)]
+		[string]$Message,
+
+		[Diagnostics.Stopwatch]$Stopwatch
+	)
+
+	if($Stopwatch) {
+		Write-Verbose ('{0:00000}:{1}' -f $Stopwatch.ElapsedMilliseconds,$Message) -Verbose
+	}
 }
 
 Set-Alias dbg Debug
@@ -135,8 +168,10 @@ Set-Alias dbg Debug
 #
 ###########################
 
-function Get-ScriptDirectory
-{
+function Get-ScriptDirectory {
+	[CmdletBinding()]
+	param()
+
 	$Invocation = (Get-Variable MyInvocation -Scope 1).Value
 	Split-Path $Invocation.MyCommand.Path
 }
@@ -147,22 +182,44 @@ function Get-ScriptDirectory
 #
 ###########################
 
-function ConvertTo-PlainText( [security.securestring]$secure ) {
-	$marshal = [Runtime.InteropServices.Marshal];
-	return $marshal::PtrToStringAuto( $marshal::SecureStringToBSTR($secure) );
+function ConvertTo-PlainText {
+	[CmdletBinding()]
+	param(
+		[Parameter(Mandatory=$true)]
+		[Security.SecureString]$SecureString
+	)
+
+	$marshal = [Runtime.InteropServices.Marshal]
+	$ptr = $marshal::SecureStringToBSTR($SecureString)
+	$result = $marshal::PtrToStringAuto($ptr)
+	$marshal::ZeroFreeBSTR($ptr)
+	return $result
 }
 
 function Get-Environment {
+	[CmdletBinding()]
+	param()
+
 	Get-ChildItem Env:
 }
 
-function Create-Console($path = $(pwd)) {
-  $console = Resolve-Path (join-path (join-path "$env:PROGRAMW6432*" "console*") "ConEmu64*");
-  . $console /config "shell" /dir "$path" /cmd powershell -cur_console:n
+function Create-Console {
+	[CmdletBinding()]
+	param(
+		[string]$Path = $(pwd)
+	)
+
+	$console = Get-Command ConEmu64.exe -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source | Select-Object -First 1
+	if (-not $console) {
+		Write-Error "ConEmu is not installed or not in PATH"
+		return
+	}
+
+	& $console /config "shell" /dir "$Path" /cmd powershell -cur_console:n
 }
 
 Set-Alias sh Create-Console
-
 Set-Alias Get-Env Get-Environment
-Set-Alias Get-Version $Host.Version
 Set-Alias nano "$(Get-Editor)"
+
+Export-ModuleMember -Function * -Alias *
