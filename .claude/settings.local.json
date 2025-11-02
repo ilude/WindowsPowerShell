@@ -2,7 +2,10 @@
   "permissions": {
     "allow": [
       "Bash(cat:*)",
-      "mcp__MCP_DOCKER__sequentialthinking"
+      "mcp__MCP_DOCKER__sequentialthinking",
+      "Bash(awk:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nReorganize documentation into feature-based structure\n\nMove all improvement documentation into .claude/features/ with dated\nsubdirectories (YYYY-MM-DD_feature-name/ format). Establishes convention\nfor organizing feature work during planning sessions.\n\nChanges:\n- Created .claude/features/2025-11-02_initial-code-review/\n- Created .claude/features/2025-11-02_phase-1-quick-wins/\n- Created .claude/features/2025-11-02_phase-2-code-polish/\n- Created .claude/features/2025-11-02_roadmap/\n- Updated .claude/CLAUDE.md with feature directory documentation\n- Added .claude/PERSONAL_RULES.md for project-specific rules\n\n🤖 Generated with Claude Code\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
     ],
     "deny": [],
     "ask": []

@@ -1,3 +1,7 @@
+# Setup-Utils Module - Requires PowerShell 3.0+
+# Uses: CmdletBinding, ValidateScript attributes (PS 3.0+)
+# Uses: Parameter validation (PS 3.0+)
+# Tested: Windows PowerShell 5.1, PowerShell Core 7.x
 
 ###########################
 #

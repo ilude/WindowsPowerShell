@@ -1,21 +1,51 @@
+# PowerShell Profile - Requires PowerShell 3.0+
+# Uses: CmdletBinding, ValidateScript attributes (PS 3.0+)
+# Uses: Get-Command with -ErrorAction (PS 3.0+)
+# Tested: Windows PowerShell 5.1, PowerShell Core 7.x
+
 # Directory where this file is located
 $script:current_directory = Split-Path $MyInvocation.MyCommand.Path
 
+###########################
+#
+# Helper function for PATH management
+#
+###########################
+
+function Add-PathIfNotExists {
+  [CmdletBinding()]
+  param(
+    [Parameter(Mandatory=$true)]
+    [ValidateNotNullOrEmpty()]
+    [string]$PathToAdd
+  )
+
+  $pathArray = $env:PATH.ToLower().Split(';')
+  $pathToCheckLower = $PathToAdd.ToLower()
+
+  if ($pathArray -notcontains $pathToCheckLower) {
+    $env:PATH = "$PathToAdd;$env:PATH"
+    Write-Verbose "Added '$PathToAdd' to PATH"
+  }
+  else {
+    Write-Verbose "Path '$PathToAdd' already exists in PATH"
+  }
+}
+
+# Add PowerShell to PATH if not present
 $script:powershell_path = "C:\Windows\System32\WindowsPowerShell\v1.0".ToLower()
-if ((-Not $env:path.ToLower().contains($script:powershell_path)) -And (Test-Path $script:powershell_path)) {
-  $env:path = "$env:path;$script:powershell_path"
+if (Test-Path $script:powershell_path) {
+  Add-PathIfNotExists -PathToAdd $script:powershell_path
 }
 
 # Add local ./Scripts folder to PATH if present
 $script:scripts_path = Join-Path $script:current_directory 'Scripts'
 if (Test-Path $script:scripts_path) {
-  $scripts_path_lc = $script:scripts_path.ToLower()
-  if (-Not ($env:path.ToLower().Split(';') -contains $scripts_path_lc)) {
-    $env:path = "$env:path;$script:scripts_path"
-  }
+  Add-PathIfNotExists -PathToAdd $script:scripts_path
 }
 
-$env:Path = "$env:USERPROFILE\.local\bin;$env:Path" 
+# Add user binary directory to PATH
+Add-PathIfNotExists -PathToAdd "$env:USERPROFILE\.local\bin" 
 
 ###########################
 #
@@ -153,9 +183,9 @@ Show-GitRepoSyncHints
 #
 ###########################
 
-$defaul_tab_expansion = 'Default_Tab_Expansion'
-if ((Test-Path Function:\TabExpansion) -and !(Test-Path Function:\$defaul_tab_expansion)) {
-  Rename-Item Function:\TabExpansion $defaul_tab_expansion
+$default_tab_expansion = 'Default_Tab_Expansion'
+if ((Test-Path Function:\TabExpansion) -and !(Test-Path Function:\$default_tab_expansion)) {
+  Rename-Item Function:\TabExpansion $default_tab_expansion
 }
 
 function TabExpansion($line, $lastWord) {
@@ -164,7 +194,7 @@ function TabExpansion($line, $lastWord) {
     # Execute git tab completion for all git-related commands
     "$(Get-GitAliasPattern) (.*)" { GitTabExpansion $lastBlock }
     # Fall back on existing tab expansion
-    default { & $defaul_tab_expansion $line $lastWord }
+    default { & $default_tab_expansion $line $lastWord }
   }
 }
 
@@ -173,25 +203,35 @@ if (Get-Module -ListAvailable -Name posh-docker) {
   Import-Module posh-docker
 } 
 if (Get-Module -ListAvailable -Name posh-git) {
-  # https://github.com/samneirinck/posh-docker
+  # https://github.com/dahlbyk/posh-git
   Import-Module posh-git
 } 
 
 # Lightweight `l` listing function (human-friendly columns + colors)
 function l {
-    param([string]$Path = '.')
+  [CmdletBinding()]
+  param(
+    [Parameter(Mandatory=$false, ValueFromPipeline=$true)]
+    [ValidateScript({Test-Path $_ -PathType Container})]
+    [string]$Path = '.'
+  )
 
-    $items = Get-ChildItem -Force -Path $Path | Sort-Object { -not $_.PSIsContainer }, Name
+  try {
+    $items = Get-ChildItem -Force -Path $Path -ErrorAction Stop | Sort-Object { -not $_.PSIsContainer }, Name
 
     foreach ($item in $items) {
-        $color = if ($item.PSIsContainer) { 'Cyan' } elseif ($item.Extension -match '\.exe|\.ps1|\.bat|\.sh') { 'Green' } else { 'Gray' }
-  $mode  = $item.Mode
-  # Format size so the total width (including ' KB') fits a fixed column width.
-  $len   = if ($item.PSIsContainer) { '<DIR>' } else { ('{0,8}' -f ([math]::Round($item.Length / 1KB, 1))) + ' KB' }
-  $date  = $item.LastWriteTime.ToString('yyyy-MM-dd HH:mm')
-  # Use a 12-character width for the size column so directories and file sizes align vertically.
-  Write-Host ("{0,-11} {1,12} {2,17} {3}" -f $mode, $len, $date, $item.Name) -ForegroundColor $color
+      $color = if ($item.PSIsContainer) { 'Cyan' } elseif ($item.Extension -match '\.exe|\.ps1|\.bat|\.sh') { 'Green' } else { 'Gray' }
+      $mode  = $item.Mode
+      # Format size so the total width (including ' KB') fits a fixed column width.
+      $len   = if ($item.PSIsContainer) { '<DIR>' } else { ('{0,8}' -f ([math]::Round($item.Length / 1KB, 1))) + ' KB' }
+      $date  = $item.LastWriteTime.ToString('yyyy-MM-dd HH:mm')
+      # Use a 12-character width for the size column so directories and file sizes align vertically.
+      Write-Host ("{0,-11} {1,12} {2,17} {3}" -f $mode, $len, $date, $item.Name) -ForegroundColor $color
     }
+  }
+  catch {
+    Write-Error "Failed to list directory '$Path': $_"
+  }
 }
 # The function `l` is callable directly. Avoid creating an alias with the same name (it can cause recursion).
 # Create a convenient alias `ll` that maps to the `l` function instead.

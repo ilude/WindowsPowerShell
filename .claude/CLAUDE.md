@@ -2,6 +2,46 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Documentation Organization
+
+All project documentation and improvement history is organized in the `.claude/features/` directory with dated subdirectories:
+
+### Feature Directories
+
+**`.claude/features/2025-11-02_initial-code-review/`**
+- Initial comprehensive code review findings
+- Files: REVIEW_REPORT.md, IMPROVEMENTS_SUMMARY.txt, README_REVIEW.md
+- Purpose: Technical analysis of codebase issues and recommendations
+
+**`.claude/features/2025-11-02_phase-1-quick-wins/`**
+- Phase 1 quick wins implementation (5/5 complete)
+- Files: PHASE_1_COMPLETE.md
+- Purpose: Fast, high-impact fixes (typos, cleanup, documentation)
+
+**`.claude/features/2025-11-02_phase-2-code-polish/`**
+- Phase 2 code quality improvements (5/5 complete)
+- Files: PHASE_2_COMPLETE.md, ADDITIONAL_RECOMMENDATIONS.md
+- Purpose: Error handling, code organization, user experience enhancements
+
+**`.claude/features/2025-11-02_roadmap/`**
+- Improvement roadmap and planning
+- Files: IMPROVEMENT_ROADMAP.txt, PLAN_SUMMARY.md
+- Purpose: Strategic planning, effort vs impact analysis, future recommendations
+
+### Navigation Tips
+
+- For quick overview: Start with `.claude/features/2025-11-02_initial-code-review/README_REVIEW.md`
+- For implementation details: See individual PHASE_*_COMPLETE.md files
+- For strategic planning: Check IMPROVEMENT_ROADMAP.txt in roadmap directory
+- For technical specifics: REVIEW_REPORT.md contains detailed bug and fix information
+
+### Future Feature Directories
+
+When working on new features or improvements, dated directories will be created following the pattern:
+`.claude/features/YYYY-MM-DD_feature-name/`
+
+---
+
 ## Recent Improvements (Latest Review)
 
 **Bug Fixes:**
@@ -125,3 +165,133 @@ When adding new utility functions, place them in a `.psm1` file in the root dire
 ### Startup Performance
 
 The `Show-GitRepoSyncHints` function runs a `git fetch` by default, which can add startup latency. Set `$env:PROFILE_GIT_FETCH=0` to disable fetching and speed up shell startup.
+
+## Configuration Reference
+
+### Environment Variables
+
+#### PROFILE_GIT_FETCH
+- **Default:** 1 (enabled)
+- **Purpose:** Controls whether `git fetch` runs automatically on shell startup
+- **Values:**
+  - `0` or `'false'` - Disable git fetch (faster startup)
+  - Any other value - Enable git fetch (default)
+- **Usage:** `$env:PROFILE_GIT_FETCH = 0`
+- **When to Use:** Set to 0 for faster startup when working offline or on slow networks
+
+#### COMPOSE_CONVERT_WINDOWS_PATHS
+- **Default:** 1 (enabled)
+- **Purpose:** Enables Docker Compose path conversion from Windows to WSL
+- **Why:** Required for Docker Desktop on Windows with WSL2 backend
+- **Usage:** Already set in profile, no action needed
+- **Related:** Requires WSL2 and Docker Desktop
+
+#### DOCKER_BUILDKIT
+- **Default:** 1 (enabled)
+- **Purpose:** Uses newer, faster Docker build engine with better caching
+- **Benefits:**
+  - Faster builds with improved caching strategies
+  - Better error messages and build output
+  - Improved build performance
+- **Usage:** Already set in profile, no action needed
+- **Requirements:** Docker version 18.09 or later
+
+### Quick Reference
+
+```powershell
+# Disable git fetch for faster startup
+$env:PROFILE_GIT_FETCH = 0
+
+# Re-enable git fetch
+$env:PROFILE_GIT_FETCH = 1
+
+# Check current settings
+$env:PROFILE_GIT_FETCH
+$env:COMPOSE_CONVERT_WINDOWS_PATHS
+$env:DOCKER_BUILDKIT
+```
+
+## Docker Utilities
+
+### Docker Functions and Aliases
+
+The profile includes comprehensive Docker utilities in `Setup/Setup-Docker.psm1`:
+
+**Container Management:**
+- `dbash <container>` - Execute bash shell in container
+- `dps` - List running containers with details
+- `dpsp` - List running containers with port information
+- `dpa` - List all containers (including stopped)
+- `dex <container> <command>` - Execute command in running container
+- `dl` - Get latest container ID
+- `drm` - Delete all stopped containers
+- `dri` - Delete all unused images
+
+**Image Management:**
+- `db [tag] [path]` - Build Docker image (default: latest, current dir)
+- `di` - List all Docker images
+- `dip <container>` - Get container IP address
+
+**Container Execution:**
+- `dkd <args>` - Run daemonized container
+- `dki <args>` - Run interactive container with bash
+- `dc` - Docker compose alias (maps to `docker compose`)
+
+**Error Handling:**
+All Docker functions now include:
+- Parameter validation with helpful error messages
+- Container existence checks before operations
+- Try-catch blocks for graceful error handling
+- Verbose output support for troubleshooting
+
+## Unix Utilities
+
+### Unix-like Commands
+
+The profile includes Unix compatibility functions in `Setup/Setup-Unix.psm1`:
+
+**Network Utilities:**
+- `Get-NetworkStatistics [-Protocol {TCP|UDP}]` - Display network connections
+- `listen` - Alias for Get-NetworkStatistics
+
+**Command Discovery:**
+- `which <command>` - Show full path to command
+
+**Features:**
+- Handles IPv4 and IPv6 addresses
+- Shows process names and PIDs
+- Filters by TCP/UDP protocol
+- Safe error handling for permission issues
+- Returns N/A for inaccessible processes
+
+### Directory Listing
+
+The `l` function provides human-friendly directory listing:
+
+```powershell
+l              # List current directory
+l "C:\path"    # List specific directory
+ll             # Alias for l
+
+# Features:
+# - Directories shown in cyan
+# - Executable files shown in green
+# - File sizes in KB
+# - ISO-formatted timestamps
+# - Sorted: directories first, then by name
+```
+
+## PATH Management
+
+The profile manages PATH intelligently with the `Add-PathIfNotExists` helper function:
+
+- Automatically adds `$env:USERPROFILE\.local\bin` for user scripts
+- Adds `Scripts/` directory from profile location
+- Adds Windows PowerShell system directory
+- Prevents duplicate entries
+- Verbose output available with `-Verbose` flag
+
+```powershell
+# Manual PATH manipulation (if needed):
+Add-PathIfNotExists -PathToAdd "C:\custom\path"
+```
