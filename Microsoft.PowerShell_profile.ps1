@@ -204,10 +204,12 @@ function l {
 
     foreach ($item in $items) {
         $color = if ($item.PSIsContainer) { 'Cyan' } elseif ($item.Extension -match '\.exe|\.ps1|\.bat|\.sh') { 'Green' } else { 'Gray' }
-        $mode  = $item.Mode
-        $len   = if ($item.PSIsContainer) { '<DIR>' } else { ('{0,8}' -f ([math]::Round($item.Length / 1KB, 1))) + ' KB' }
-        $date  = $item.LastWriteTime.ToString('yyyy-MM-dd HH:mm')
-        Write-Host ("{0,-11} {1,10} {2,17} {3}" -f $mode, $len, $date, $item.Name) -ForegroundColor $color
+  $mode  = $item.Mode
+  # Format size so the total width (including ' KB') fits a fixed column width.
+  $len   = if ($item.PSIsContainer) { '<DIR>' } else { ('{0,8}' -f ([math]::Round($item.Length / 1KB, 1))) + ' KB' }
+  $date  = $item.LastWriteTime.ToString('yyyy-MM-dd HH:mm')
+  # Use a 12-character width for the size column so directories and file sizes align vertically.
+  Write-Host ("{0,-11} {1,12} {2,17} {3}" -f $mode, $len, $date, $item.Name) -ForegroundColor $color
     }
 }
 # The function `l` is callable directly. Avoid creating an alias with the same name (it can cause recursion).
