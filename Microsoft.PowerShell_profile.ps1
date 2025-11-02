@@ -103,8 +103,10 @@ function prompt {
 ###########################
 
 function Show-GitRepoSyncHints {
+  [CmdletBinding()]
   param(
-    [string]$RepoPath = $script:current_directory
+    [string]$RepoPath = $script:current_directory,
+    [switch]$SkipFetch
   )
 
   try {
@@ -115,14 +117,17 @@ function Show-GitRepoSyncHints {
     $isRepo = & git -C "$RepoPath" rev-parse --is-inside-work-tree 2>$null
     if ($LASTEXITCODE -ne 0 -or $isRepo -ne 'true') { return }
 
-    # Optional fetch to update ahead/behind info; disable by setting PROFILE_GIT_FETCH=0
-    $doFetch = $true
-    if ($env:PROFILE_GIT_FETCH) {
-      $val = $env:PROFILE_GIT_FETCH.ToLower()
-      if (@('0','false','no') -contains $val) { $doFetch = $false }
-    }
-    if ($doFetch) {
-      & git -C "$RepoPath" fetch --quiet 2>$null | Out-Null
+    # Skip fetch if explicitly requested (for async mode)
+    if (-not $SkipFetch) {
+      # Optional fetch to update ahead/behind info; disable by setting PROFILE_GIT_FETCH=0
+      $doFetch = $true
+      if ($env:PROFILE_GIT_FETCH) {
+        $val = $env:PROFILE_GIT_FETCH.ToLower()
+        if (@('0','false','no') -contains $val) { $doFetch = $false }
+      }
+      if ($doFetch) {
+        & git -C "$RepoPath" fetch --quiet 2>$null | Out-Null
+      }
     }
 
     $branch   = (& git -C "$RepoPath" rev-parse --abbrev-ref HEAD 2>$null)
@@ -147,22 +152,22 @@ function Show-GitRepoSyncHints {
       if ($branch) { Write-Host ("  Branch: {0}" -f $branch) -ForegroundColor DarkGray }
 
       if ($dirty) {
-        Write-Host "  • Uncommitted changes present" -ForegroundColor Red
+        Write-Host "  - Uncommitted changes present" -ForegroundColor Red
         Write-Host ('    git -C "{0}" status' -f $RepoPath) -ForegroundColor Cyan
       }
 
       if (-not $upstream) {
-        Write-Host ("  • No upstream set for '{0}'." -f $branch) -ForegroundColor Red
+        Write-Host ("  - No upstream set for '{0}'." -f $branch) -ForegroundColor Red
         Write-Host ('    git -C "{0}" branch --set-upstream-to origin/{1}' -f $RepoPath, $branch) -ForegroundColor Cyan
       }
 
       if ($behind -gt 0) {
-        Write-Host ("  • Behind by {0} commit(s) — pull needed" -f $behind) -ForegroundColor Yellow
+        Write-Host ("  - Behind by {0} commit(s) - pull needed" -f $behind) -ForegroundColor Yellow
         Write-Host ('    git -C "{0}" pull' -f $RepoPath) -ForegroundColor Cyan
       }
 
       if ($ahead -gt 0) {
-        Write-Host ("  • Ahead by {0} commit(s) — push needed" -f $ahead) -ForegroundColor Yellow
+        Write-Host ("  - Ahead by {0} commit(s) - push needed" -f $ahead) -ForegroundColor Yellow
         Write-Host ('    git -C "{0}" push' -f $RepoPath) -ForegroundColor Cyan
       }
 
@@ -174,8 +179,40 @@ function Show-GitRepoSyncHints {
   }
 }
 
-# Run the sync hint once at startup for this profile's repo
-Show-GitRepoSyncHints
+function Start-AsyncGitFetch {
+  [CmdletBinding()]
+  param(
+    [string]$RepoPath = $script:current_directory,
+    [int]$TimeoutSeconds = 10
+  )
+
+  # Don't start async fetch if disabled
+  $doFetch = $true
+  if ($env:PROFILE_GIT_FETCH) {
+    $val = $env:PROFILE_GIT_FETCH.ToLower()
+    if (@('0','false','no') -contains $val) { $doFetch = $false }
+  }
+  if (-not $doFetch) { return }
+
+  # Verify git and repo exist before spawning background job
+  $git = Get-Command git -ErrorAction SilentlyContinue
+  if (-not $git -or -not (Test-Path -LiteralPath $RepoPath)) { return }
+
+  $isRepo = & git -C "$RepoPath" rev-parse --is-inside-work-tree 2>$null
+  if ($LASTEXITCODE -ne 0 -or $isRepo -ne 'true') { return }
+
+  # Start background job to fetch without blocking startup
+  $null = Start-Job -ScriptBlock {
+    param($repoPath)
+    & git -C "$repoPath" fetch --quiet 2>$null
+  } -ArgumentList $RepoPath -ErrorAction SilentlyContinue
+}
+
+# Run the sync hint once at startup for this profile's repo (skip fetch to run async instead)
+Show-GitRepoSyncHints -SkipFetch
+
+# Start async git fetch in background (non-blocking)
+Start-AsyncGitFetch
 
 ###########################
 #

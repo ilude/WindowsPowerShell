@@ -58,8 +58,15 @@ When working on new features or improvements, dated directories will be created 
 - Improved `ConvertTo-PlainText` to properly clean up secure string pointers
 - Enhanced `Create-Console` with proper error checking for ConEmu availability
 
+**Performance Improvements:**
+- Implemented **asynchronous git fetch** using PowerShell background jobs (`Start-Job`) to eliminate startup blocking
+- `Show-GitRepoSyncHints` now accepts `-SkipFetch` parameter to skip fetch on startup
+- New `Start-AsyncGitFetch` function spawns background fetch job that doesn't delay shell initialization
+- Startup now immediately displays sync status while fetch completes in background
+
 **Documentation:**
 - Updated CLAUDE.md to reflect current implementation
+- Added documentation for async git fetch functions and behavior
 - All functions now follow PowerShell best practices
 
 ## Repository Overview
@@ -103,10 +110,12 @@ The profile includes comprehensive Git integration:
 ### Startup Behavior
 
 On profile load, the system:
-1. Optionally runs `git fetch` in the profile's own repository (controlled by `$env:PROFILE_GIT_FETCH`)
-2. Checks sync status and displays actionable hints if the repo is dirty or out-of-sync
+1. Checks sync status immediately and displays actionable hints if the repo is dirty or out-of-sync
+2. Starts **asynchronous** `git fetch` in background job (non-blocking) to update remote tracking
 3. Sets up posh-git and posh-docker modules if available
 4. Configures Docker environment variables (`COMPOSE_CONVERT_WINDOWS_PATHS=1`, `DOCKER_BUILDKIT=1`)
+
+**Note on Async Fetch:** The `git fetch` operation now runs in a background PowerShell job and does not block shell startup. This eliminates startup delays on slow networks while still updating remote tracking information. The `git fetch` can be disabled by setting `$env:PROFILE_GIT_FETCH=0`.
 
 ### Custom Functions
 
@@ -136,6 +145,23 @@ git alias
 # Display Git aliases in formatted table
 Display-GitAliases
 ```
+
+### Git Status and Sync
+
+```powershell
+# Manually check repo sync status with sync hints
+Show-GitRepoSyncHints
+
+# Manually start async git fetch in background
+Start-AsyncGitFetch
+
+# Manually check sync status without fetching
+Show-GitRepoSyncHints -SkipFetch
+```
+
+**Functions:**
+- `Show-GitRepoSyncHints [-RepoPath <path>] [-SkipFetch]` - Displays repo sync status (branch, dirty state, commits ahead/behind)
+- `Start-AsyncGitFetch [-RepoPath <path>]` - Spawns background job to fetch without blocking
 
 ### Repository Maintenance
 
