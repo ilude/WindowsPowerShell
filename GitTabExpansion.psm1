@@ -182,7 +182,7 @@ function GitTabExpansion($lastBlock) {
     
 		# Handles delete remote branch and checkout tracking 
 		"^(drt).* (?<tag>\S*)$" {
-				gitRemoteTagss $matches['tag']
+				gitRemoteTags $matches['tag']
 		}
     
     # Handles delete branch

@@ -1,4 +1,12 @@
 function Setup-Git {
+	[CmdletBinding()]
+	param()
+
+	if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
+		Write-Error "Git is not installed or not in PATH"
+		return
+	}
+
 	git config --global core.eol lf
 	git config --global core.autocrlf input
 	git config --global core.editor "'$(get-editor)' -w"
@@ -77,9 +85,20 @@ function Setup-Git {
 #
 ###########################
 
-function Check-RemoteRepository($pwd = $(pwd)) {
-	pushd $pwd
-	if(Test-GitRepository) {	
+function Check-RemoteRepository {
+	[CmdletBinding()]
+	param(
+		[string]$Path = $(pwd)
+	)
+
+	if (-not (Test-Path $Path)) {
+		Write-Error "Path does not exist: $Path"
+		return
+	}
+
+	pushd $Path
+	try {
+		if(Test-GitRepository) {	
 		if((git diff-index --name-only HEAD).length -gt 0) {
 			Write-Warning "Local Powershell profile repository has uncommited changes"
 		}
@@ -88,7 +107,7 @@ function Check-RemoteRepository($pwd = $(pwd)) {
 		$local=$(git rev-parse HEAD)
 
 		Write-Verbose "Local:  $local => Remote: $remote"
-		if($remote -ne $remote) {
+		if($remote -ne $local) {
 			if(git branch --contains $remote) {
 				Write-Warning "Local Powershell profile repository has changes that have not been pushed upstream"
 			}
@@ -100,7 +119,10 @@ function Check-RemoteRepository($pwd = $(pwd)) {
 			Write-Verbose "Local Powershell profile repository is up to date"
 		}
 	}
-	popd
+	}
+	finally {
+		popd
+	}
 }
 
 # Git functions

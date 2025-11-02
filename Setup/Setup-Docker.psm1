@@ -1,70 +1,233 @@
+# Setup-Docker Module - Docker container management utilities
+# Requires PowerShell 3.0+
+# Requires: Docker command-line tools installed
+
+# Execute bash in running container
 function dbash {
-  Param(
-    [parameter(Mandatory=$true)][string]$container
+  [CmdletBinding()]
+  param(
+    [Parameter(Mandatory=$true, ValueFromPipeline=$true, HelpMessage='Container name or ID')]
+    [ValidateNotNullOrEmpty()]
+    [string]$Container
   )
-  
-  docker exec -it $container /bin/bash
+
+  try {
+    $exists = docker ps -q --filter "id=$Container" --filter "name=$Container" 2>$null
+    if (-not $exists) {
+      Write-Error "Container '$Container' not found or not running"
+      return
+    }
+
+    docker exec -it $Container /bin/bash
+  }
+  catch {
+    Write-Error "Failed to execute bash in container '$Container': $_"
+  }
 }
 
 # Get latest container ID
 function dl {
-  docker ps -l -q $args
+  [CmdletBinding()]
+  param()
+
+  try {
+    docker ps -l -q
+  }
+  catch {
+    Write-Error "Failed to get latest container: $_"
+  }
 }
 
 # Get container process
-function dps  {
-  docker ps --format="table {{.Names}}\t{{.ID}}\t{{.Image}}\t{{.RunningFor}}\t{{.State}}\t{{.Status}}"
+function dps {
+  [CmdletBinding()]
+  param()
+
+  try {
+    docker ps --format="table {{.Names}}\t{{.ID}}\t{{.Image}}\t{{.RunningFor}}\t{{.State}}\t{{.Status}}"
+  }
+  catch {
+    Write-Error "Failed to get container processes: $_"
+  }
 }
 
+# Get container process with ports
 function dpsp {
-  docker ps --format="table {{.Names}}\t{{.ID}}\t{{.Image}}\t{{.RunningFor}}\t{{.State}}\t{{.Status}}\t{{.Ports}}"
+  [CmdletBinding()]
+  param()
+
+  try {
+    docker ps --format="table {{.Names}}\t{{.ID}}\t{{.Image}}\t{{.RunningFor}}\t{{.State}}\t{{.Status}}\t{{.Ports}}"
+  }
+  catch {
+    Write-Error "Failed to get container processes with ports: $_"
+  }
 }
 
-# Get process included stop container
-function dpa { 
-  docker ps -a $args
+# Get all containers (including stopped)
+function dpa {
+  [CmdletBinding()]
+  param()
+
+  try {
+    docker ps -a
+  }
+  catch {
+    Write-Error "Failed to get all containers: $_"
+  }
 }
 
+# Build Docker image
 function db {
-  docker build -t $arg .
+  [CmdletBinding()]
+  param(
+    [Parameter(Mandatory=$false)]
+    [string]$Tag = 'latest',
+
+    [Parameter(Mandatory=$false)]
+    [string]$Path = '.'
+  )
+
+  try {
+    if (-not (Test-Path $Path)) {
+      Write-Error "Path '$Path' does not exist"
+      return
+    }
+
+    docker build -t $Tag $Path
+  }
+  catch {
+    Write-Error "Failed to build Docker image: $_"
+  }
 }
 
-# Get images
+# Get Docker images
 function di {
-  docker images $args
+  [CmdletBinding()]
+  param()
+
+  try {
+    docker images
+  }
+  catch {
+    Write-Error "Failed to get Docker images: $_"
+  }
 }
 
-# Get container IP
+# Get container IP address
 function dip {
-  docker inspect --format '{{ .NetworkSettings.IPAddress }}' $args
+  [CmdletBinding()]
+  param(
+    [Parameter(Mandatory=$true, ValueFromPipeline=$true, HelpMessage='Container name or ID')]
+    [ValidateNotNullOrEmpty()]
+    [string]$Container
+  )
+
+  try {
+    docker inspect --format '{{ .NetworkSettings.IPAddress }}' $Container
+  }
+  catch {
+    Write-Error "Failed to get IP for container '$Container': $_"
+  }
 }
 
-# Run deamonized container, e.g., $dkd base /bin/echo hello
+# Run daemonized container
 function dkd {
-  docker run -d -P $args
+  [CmdletBinding()]
+  param(
+    [Parameter(Mandatory=$true, ValueFromRemainingArguments=$true)]
+    [string[]]$Arguments
+  )
+
+  try {
+    docker run -d -P $Arguments
+  }
+  catch {
+    Write-Error "Failed to run daemonized container: $_"
+  }
 }
 
-# Run interactive container, e.g., $dki base /bin/bash
+# Run interactive container
 function dki {
-  docker run --rm -i -t -P $args /bin/bash
+  [CmdletBinding()]
+  param(
+    [Parameter(Mandatory=$true, ValueFromRemainingArguments=$true)]
+    [string[]]$Arguments
+  )
+
+  try {
+    docker run --rm -i -t -P $Arguments /bin/bash
+  }
+  catch {
+    Write-Error "Failed to run interactive container: $_"
+  }
 }
 
-# Execute interactive container, e.g., $dex base /bin/bash
+# Execute interactive command in running container
 function dex {
-  docker exec -it $args
+  [CmdletBinding()]
+  param(
+    [Parameter(Mandatory=$true, ValueFromPipeline=$true, HelpMessage='Container name or ID')]
+    [ValidateNotNullOrEmpty()]
+    [string]$Container,
+
+    [Parameter(Mandatory=$true, ValueFromRemainingArguments=$true)]
+    [string[]]$Command
+  )
+
+  try {
+    $exists = docker ps -q --filter "id=$Container" --filter "name=$Container" 2>$null
+    if (-not $exists) {
+      Write-Error "Container '$Container' not found or not running"
+      return
+    }
+
+    docker exec -it $Container $Command
+  }
+  catch {
+    Write-Error "Failed to execute command in container '$Container': $_"
+  }
 }
 
-# delete all non running containers
+# Delete all non-running containers
 function drm {
-  docker rm $(docker ps -q -a)
+  [CmdletBinding()]
+  param()
+
+  try {
+    $containers = docker ps -q -a
+    if (-not $containers) {
+      Write-Host "No containers to delete"
+      return
+    }
+
+    docker rm $containers
+  }
+  catch {
+    Write-Error "Failed to remove containers: $_"
+  }
 }
 
-# delete all images that are not in use
+# Delete all unused images
 function dri {
-  docker rmi $(docker images -q)
+  [CmdletBinding()]
+  param()
+
+  try {
+    $images = docker images -q
+    if (-not $images) {
+      Write-Host "No images to delete"
+      return
+    }
+
+    docker rmi $images
+  }
+  catch {
+    Write-Error "Failed to remove images: $_"
+  }
 }
 
-
+# Docker compose alias
 Set-Alias dc "docker compose"
 
 Export-ModuleMember -Function * -Alias *
