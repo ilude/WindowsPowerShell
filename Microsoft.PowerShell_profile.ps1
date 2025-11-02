@@ -210,7 +210,9 @@ function l {
         Write-Host ("{0,-11} {1,10} {2,17} {3}" -f $mode, $len, $date, $item.Name) -ForegroundColor $color
     }
 }
-Set-Alias -Name l -Value l -Force
+# The function `l` is callable directly. Avoid creating an alias with the same name (it can cause recursion).
+# Create a convenient alias `ll` that maps to the `l` function instead.
+Set-Alias -Name ll -Value l -Force
 
 $Env:COMPOSE_CONVERT_WINDOWS_PATHS = 1
 $Env:DOCKER_BUILDKIT=1
