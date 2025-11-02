@@ -1,14 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(cat:*)",
-      "mcp__MCP_DOCKER__sequentialthinking",
-      "Bash(awk:*)",
-      "Bash(git add:*)",
-      "Bash(git commit -m \"$(cat <<''EOF''\nReorganize documentation into feature-based structure\n\nMove all improvement documentation into .claude/features/ with dated\nsubdirectories (YYYY-MM-DD_feature-name/ format). Establishes convention\nfor organizing feature work during planning sessions.\n\nChanges:\n- Created .claude/features/2025-11-02_initial-code-review/\n- Created .claude/features/2025-11-02_phase-1-quick-wins/\n- Created .claude/features/2025-11-02_phase-2-code-polish/\n- Created .claude/features/2025-11-02_roadmap/\n- Updated .claude/CLAUDE.md with feature directory documentation\n- Added .claude/PERSONAL_RULES.md for project-specific rules\n\n🤖 Generated with Claude Code\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
-      "Bash(powershell -NoProfile -Command \". .\\Microsoft.PowerShell_profile.ps1\")",
-      "Bash(powershell -NoProfile -Command \". .\\Microsoft.PowerShell_profile.ps1 -ErrorAction Stop; Write-Host ''Profile loaded successfully''\")",
-      "Bash(git commit -m \"$(cat <<''EOF''\nImplement async git fetch for non-blocking startup\n\nReplace synchronous git fetch with asynchronous background job to\neliminate startup delays. New Start-AsyncGitFetch function spawns\nbackground job while Show-GitRepoSyncHints displays status immediately.\n\nChanges:\n- Added Start-AsyncGitFetch() function for background fetch\n- Updated Show-GitRepoSyncHints() with -SkipFetch parameter\n- Modified startup sequence to call async fetch instead of sync\n- Fixed special character encoding issues in output strings\n- Updated CLAUDE.md with async fetch documentation\n\n🤖 Generated with Claude Code\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
+      "Bash(git checkout:*)",
+      "Bash(git merge:*)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []
