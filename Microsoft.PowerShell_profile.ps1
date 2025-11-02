@@ -196,6 +196,22 @@ if (Get-Module -ListAvailable -Name posh-git) {
   Import-Module posh-git
 } 
 
+# Lightweight `l` listing function (human-friendly columns + colors)
+function l {
+    param([string]$Path = '.')
+
+    $items = Get-ChildItem -Force -Path $Path | Sort-Object { -not $_.PSIsContainer }, Name
+
+    foreach ($item in $items) {
+        $color = if ($item.PSIsContainer) { 'Cyan' } elseif ($item.Extension -match '\.exe|\.ps1|\.bat|\.sh') { 'Green' } else { 'Gray' }
+        $mode  = $item.Mode
+        $len   = if ($item.PSIsContainer) { '<DIR>' } else { ('{0,8}' -f ([math]::Round($item.Length / 1KB, 1))) + ' KB' }
+        $date  = $item.LastWriteTime.ToString('yyyy-MM-dd HH:mm')
+        Write-Host ("{0,-11} {1,10} {2,17} {3}" -f $mode, $len, $date, $item.Name) -ForegroundColor $color
+    }
+}
+Set-Alias -Name l -Value l -Force
+
 $Env:COMPOSE_CONVERT_WINDOWS_PATHS = 1
 $Env:DOCKER_BUILDKIT=1
 
