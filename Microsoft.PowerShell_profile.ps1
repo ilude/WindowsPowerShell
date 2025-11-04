@@ -74,6 +74,15 @@ function prompt {
     $userLocation = $path.Substring($index, $path.Length - $index)
   }
 
+  # Add ~/ prefix if inside home directory
+  if ($path.StartsWith($env:USERPROFILE, [System.StringComparison]::OrdinalIgnoreCase)) {
+    if ($path -eq $env:USERPROFILE) {
+      $userLocation = '~'
+    } else {
+      $userLocation = '~/' + $userLocation
+    }
+  }
+
   Write-Host $userLocation -NoNewLine -ForegroundColor Green
 
   if (Test-GitRepository) {
