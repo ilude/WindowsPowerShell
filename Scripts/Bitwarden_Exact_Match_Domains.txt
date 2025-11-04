@@ -1,0 +1,6 @@
+# add domains one per line to this file
+ilude.com
+modocdsdev.com
+redcedarill.com
+teams-sddc-dev.com
+
