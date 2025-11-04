@@ -194,6 +194,137 @@ The `Show-GitRepoSyncHints` function runs a `git fetch` by default, which can ad
 
 ## Configuration Reference
 
+### Multi-Account Git Configuration
+
+This repository uses a **machine-independent** git configuration strategy that automatically switches between personal and work identities based on repository remotes.
+
+#### Architecture
+
+**Three-file configuration system:**
+
+1. **`~/.gitconfig`** - Main config with shared settings (aliases, tools, behavior) and conditional includes
+2. **`~/.gitconfig-personal`** - Personal identity and URL rewriting
+3. **`~/.gitconfig-work`** - Work identity and URL rewriting
+4. **`~/.ssh/config`** - Machine-specific SSH key assignments
+
+#### How It Works
+
+**Automatic Identity Switching (Remote-Based):**
+
+The main `~/.gitconfig` uses `[includeIf "hasconfig:remote.*.url:..."]` patterns to load the appropriate identity config based on the repository's remote URL:
+
+- **Personal repos** (ilude, traefikturkey) → loads `~/.gitconfig-personal`
+- **Work repos** (mtg-eagletg, EagleTG-Development) → loads `~/.gitconfig-work`
+
+**Machine-Specific SSH Key Handling:**
+
+SSH keys are configured per-machine in `~/.ssh/config` using host aliases:
+
+```ssh
+# Host aliases (same on all machines)
+Host github.com-personal
+  HostName github.com
+  User git
+  IdentityFile <machine-specific-path>
+  IdentitiesOnly yes
+
+Host github.com-work
+  HostName github.com
+  User git
+  IdentityFile <machine-specific-path>
+  IdentitiesOnly yes
+```
+
+**Windows machine (this machine):**
+```ssh
+Host github.com-personal
+  IdentityFile ~/.ssh/id_ed25519-personal  # Personal key
+
+Host github.com-work
+  IdentityFile ~/.ssh/id_ed25519           # Work key
+```
+
+**Other machines (Linux/Mac):**
+```ssh
+Host github.com-personal
+  IdentityFile ~/.ssh/id_ed25519           # Personal key
+
+Host github.com-work
+  IdentityFile ~/.ssh/id_ed25519-work      # Work key
+```
+
+#### Configuration Files
+
+**`~/.gitconfig-personal`:**
+```ini
+# Personal repos configuration
+[user]
+	name = mike
+	email = mglenn@ilude.com
+
+[url "github.com-personal:"]
+	insteadOf = git@github.com:
+	insteadOf = https://github.com/
+```
+
+**`~/.gitconfig-work`:**
+```ini
+# Work repos configuration
+[user]
+	name = Mike Glenn
+	email = michael.glenn@eagletg.com
+
+[url "github.com-work:"]
+	insteadOf = git@github.com:
+	insteadOf = https://github.com/
+```
+
+#### Setup Instructions for New Machines
+
+When setting up a new machine, follow these steps:
+
+1. **Copy git config files** (same on all machines):
+   ```bash
+   # Main config with conditional includes and aliases
+   cp ~/.gitconfig ~/.gitconfig.backup  # if it exists
+
+   # Copy from dotfiles repo or this documentation
+   # Files: ~/.gitconfig, ~/.gitconfig-personal, ~/.gitconfig-work
+   ```
+
+2. **Configure SSH keys** (machine-specific):
+   ```bash
+   # Edit ~/.ssh/config to add host aliases
+   # Set IdentityFile paths based on which key is personal vs work
+
+   # Windows: id_ed25519 = work, id_ed25519-personal = personal
+   # Linux/Mac: id_ed25519 = personal, id_ed25519-work = work
+   ```
+
+3. **Verify setup**:
+   ```bash
+   # Clone a personal repo and check identity
+   git clone git@github.com:ilude/test-repo.git
+   cd test-repo
+   git config user.email  # Should show: mglenn@ilude.com
+
+   # Clone a work repo and check identity
+   git clone git@github.com:mtg-eagletg/test-repo.git
+   cd test-repo
+   git config user.email  # Should show: michael.glenn@eagletg.com
+   ```
+
+#### Key Benefits
+
+- **Automatic switching** - No manual configuration per repo
+- **Machine-independent** - Same git config files work on all machines
+- **Works anywhere** - Not dependent on directory structure
+- **Simple SSH config** - Just update key paths per machine
+
+#### Reference
+
+Based on dotfiles repo: https://github.com/ilude/dotfiles
+
 ### Environment Variables
 
 #### PROFILE_GIT_FETCH
